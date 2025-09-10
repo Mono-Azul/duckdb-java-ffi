@@ -6,6 +6,13 @@
 out/
 gen/
 
+# jextract
+jextract/
+
+# not needed libduckdb files
+*.hpp
+*.a
+
 # Maven
 target/
 pom.xml.tag
