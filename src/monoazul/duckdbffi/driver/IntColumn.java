@@ -60,12 +60,12 @@ public class IntColumn extends PrimitiveColumn<Integer>
         return retArray;
     }
 
-    // Check Validity before using the value as it could be null
+    // Don't forget to check Validity before using the value as it could be null
     public int getPrimitiveValue(int pos)
     {
         // Division with floor because List is 0 based
         int arrayPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
-        int[] IntVectorArray = VectorArrays.get(arrayPosInList);
-        return IntVectorArray[pos % ResMetaData.maxVectorSize()];
+        int[] VectorArray = VectorArrays.get(arrayPosInList);
+        return VectorArray[pos % ResMetaData.maxVectorSize()];
     }
 }
