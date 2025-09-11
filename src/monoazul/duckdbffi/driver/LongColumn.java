@@ -17,12 +17,14 @@ public class LongColumn extends PrimitiveColumn<Long>{
     }
 
     @Override
-    public List<?> getVectorArrays() {
+    public List<long[]> getVectorArrays()
+    {
         return VectorArrays;
     }
 
     @Override
-    protected void addVectorChunk(MemorySegment ResultVector, int dbChunkSize) {
+    protected void addVectorChunk(MemorySegment ResultVector, int dbChunkSize)
+    {
         // Convert Vector into long[] array
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         long[] ResultArray = new long[dbChunkSize];
@@ -55,5 +57,14 @@ public class LongColumn extends PrimitiveColumn<Long>{
             startPos += arr.length;
         }
         return retArray;
+    }
+
+    // Don't forget to check Validity before using the value as it could be null
+    public long getPrimitiveValue(int pos)
+    {
+        // Division with floor because List is 0 based
+        int arrayPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
+        long[] VectorArray = VectorArrays.get(arrayPosInList);
+        return VectorArray[pos % ResMetaData.maxVectorSize()];
     }
 }
