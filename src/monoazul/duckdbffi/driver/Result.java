@@ -94,6 +94,16 @@ public class Result {
                     new LongColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_VARCHAR ->
                     new StringColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_DECIMAL ->
+                    new DecimalColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_FLOAT ->
+                    new FloatColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_DOUBLE ->
+                    new DoubleColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_SMALLINT ->
+                    new ShortColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_TINYINT ->
+                    new ByteColumn(ColumnName, DbDatatype);
             default -> null;
         };
     }
