@@ -6,6 +6,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.nio.charset.StandardCharsets;
+import java.util.BitSet;
 
 import static monoazul.duckdbffi.jextractffi.duckdb_h.*;
 
@@ -25,7 +26,8 @@ public class StringColumn extends ObjectColumn<String>
 
         try (Arena ColumnArena = Arena.ofConfined())
         {
-            for (int pos = 0; pos < dbChunkSize; pos++) {
+            for (int pos = 0; pos < dbChunkSize; pos++)
+            {
                 MemorySegment String_t = duckdb_string_t.reinterpret(ResultVectorData, dbChunkSize, ColumnArena, null);
                 MemorySegment String_struct = duckdb_string_t.asSlice(String_t, pos);
 
@@ -48,6 +50,7 @@ public class StringColumn extends ObjectColumn<String>
                     ResultArray[pos] = new String(byteString, StandardCharsets.UTF_8);
                 }
             }
+            setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         }
         this.VectorArrays.add(ResultArray);
     }

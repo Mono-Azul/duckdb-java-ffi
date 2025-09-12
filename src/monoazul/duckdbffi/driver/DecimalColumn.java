@@ -60,6 +60,7 @@ public class DecimalColumn extends ObjectColumn<BigDecimal>
                     ResultArray[i] = new BigDecimal(HIntString.getString(0)).movePointLeft(DecimalSize);
                 }
             }
+            setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         }
         this.VectorArrays.add(ResultArray);
     }
