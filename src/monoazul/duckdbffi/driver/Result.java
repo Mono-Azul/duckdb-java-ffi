@@ -47,6 +47,12 @@ public class Result {
                 DuckDbDatatype DbDatatype = new DuckDbDatatype((short) duckdb_get_type_id(ResultVectorType));
                 String ColumnName = duckdb_column_name(DuckDbResultPtr, col).reinterpret(Integer.MAX_VALUE).getString(0);
 
+                // Destroy column_type, but we need a pointer first
+                MemorySegment ResultVectorTypePtr = ResulArena.allocate(C_POINTER);
+                ResultVectorTypePtr.set(ValueLayout.JAVA_LONG, 0, ResultVectorType.address());
+                duckdb_destroy_logical_type(ResultVectorTypePtr);
+
+                // Create and add new column
                 this.Columns.add(createColumnByDatatype(ColumnName, DbDatatype));
 
                 // Add first vector as we have the result vector Segment at hand anyway
@@ -104,6 +110,11 @@ public class Result {
                     new ShortColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_TINYINT ->
                     new ByteColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP,
+                 DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_S,
+                 DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_MS,
+                 DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_NS ->
+                    new LocalDateTimeColumn(ColumnName, DbDatatype);
             default -> null;
         };
     }
