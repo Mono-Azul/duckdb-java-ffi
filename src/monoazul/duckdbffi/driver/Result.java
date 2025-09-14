@@ -121,6 +121,10 @@ public class Result {
                     new LongObjectColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_UTINYINT ->
                     new ShortObjectColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_HUGEINT,
+                 DuckDbDatatype.DUCKDB_TYPE_UHUGEINT,
+                 DuckDbDatatype.DUCKDB_TYPE_UBIGINT->
+                    new BigIntegerColumn(ColumnName, DbDatatype);
             default -> new UnknownColumn(ColumnName, DbDatatype);
         };
     }
