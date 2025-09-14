@@ -18,6 +18,7 @@ abstract public class Column<T> {
     {
         this.ResMetaData = ResMetaData;
     }
+
     protected abstract void addVectorChunk(MemorySegment ResultVector, int dbChunkSize);
 
     abstract public T getValue(int pos);

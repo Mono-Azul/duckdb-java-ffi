@@ -1,0 +1,56 @@
+package monoazul.duckdbffi.driver;
+
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
+import java.util.Arrays;
+
+import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
+
+// This class has Integer objects instead of primitive ints. Also, it is used as a carrier for unsigned short.
+public class IntObjectColumn extends ObjectColumn<Integer>
+{
+    public IntObjectColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    {
+        super(ColumnName, ColumnDatatype);
+        Clazz = Integer.class;
+    }
+    @Override
+    protected void addVectorChunk(MemorySegment ResultVector, int dbChunkSize)
+    {
+        // Switch to unsigned short path
+        if (ColumnDuckDbDataype.type == DuckDbDatatype.DUCKDB_TYPE_USMALLINT)
+        {
+            addVectorChunkUnsignedShort(ResultVector, dbChunkSize);
+            return;
+        }
+
+        // Convert Vector into int[] array first and then convert to Integer[]
+        MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
+        int[] PrimitiveResultArray = new int[dbChunkSize];
+        ResultVectorData.reinterpret((long) dbChunkSize * 4);
+        MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_INT, 0, PrimitiveResultArray, 0, dbChunkSize);
+
+        Integer[] ResultArray = Arrays.stream(PrimitiveResultArray).boxed().toArray(Integer[]::new);
+        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
+        this.VectorArrays.add(ResultArray);
+    }
+
+    protected void addVectorChunkUnsignedShort(MemorySegment ResultVector, int dbChunkSize)
+    {
+        // Convert Vector into short[] array first and then convert to Integer[]
+        MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
+        short[] PrimitiveResultArray = new short[dbChunkSize];
+        ResultVectorData.reinterpret((long) dbChunkSize * 2);
+        MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_SHORT, 0, PrimitiveResultArray, 0, dbChunkSize);
+
+        Integer[] ResultArray = new Integer[dbChunkSize];
+
+        for (int pos = 0; pos < dbChunkSize; pos++)
+        {
+            ResultArray[pos] = (Integer) Short.toUnsignedInt(PrimitiveResultArray[pos]);
+        }
+
+        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
+        this.VectorArrays.add(ResultArray);
+    }
+}

@@ -115,6 +115,12 @@ public class Result {
                  DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_MS,
                  DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_NS ->
                     new LocalDateTimeColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_USMALLINT ->
+                    new IntObjectColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_UINTEGER->
+                    new LongObjectColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_UTINYINT ->
+                    new ShortObjectColumn(ColumnName, DbDatatype);
             default -> new UnknownColumn(ColumnName, DbDatatype);
         };
     }
