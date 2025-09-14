@@ -35,9 +35,9 @@ public class BigIntegerColumn extends ObjectColumn<BigInteger>
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         byte[] ResultByteArray = ResultVectorData.reinterpret((long)dbChunkSize * 16).toArray(ValueLayout.JAVA_BYTE);
 
-        for (int pos = 0; pos < dbChunkSize; pos+= 16)
+        for (int pos = 0; pos < dbChunkSize; pos++)
         {
-            byte[] swappedArray = swapEndianness16(Arrays.copyOfRange(ResultByteArray, pos, pos + 16));
+            byte[] swappedArray = swapEndianness16(Arrays.copyOfRange(ResultByteArray, pos * 16, pos * 16 + 16));
             ResultArray[pos] = new BigInteger(swappedArray, 0, 16);
         }
         this.VectorArrays.add(ResultArray);
@@ -50,9 +50,9 @@ public class BigIntegerColumn extends ObjectColumn<BigInteger>
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         byte[] ResultByteArray = ResultVectorData.reinterpret((long)dbChunkSize * 8).toArray(ValueLayout.JAVA_BYTE);
 
-        for (int pos = 0; pos < dbChunkSize; pos+= 8)
+        for (int pos = 0; pos < dbChunkSize; pos++)
         {
-            byte[] swappedArray = swapEndianness8(Arrays.copyOfRange(ResultByteArray, pos, pos + 8));
+            byte[] swappedArray = swapEndianness8(Arrays.copyOfRange(ResultByteArray, pos * 8, pos * 8 + 8));
             ResultArray[pos] = new BigInteger(1, swappedArray, 0, 8);
         }
         this.VectorArrays.add(ResultArray);
@@ -65,9 +65,9 @@ public class BigIntegerColumn extends ObjectColumn<BigInteger>
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         byte[] ResultByteArray = ResultVectorData.reinterpret((long)dbChunkSize * 16).toArray(ValueLayout.JAVA_BYTE);
 
-        for (int pos = 0; pos < dbChunkSize; pos+= 16)
+        for (int pos = 0; pos < dbChunkSize; pos++)
         {
-            byte[] swappedArray = swapEndianness16(Arrays.copyOfRange(ResultByteArray, pos, pos + 16));
+            byte[] swappedArray = swapEndianness16(Arrays.copyOfRange(ResultByteArray, pos * 16, pos * 16 + 16));
             ResultArray[pos] = new BigInteger(1, swappedArray, 0, 16);
         }
         this.VectorArrays.add(ResultArray);
