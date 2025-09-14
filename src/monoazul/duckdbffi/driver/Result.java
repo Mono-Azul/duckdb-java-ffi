@@ -115,7 +115,7 @@ public class Result {
                  DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_MS,
                  DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_NS ->
                     new LocalDateTimeColumn(ColumnName, DbDatatype);
-            default -> null;
+            default -> new UnknownColumn(ColumnName, DbDatatype);
         };
     }
 
