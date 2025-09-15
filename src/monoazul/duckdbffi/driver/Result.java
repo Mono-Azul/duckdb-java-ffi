@@ -12,8 +12,8 @@ import java.util.List;
 // FFI Imports
 import static monoazul.duckdbffi.jextractffi.duckdb_h.*;
 
-public class Result {
-
+public class Result
+{
     public final List<Column> Columns;
     public final ResultMetaData ResMetaData;
 
@@ -137,5 +137,25 @@ public class Result {
             Row.add(Columns.get(col).getValue(row));
         }
         return Row;
+    }
+    
+    public int getColumnCount()
+    {
+        return ResMetaData.columnsCount();
+    }
+
+    public int getRowCount()
+    {
+        return ResMetaData.rowCount();
+    }
+
+    public int getMaxVectorSize()
+    {
+        return ResMetaData.maxVectorSize();
+    }
+
+    public int getChunkCount()
+    {
+        return ResMetaData.chunkCount();
     }
 }
