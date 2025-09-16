@@ -106,21 +106,21 @@ public class Result
         System.out.println(DbDatatype.type);
         return switch (DbDatatype.type) {
             case DuckDbDatatype.DUCKDB_TYPE_INTEGER ->
-                    new IntColumn(ColumnName, DbDatatype);
+                    ColumnFactory.createIntColumn(ColumnName, DbDatatype, primitivesAsObject);
             case DuckDbDatatype.DUCKDB_TYPE_BIGINT ->
-                    new LongColumn(ColumnName, DbDatatype);
+                    ColumnFactory.createLongColumn(ColumnName, DbDatatype, primitivesAsObject);
             case DuckDbDatatype.DUCKDB_TYPE_VARCHAR ->
                     new StringColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_DECIMAL ->
                     new DecimalColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_FLOAT ->
-                    new FloatColumn(ColumnName, DbDatatype);
+                    ColumnFactory.createFloatColumn(ColumnName, DbDatatype, primitivesAsObject);
             case DuckDbDatatype.DUCKDB_TYPE_DOUBLE ->
-                    new DoubleColumn(ColumnName, DbDatatype);
+                    ColumnFactory.createDoubleColumn(ColumnName, DbDatatype, primitivesAsObject);
             case DuckDbDatatype.DUCKDB_TYPE_SMALLINT ->
-                    new ShortColumn(ColumnName, DbDatatype);
+                    ColumnFactory.createShortColumn(ColumnName, DbDatatype, primitivesAsObject);
             case DuckDbDatatype.DUCKDB_TYPE_TINYINT ->
-                    new ByteColumn(ColumnName, DbDatatype);
+                    ColumnFactory.createByteColumn(ColumnName, DbDatatype, primitivesAsObject);
             case DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP,
                  DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_S,
                  DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_MS,
@@ -137,7 +137,7 @@ public class Result
                  DuckDbDatatype.DUCKDB_TYPE_UBIGINT->
                     new BigIntegerColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_BOOLEAN ->
-                    new BooleanColumn(ColumnName, DbDatatype);
+                    ColumnFactory.createBooleanColumn(ColumnName, DbDatatype, primitivesAsObject);
             default -> new UnknownColumn(ColumnName, DbDatatype);
         };
     }
