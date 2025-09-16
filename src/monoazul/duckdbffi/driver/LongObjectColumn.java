@@ -17,7 +17,7 @@ public class LongObjectColumn extends ObjectColumn<Long>
     @Override
     protected void addVectorChunk(MemorySegment ResultVector, int dbChunkSize)
     {
-        // Switch to unsigned short path
+        // Switch to unsigned int path
         if (ColumnDuckDbDataype.type == DuckDbDatatype.DUCKDB_TYPE_UINTEGER)
         {
             addVectorChunkUnsignedInt(ResultVector, dbChunkSize);

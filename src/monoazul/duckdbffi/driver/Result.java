@@ -138,6 +138,12 @@ public class Result
                     new BigIntegerColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_BOOLEAN ->
                     ColumnFactory.createBooleanColumn(ColumnName, DbDatatype, primitivesAsObject);
+            case DuckDbDatatype.DUCKDB_TYPE_DATE ->
+                    new LocalDateColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_TIME ->
+                    new LocalTimeColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_UUID ->
+                    new UuidColumn(ColumnName, DbDatatype);
             default -> new UnknownColumn(ColumnName, DbDatatype);
         };
     }
