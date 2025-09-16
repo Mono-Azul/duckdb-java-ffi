@@ -17,7 +17,18 @@ public class Result
     public final List<Column> Columns;
     public final ResultMetaData ResMetaData;
 
-    public Result(MemorySegment DuckDbResultPtr) throws Throwable {
+    // Configuration
+    public final boolean primitivesAsObject;
+
+    public Result(MemorySegment DuckDbResultPtr) throws Throwable
+    {
+        this(DuckDbResultPtr, false);
+    }
+
+    public Result(MemorySegment DuckDbResultPtr, boolean primitivesAsObject) throws Throwable
+    {
+        this.primitivesAsObject = primitivesAsObject;
+
         final int columnsCount = (int)duckdb_column_count(DuckDbResultPtr);
         this.Columns = new ArrayList<>();
 
@@ -53,7 +64,7 @@ public class Result
                 duckdb_destroy_logical_type(ResultVectorTypePtr);
 
                 // Create and add new column
-                this.Columns.add(createColumnByDatatype(ColumnName, DbDatatype));
+                this.Columns.add(createColumnByDatatype(ColumnName, DbDatatype, primitivesAsObject));
 
                 // Add first vector as we have the result vector Segment at hand anyway
                 Columns.get(col).addVectorChunk(ResultVector, dbChunkSize);
@@ -90,7 +101,7 @@ public class Result
         }
     }
 
-    private static Column createColumnByDatatype(String ColumnName, DuckDbDatatype DbDatatype)
+    private static Column createColumnByDatatype(String ColumnName, DuckDbDatatype DbDatatype, boolean primitivesAsObject)
     {
         System.out.println(DbDatatype.type);
         return switch (DbDatatype.type) {
@@ -125,6 +136,8 @@ public class Result
                  DuckDbDatatype.DUCKDB_TYPE_UHUGEINT,
                  DuckDbDatatype.DUCKDB_TYPE_UBIGINT->
                     new BigIntegerColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_BOOLEAN ->
+                    new BooleanColumn(ColumnName, DbDatatype);
             default -> new UnknownColumn(ColumnName, DbDatatype);
         };
     }
@@ -138,7 +151,7 @@ public class Result
         }
         return Row;
     }
-    
+
     public int getColumnCount()
     {
         return ResMetaData.columnsCount();
