@@ -24,11 +24,12 @@ public class ByteColumn extends PrimitiveColumn<Byte>
     }
 
     @Override
-    protected void addVectorChunk(MemorySegment ResultVector, int dbChunkSize) {
+    protected void addVectorChunk(MemorySegment ResultVector, int dbChunkSize)
+    {
         // Convert Vector into byte[] array
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         byte[] ResultArray = new byte[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 1);
+        ResultVectorData.reinterpret(dbChunkSize);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_BYTE, 0, ResultArray, 0, dbChunkSize);
         this.VectorArrays.add(ResultArray);
     }
