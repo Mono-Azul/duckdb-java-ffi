@@ -27,7 +27,7 @@ public class duckdb_timestamp {
 
     private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
         duckdb_h.C_LONG.withName("micros")
-    ).withName("$anon$293:9");
+    ).withName("$anon$312:9");
 
     /**
      * The layout of this struct

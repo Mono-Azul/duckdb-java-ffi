@@ -32,7 +32,7 @@ public class duckdb_decimal {
         duckdb_h.C_CHAR.withName("scale"),
         MemoryLayout.paddingLayout(6),
         duckdb_hugeint.layout().withName("value")
-    ).withName("$anon$336:9");
+    ).withName("$anon$361:9");
 
     /**
      * The layout of this struct

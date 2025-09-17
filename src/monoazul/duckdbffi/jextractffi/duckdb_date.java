@@ -27,7 +27,7 @@ public class duckdb_date {
 
     private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
         duckdb_h.C_INT.withName("days")
-    ).withName("$anon$261:9");
+    ).withName("$anon$271:9");
 
     /**
      * The layout of this struct

@@ -31,7 +31,7 @@ public class duckdb_interval {
         duckdb_h.C_INT.withName("months"),
         duckdb_h.C_INT.withName("days"),
         duckdb_h.C_LONG.withName("micros")
-    ).withName("$anon$317:9");
+    ).withName("$anon$337:9");
 
     /**
      * The layout of this struct

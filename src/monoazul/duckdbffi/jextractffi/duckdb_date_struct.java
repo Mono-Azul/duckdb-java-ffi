@@ -32,7 +32,7 @@ public class duckdb_date_struct {
         duckdb_h.C_CHAR.withName("month"),
         duckdb_h.C_CHAR.withName("day"),
         MemoryLayout.paddingLayout(2)
-    ).withName("$anon$264:9");
+    ).withName("$anon$275:9");
 
     /**
      * The layout of this struct

@@ -37,7 +37,7 @@ public class duckdb_result {
         duckdb_h.C_POINTER.withName("deprecated_columns"),
         duckdb_h.C_POINTER.withName("deprecated_error_message"),
         duckdb_h.C_POINTER.withName("internal_data")
-    ).withName("$anon$442:9");
+    ).withName("$anon$468:9");
 
     /**
      * The layout of this struct

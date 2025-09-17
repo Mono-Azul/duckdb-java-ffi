@@ -29,7 +29,7 @@ public class duckdb_timestamp_struct {
     private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
         duckdb_date_struct.layout().withName("date"),
         duckdb_time_struct.layout().withName("time")
-    ).withName("$anon$312:9");
+    ).withName("$anon$316:9");
 
     /**
      * The layout of this struct

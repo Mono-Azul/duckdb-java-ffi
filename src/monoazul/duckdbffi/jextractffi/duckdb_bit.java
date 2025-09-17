@@ -29,7 +29,7 @@ public class duckdb_bit {
     private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
         duckdb_h.C_POINTER.withName("data"),
         duckdb_h.C_LONG.withName("size")
-    ).withName("$anon$426:9");
+    ).withName("$anon$452:9");
 
     /**
      * The layout of this struct

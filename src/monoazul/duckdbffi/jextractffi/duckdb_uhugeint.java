@@ -29,7 +29,7 @@ public class duckdb_uhugeint {
     private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
         duckdb_h.C_LONG.withName("lower"),
         duckdb_h.C_LONG.withName("upper")
-    ).withName("$anon$330:9");
+    ).withName("$anon$354:9");
 
     /**
      * The layout of this struct

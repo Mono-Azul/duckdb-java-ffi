@@ -29,7 +29,7 @@ public class duckdb_list_entry {
     private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
         duckdb_h.C_LONG.withName("offset"),
         duckdb_h.C_LONG.withName("length")
-    ).withName("$anon$370:9");
+    ).withName("$anon$396:9");
 
     /**
      * The layout of this struct
