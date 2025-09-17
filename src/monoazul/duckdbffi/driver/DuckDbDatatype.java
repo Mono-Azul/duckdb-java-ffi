@@ -1,6 +1,7 @@
 package monoazul.duckdbffi.driver;
 
-public class DuckDbDatatype {
+public class DuckDbDatatype
+{
     // Copied from duckdb.h duckdb_type enum
     final static short DUCKDB_TYPE_INVALID = 0;
     // bool
@@ -72,13 +73,15 @@ public class DuckDbDatatype {
     // ANY type
     final static short DUCKDB_TYPE_ANY = 34;
     // duckdb_varint
-    final static short DUCKDB_TYPE_VARINT = 35;
+    final static short DUCKDB_TYPE_BIGNUM = 35;
     // SQLNULL type
     final static short DUCKDB_TYPE_SQLNULL = 36;
     // STRING_LITERAL type
     final static short DUCKDB_TYPE_STRING_LITERAL = 37;
     // INTEGER_LITERAL type
     final static short DUCKDB_TYPE_INTEGER_LITERAL = 38;
+    // duckdb_time_ns (nanoseconds)
+    final static short DUCKDB_TYPE_TIME_NS = 39;
 
     final short type;
 
@@ -86,7 +89,7 @@ public class DuckDbDatatype {
     {
         // Values outside the numbers above are invalid => datatype = 0
         if (datatype >= 0
-            && datatype <= 38) {
+            && datatype <= 39) {
             this.type = datatype;
         }
         else
