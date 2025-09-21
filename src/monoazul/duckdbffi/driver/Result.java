@@ -126,6 +126,9 @@ public class Result
                  DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_MS,
                  DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_NS ->
                     new LocalDateTimeColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_TZ ->
+                    // It is possible to use a factory in the future to return e.g. ZonedDateTime
+                    new InstantColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_USMALLINT ->
                     new IntObjectColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_UINTEGER->
@@ -144,6 +147,8 @@ public class Result
                     new LocalTimeColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_UUID ->
                     new UuidColumn(ColumnName, DbDatatype);
+            case DuckDbDatatype.DUCKDB_TYPE_INTERVAL ->
+                    new IntervalColumn(ColumnName, DbDatatype);
             default -> new UnknownColumn(ColumnName, DbDatatype);
         };
     }
