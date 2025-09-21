@@ -143,7 +143,8 @@ public class Result
                     ColumnFactory.createBooleanColumn(ColumnName, DbDatatype, primitivesAsObject);
             case DuckDbDatatype.DUCKDB_TYPE_DATE ->
                     new LocalDateColumn(ColumnName, DbDatatype);
-            case DuckDbDatatype.DUCKDB_TYPE_TIME ->
+            case DuckDbDatatype.DUCKDB_TYPE_TIME,
+                 DuckDbDatatype.DUCKDB_TYPE_TIME_NS ->
                     new LocalTimeColumn(ColumnName, DbDatatype);
             case DuckDbDatatype.DUCKDB_TYPE_UUID ->
                     new UuidColumn(ColumnName, DbDatatype);

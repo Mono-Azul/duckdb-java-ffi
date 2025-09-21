@@ -25,13 +25,23 @@ public class LocalTimeColumn extends ObjectColumn<LocalTime>
         ResultVectorData.reinterpret(dbChunkSize);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_LONG, 0, TmpResultArray, 0, dbChunkSize);
 
-        // Create LocalDate from int
-        for (int pos = 0; pos < dbChunkSize; pos++)
+        if (ColumnDuckDbDataype.type == DuckDbDatatype.DUCKDB_TYPE_TIME)
         {
-            // Time stored in micros => * 1000
-            ResultArray[pos] = LocalTime.ofNanoOfDay(1000 * TmpResultArray[pos]);
+            // Create LocalDate from micros
+            for (int pos = 0; pos < dbChunkSize; pos++)
+            {
+                // Time stored in micros => * 1000
+                ResultArray[pos] = LocalTime.ofNanoOfDay(1000 * TmpResultArray[pos]);
+            }
         }
-
+        else // DuckDbDatatype.DUCKDB_TYPE_TIME_NS
+        {
+            // Create LocalDate from nanos
+            for (int pos = 0; pos < dbChunkSize; pos++)
+            {
+                ResultArray[pos] = LocalTime.ofNanoOfDay(TmpResultArray[pos]);
+            }
+        }
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         this.VectorArrays.add(ResultArray);
     }
