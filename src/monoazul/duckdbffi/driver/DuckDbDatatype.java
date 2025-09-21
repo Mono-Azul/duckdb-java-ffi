@@ -72,7 +72,7 @@ public class DuckDbDatatype
     final static short DUCKDB_TYPE_TIMESTAMP_TZ = 31;
     // ANY type
     final static short DUCKDB_TYPE_ANY = 34;
-    // duckdb_varint
+    // duckdb_bignum
     final static short DUCKDB_TYPE_BIGNUM = 35;
     // SQLNULL type
     final static short DUCKDB_TYPE_SQLNULL = 36;

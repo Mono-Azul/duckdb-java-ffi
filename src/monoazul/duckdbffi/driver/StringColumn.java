@@ -6,7 +6,6 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.nio.charset.StandardCharsets;
-import java.util.BitSet;
 
 import static monoazul.duckdbffi.jextractffi.duckdb_h.*;
 
@@ -26,9 +25,10 @@ public class StringColumn extends ObjectColumn<String>
 
         try (Arena ColumnArena = Arena.ofConfined())
         {
+            MemorySegment String_t = duckdb_string_t.reinterpret(ResultVectorData, dbChunkSize, ColumnArena, null);
+
             for (int pos = 0; pos < dbChunkSize; pos++)
             {
-                MemorySegment String_t = duckdb_string_t.reinterpret(ResultVectorData, dbChunkSize, ColumnArena, null);
                 MemorySegment String_struct = duckdb_string_t.asSlice(String_t, pos);
 
                 // Short strings can be inlined, longer ones have a pointer => this is a union struct!
