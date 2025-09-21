@@ -39,7 +39,7 @@ public class Result
         try (Arena ResulArena = Arena.ofConfined())
         {
             // Get first DbChunk and check if there are return columns
-            MemorySegment DuckDbResult = duckdb_result.reinterpret(DuckDbResultPtr, ResulArena, duckdb_h::duckdb_destroy_result);
+            MemorySegment DuckDbResult = duckdb_result.reinterpret(DuckDbResultPtr, ResulArena, null);
             MemorySegment DbChunk = duckdb_fetch_chunk(DuckDbResult);
 
             if (DbChunk.address() == 0) {
