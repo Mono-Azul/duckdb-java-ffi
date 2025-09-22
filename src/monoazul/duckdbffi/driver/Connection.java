@@ -48,11 +48,23 @@ public class Connection implements AutoCloseable
         if (duckDbState == DuckDBError())
         {
             System.out.println("Error running query: " + sql);
-            throw new Exception();
+
+            String ErrorMessage = duckdb_result_error(DuckDbResultPtr).getString(0);
+            Integer ErrorNumber = duckdb_result_error_type(DuckDbResultPtr);
+
+            // Destroy duckdb_result
+            duckdb_destroy_result(DuckDbResultPtr);
+
+            return new Result(ErrorMessage, ErrorNumber);
         }
 
         // Create Result
-        return new Result(DuckDbResultPtr, true);
+        var tmpResult = new Result(DuckDbResultPtr, true);
+
+        // Destroy duckdb_result
+        duckdb_destroy_result(DuckDbResultPtr);
+
+        return tmpResult;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package monoazul.duckdbffi.driver;
 
+import monoazul.duckdbffi.jextractffi.duckdb_h;
 import monoazul.duckdbffi.jextractffi.duckdb_result;
 
 import java.lang.foreign.Arena;
@@ -14,9 +15,21 @@ public class Result
 {
     public final List<Column> Columns;
     public final ResultMetaData ResMetaData;
+    private final String ErrorMessage;
+    private final Integer ErrorNumber;
 
     // Configuration
     public final boolean primitivesAsObject;
+
+    // Constructor for Error Result
+    public Result(String ErrorMessage, Integer ErrorNumber)
+    {
+        this.ErrorMessage = ErrorMessage;
+        this.ErrorNumber = ErrorNumber;
+        this.Columns = null;
+        this.ResMetaData = new ResultMetaData(0, 0, 0, 0);
+        primitivesAsObject = true;
+    }
 
     public Result(MemorySegment DuckDbResultPtr) throws Throwable
     {
@@ -26,6 +39,8 @@ public class Result
     public Result(MemorySegment DuckDbResultPtr, boolean primitivesAsObject) throws Throwable
     {
         this.primitivesAsObject = primitivesAsObject;
+        this.ErrorMessage = null;
+        this.ErrorNumber = null;
 
         final int columnsCount = (int)duckdb_column_count(DuckDbResultPtr);
         this.Columns = new ArrayList<>();
@@ -175,5 +190,24 @@ public class Result
     public int getChunkCount()
     {
         return ResMetaData.chunkCount();
+    }
+
+    public boolean hasError()
+    {
+        return ErrorNumber != null;
+    }
+
+    public String getErrorMessage()
+    {
+        if (!hasError())
+        {
+            return "No errors!";
+        }
+        return ErrorMessage;
+    }
+
+    public Integer getErrorNumber()
+    {
+        return ErrorNumber;
     }
 }
