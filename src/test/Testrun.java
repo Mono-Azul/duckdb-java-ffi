@@ -1,7 +1,10 @@
-package monoazul.duckdbffi.test;
+package test;
 
 import monoazul.duckdbffi.driver.Database;
+import monoazul.duckdbffi.driver.Connection;
 import monoazul.duckdbffi.driver.Result;
+
+import java.math.BigDecimal;
 
 public class Testrun {
     public static void main(String[] args) {
@@ -9,7 +12,7 @@ public class Testrun {
         {
             try (var db = new Database(":memory:"))
             {
-                try (var con = db.getConnection())
+                try (Connection con = db.getConnection())
                 {
                     Result res = con.query("SELECT *,-1.234::decimal(4,3), TIMESTAMP '1902-09-20 11:30:00.123456789', 1.1234::long, 2.33445::double, 65535::uint16, 255::uint8, 4294967295::uint32  FROM duckdb_memory();");
 
@@ -24,16 +27,37 @@ public class Testrun {
  Result res = con.query("SELECT -234::int4, * FROM duckdb_settings();")
  Result res = con.query("select 'aaa' union select null union select 'xxx';")
    */
+                    // Check for error
+                    if (res.hasError())
+                    {
+                        System.out.println(res.getErrorMessage());
+                        return;
+                    }
+
                     // Check if rows are returned
                     if (res.getColumnCount() == 0) {return;}
 
                     // Print all columns and rows
                     for (int row = 0; row < res.getRowCount(); row++) {
                         var Row = res.getRow(row);
-                        System.out.println("Row " + row);
+                        //System.out.println("Row " + row);
                         for (Object o : Row) {
-                            System.out.println(o);
+                            System.out.print(" | " + o + " | ");
                         }
+                        System.out.println(" ");
+                    }
+                    System.out.println(" ");
+
+                    // Casts
+                    try
+                    {
+                        var RowX = res.getRow(0);
+                        BigDecimal z = (BigDecimal)RowX.getFirst();
+                        System.out.println(z);
+                    }
+                    catch (ClassCastException e)
+                    {
+                        System.out.println(e.getMessage());
                     }
                 }
             }

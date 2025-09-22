@@ -49,10 +49,10 @@ public class Result
         duckdb_vector_size invoker = duckdb_vector_size.makeInvoker();
         final int maxVectorSize = (int)(long)invoker.handle().invokeExact();
 
-        try (Arena ResulArena = Arena.ofConfined())
+        try (Arena ResultArena = Arena.ofConfined())
         {
             // Get first DbChunk and check if there are return columns
-            MemorySegment DuckDbResult = duckdb_result.reinterpret(DuckDbResultPtr, ResulArena, null);
+            MemorySegment DuckDbResult = duckdb_result.reinterpret(DuckDbResultPtr, ResultArena, null);
             MemorySegment DbChunk = duckdb_fetch_chunk(DuckDbResult);
 
             if (DbChunk.address() == 0)
@@ -74,7 +74,7 @@ public class Result
                 String ColumnName = duckdb_column_name(DuckDbResultPtr, col).reinterpret(Integer.MAX_VALUE).getString(0);
 
                 // Destroy column_type, but we need a pointer first
-                MemorySegment ResultVectorTypePtr = ResulArena.allocate(C_POINTER);
+                MemorySegment ResultVectorTypePtr = ResultArena.allocate(C_POINTER);
                 ResultVectorTypePtr.set(ValueLayout.JAVA_LONG, 0, ResultVectorType.address());
                 duckdb_destroy_logical_type(ResultVectorTypePtr);
 
@@ -86,7 +86,7 @@ public class Result
             }
 
             // We need a pointer to the Chunk in order to destroy it
-            MemorySegment DbChunkPtr = ResulArena.allocate(C_POINTER);
+            MemorySegment DbChunkPtr = ResultArena.allocate(C_POINTER);
             DbChunkPtr.set(ValueLayout.JAVA_LONG, 0, DbChunk.address());
             duckdb_destroy_data_chunk(DbChunkPtr);
 
