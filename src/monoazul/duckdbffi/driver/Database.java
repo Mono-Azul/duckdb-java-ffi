@@ -94,11 +94,16 @@ public class Database implements AutoCloseable
         this.DatabaseFileName = DatabaseFileName;
 
         // Open DB
-        int duckDbState = duckdb_open(DatabaseFileNameNative, DuckDbDatabasePtr);
+        //int duckDbState = duckdb_open(DatabaseFileNameNative, DuckDbDatabasePtr);
+
+        MemorySegment ErrorMessagePtr = DatabaseArena.allocate(C_POINTER);
+        int duckDbState = duckdb_open_ext(DatabaseFileNameNative, DuckDbDatabasePtr, MemorySegment.NULL, ErrorMessagePtr);
 
         if (duckDbState == DuckDBError())
         {
             System.out.println("Error opening DB!");
+            System.out.println(ErrorMessagePtr.get(C_POINTER, 0).getString(0));
+            throw new Exception();
         }
 
         DuckDbDatabase = DuckDbDatabasePtr.get(C_POINTER, 0);
