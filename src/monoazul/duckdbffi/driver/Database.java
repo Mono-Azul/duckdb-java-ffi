@@ -50,10 +50,10 @@ public class Database implements AutoCloseable
             {
                 os_name = "linux";
             }
-            String lib_res_name = "/libduckdb_java.so"
+            String lib_res_name = "/libduckdb.so"
                     + "_" + os_name + "_" + os_arch;
 
-            Path lib_file = Files.createTempFile("libduckdb_java", ".so");
+            Path lib_file = Files.createTempFile("libduckdb", ".so");
             URL lib_res = Database.class.getResource(lib_res_name);
             if (lib_res == null)
             {
