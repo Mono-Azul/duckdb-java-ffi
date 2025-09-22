@@ -11,7 +11,7 @@ public class IntColumn extends PrimitiveColumn<Integer>
 {
     final List<int[]> VectorArrays;
 
-    public IntColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public IntColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
 
@@ -23,7 +23,7 @@ public class IntColumn extends PrimitiveColumn<Integer>
         // Convert Vector into int[] array
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         int[] ResultArray = new int[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 4);
+        ResultVectorData.reinterpret((long)dbChunkSize * 4);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_INT, 0, ResultArray, 0, dbChunkSize);
         this.VectorArrays.add(ResultArray);
     }
@@ -33,8 +33,9 @@ public class IntColumn extends PrimitiveColumn<Integer>
     {
         // Division with floor because List is 0 based
         int arrayPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
-        if (getValidity(pos)) {
-            return (Integer) VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
+        if (getValidity(pos))
+        {
+            return VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
         }
         // Null value
         return null;

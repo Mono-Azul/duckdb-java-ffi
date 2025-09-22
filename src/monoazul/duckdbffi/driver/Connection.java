@@ -16,7 +16,8 @@ public class Connection implements AutoCloseable
     private final MemorySegment DuckDbConnection; // _duckdb_connection
     private MemorySegment DuckDbConnectionPtr;
 
-    public Connection(MemorySegment DuckDbDatabase) throws Exception {
+    public Connection(MemorySegment DuckDbDatabase) throws Exception
+    {
         ConnectionArena = Arena.ofConfined();
 
         // There could be problems with double freeing otherwise
@@ -34,7 +35,8 @@ public class Connection implements AutoCloseable
         DuckDbConnection = DuckDbConnectionPtr.get(C_POINTER, 0);
     }
 
-    public Result query(String sql) throws Throwable {
+    public Result query(String sql) throws Throwable
+    {
         // Create duckdb_result struct
         MemorySegment DuckDbResult = duckdb_result.allocate(ConnectionArena);
         MemorySegment DuckDbResultPtr = ConnectionArena.allocate(C_POINTER);

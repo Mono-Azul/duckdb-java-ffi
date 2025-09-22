@@ -12,7 +12,7 @@ import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 // Changing to a timezone is easy in Java and up to the user.
 public class InstantColumn extends ObjectColumn<Instant>
 {
-    public InstantColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public InstantColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
         Clazz = Instant.class;

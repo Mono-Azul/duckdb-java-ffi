@@ -11,11 +11,13 @@ public class ShortColumn extends PrimitiveColumn<Short>
 {
     final List<short[]> VectorArrays;
 
-    public ShortColumn(String ColumnName, DuckDbDatatype ColumnDatatype) {
+    public ShortColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
+    {
         super(ColumnName, ColumnDatatype);
 
         VectorArrays = new ArrayList<>();
     }
+
     @Override
     public List<short[]> getVectorArrays()
     {
@@ -23,21 +25,24 @@ public class ShortColumn extends PrimitiveColumn<Short>
     }
 
     @Override
-    protected void addVectorChunk(MemorySegment ResultVector, int dbChunkSize) {
+    protected void addVectorChunk(MemorySegment ResultVector, int dbChunkSize)
+    {
         // Convert Vector into short[] array
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         short[] ResultArray = new short[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 2);
+        ResultVectorData.reinterpret((long)dbChunkSize * 2);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_SHORT, 0, ResultArray, 0, dbChunkSize);
         this.VectorArrays.add(ResultArray);
     }
 
     @Override
-    public Short getValue(int pos) {
+    public Short getValue(int pos)
+    {
         // Division with floor because List is 0 based
         int arrayPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
-        if (getValidity(pos)) {
-            return (Short) VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
+        if (getValidity(pos))
+        {
+            return VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
         }
         // Null value
         return null;

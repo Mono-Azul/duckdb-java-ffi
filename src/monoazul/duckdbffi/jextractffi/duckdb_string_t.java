@@ -195,7 +195,7 @@ public class duckdb_string_t {
                 MemorySegment.copy(fieldValue, 0L, struct, prefix$OFFSET, prefix$LAYOUT.byteSize());
             }
 
-            private static long[] prefix$DIMS = { 4 };
+            private static final long[] prefix$DIMS = { 4 };
 
             /**
              * Dimensions for array field:
@@ -491,7 +491,7 @@ public class duckdb_string_t {
                 MemorySegment.copy(fieldValue, 0L, struct, inlined$OFFSET, inlined$LAYOUT.byteSize());
             }
 
-            private static long[] inlined$DIMS = { 12 };
+            private static final long[] inlined$DIMS = { 12 };
 
             /**
              * Dimensions for array field:

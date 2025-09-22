@@ -14,7 +14,8 @@ abstract public class ObjectColumn<T> extends Column<T>
     final List<T[]> VectorArrays;
     Class<T> Clazz;
 
-    public ObjectColumn(String ColumnName, DuckDbDatatype ColumnDatatype) {
+    public ObjectColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
+    {
         super(ColumnName, ColumnDatatype);
         VectorArrays = new ArrayList<>();
     }
@@ -26,7 +27,7 @@ abstract public class ObjectColumn<T> extends Column<T>
 
     public T[] getAsArray()
     {
-        @SuppressWarnings("unchecked") T[] retArray = (T[]) Array.newInstance(Clazz, ResMetaData.rowCount());
+        @SuppressWarnings("unchecked") T[] retArray = (T[])Array.newInstance(Clazz, ResMetaData.rowCount());
         int startPos = 0;
 
         // Concat all Arrays
@@ -53,7 +54,8 @@ abstract public class ObjectColumn<T> extends Column<T>
         MemorySegment ValidityPtr = duckdb_vector_get_validity(ResultVector);
 
         // Null pointer indicates no need for mask => no nulls
-        if (ValidityPtr.address() == 0) {
+        if (ValidityPtr.address() == 0)
+        {
             return;
         }
 

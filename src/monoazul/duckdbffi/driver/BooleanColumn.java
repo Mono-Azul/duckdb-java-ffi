@@ -11,7 +11,8 @@ public class BooleanColumn extends PrimitiveColumn<Boolean>
 {
     final List<boolean[]> VectorArrays;
 
-    public BooleanColumn(String ColumnName, DuckDbDatatype ColumnDatatype) {
+    public BooleanColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
+    {
         super(ColumnName, ColumnDatatype);
 
         VectorArrays = new ArrayList<>();
@@ -51,7 +52,7 @@ public class BooleanColumn extends PrimitiveColumn<Boolean>
         int arrayPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
         if (getValidity(pos))
         {
-            return (Boolean) VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
+            return VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
         }
         // Null value
         return null;

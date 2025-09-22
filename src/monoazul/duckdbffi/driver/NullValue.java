@@ -4,5 +4,8 @@ package monoazul.duckdbffi.driver;
 public class NullValue
 {
     @Override
-    public String toString() {return null;}
+    public String toString()
+    {
+        return null;
+    }
 }

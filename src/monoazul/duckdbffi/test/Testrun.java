@@ -25,7 +25,7 @@ public class Testrun {
  Result res = con.query("select 'aaa' union select null union select 'xxx';")
    */
                     // Check if rows are returned
-                    if (res.getColumnCount() == 0) {return;};
+                    if (res.getColumnCount() == 0) {return;}
 
                     // Print all columns and rows
                     for (int row = 0; row < res.getRowCount(); row++) {

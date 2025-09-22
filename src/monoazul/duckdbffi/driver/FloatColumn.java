@@ -11,7 +11,8 @@ public class FloatColumn extends PrimitiveColumn<Float>
 {
     final List<float[]> VectorArrays;
 
-    public FloatColumn(String ColumnName, DuckDbDatatype ColumnDatatype) {
+    public FloatColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
+    {
         super(ColumnName, ColumnDatatype);
 
         VectorArrays = new ArrayList<>();
@@ -29,7 +30,7 @@ public class FloatColumn extends PrimitiveColumn<Float>
         // Convert Vector into float[] array
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         float[] ResultArray = new float[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 4);
+        ResultVectorData.reinterpret((long)dbChunkSize * 4);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_FLOAT, 0, ResultArray, 0, dbChunkSize);
         this.VectorArrays.add(ResultArray);
     }
@@ -39,8 +40,9 @@ public class FloatColumn extends PrimitiveColumn<Float>
     {
         // Division with floor because List is 0 based
         int arrayPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
-        if (getValidity(pos)) {
-            return (Float) VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
+        if (getValidity(pos))
+        {
+            return VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
         }
         // Null value
         return null;

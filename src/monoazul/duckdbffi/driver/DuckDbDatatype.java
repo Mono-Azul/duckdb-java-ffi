@@ -85,16 +85,17 @@ public class DuckDbDatatype
 
     final short type;
 
-    public DuckDbDatatype (short datatype)
+    public DuckDbDatatype(short datatype)
     {
         // Values outside the numbers above are invalid => datatype = 0
         if (datatype >= 0
-            && datatype <= 39) {
+                && datatype <= 39)
+        {
             this.type = datatype;
         }
         else
         {
-            this.type = 0 ;
+            this.type = 0;
         }
     }
 }

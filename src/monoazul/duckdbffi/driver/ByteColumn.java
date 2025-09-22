@@ -11,7 +11,8 @@ public class ByteColumn extends PrimitiveColumn<Byte>
 {
     final List<byte[]> VectorArrays;
 
-    public ByteColumn(String ColumnName, DuckDbDatatype ColumnDatatype) {
+    public ByteColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
+    {
         super(ColumnName, ColumnDatatype);
 
         VectorArrays = new ArrayList<>();
@@ -39,8 +40,9 @@ public class ByteColumn extends PrimitiveColumn<Byte>
     {
         // Division with floor because List is 0 based
         int arrayPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
-        if (getValidity(pos)) {
-            return (Byte) VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
+        if (getValidity(pos))
+        {
+            return VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
         }
         // Null value
         return null;

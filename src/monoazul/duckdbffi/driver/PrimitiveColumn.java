@@ -12,7 +12,8 @@ abstract public class PrimitiveColumn<T> extends Column<T>
 {
     final List<BitSet> ValidityMasks;
 
-    public PrimitiveColumn(String ColumnName, DuckDbDatatype ColumnDatatype) {
+    public PrimitiveColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
+    {
         super(ColumnName, ColumnDatatype);
         ValidityMasks = new ArrayList<>();
     }

@@ -8,7 +8,7 @@ import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
 public class LongObjectColumn extends ObjectColumn<Long>
 {
-    public LongObjectColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public LongObjectColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
         Clazz = Long.class;
@@ -27,7 +27,7 @@ public class LongObjectColumn extends ObjectColumn<Long>
         // Convert Vector into long[] array first and then convert to Long[]
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         long[] PrimitiveResultArray = new long[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 8);
+        ResultVectorData.reinterpret((long)dbChunkSize * 8);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_LONG, 0, PrimitiveResultArray, 0, dbChunkSize);
 
         Long[] ResultArray = Arrays.stream(PrimitiveResultArray).boxed().toArray(Long[]::new);
@@ -41,7 +41,7 @@ public class LongObjectColumn extends ObjectColumn<Long>
         // Convert Vector into int[] array first and then convert to Long[]
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         int[] PrimitiveResultArray = new int[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 4);
+        ResultVectorData.reinterpret((long)dbChunkSize * 4);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_INT, 0, PrimitiveResultArray, 0, dbChunkSize);
 
         Long[] ResultArray = new Long[dbChunkSize];

@@ -2,13 +2,12 @@ package monoazul.duckdbffi.driver;
 
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
-import java.util.Arrays;
 
 import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
 public class FloatObjectColumn extends ObjectColumn<Float>
 {
-    public FloatObjectColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public FloatObjectColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
         Clazz = Float.class;
@@ -20,7 +19,7 @@ public class FloatObjectColumn extends ObjectColumn<Float>
         // Convert Vector into float[] array first and then convert to Float[]
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         float[] PrimitiveResultArray = new float[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 4);
+        ResultVectorData.reinterpret((long)dbChunkSize * 4);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_FLOAT, 0, PrimitiveResultArray, 0, dbChunkSize);
 
         Float[] ResultArray = new Float[dbChunkSize];

@@ -2,7 +2,6 @@ package monoazul.duckdbffi.driver;
 
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;

@@ -2,19 +2,20 @@ package monoazul.duckdbffi.driver;
 
 import java.lang.foreign.MemorySegment;
 
-abstract public class Column<T> {
+abstract public class Column<T>
+{
     public final DuckDbDatatype ColumnDuckDbDataype;
     //public final JavaDatatype ColumnJavaDatatype;
     public final String ColumnName;
     public ResultMetaData ResMetaData;
 
-    public Column (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public Column(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         this.ColumnName = ColumnName;
         this.ColumnDuckDbDataype = ColumnDatatype;
     }
 
-    protected  void addResultMetaData(ResultMetaData ResMetaData)
+    protected void addResultMetaData(ResultMetaData ResMetaData)
     {
         this.ResMetaData = ResMetaData;
     }

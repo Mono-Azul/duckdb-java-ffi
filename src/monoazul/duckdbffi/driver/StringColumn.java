@@ -7,11 +7,12 @@ import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.nio.charset.StandardCharsets;
 
-import static monoazul.duckdbffi.jextractffi.duckdb_h.*;
+import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_string_is_inlined;
+import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
 public class StringColumn extends ObjectColumn<String>
 {
-    public StringColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public StringColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
         Clazz = String.class;

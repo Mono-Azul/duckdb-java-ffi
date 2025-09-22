@@ -7,7 +7,7 @@ import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
 public class DoubleObjectColumn extends ObjectColumn<Double>
 {
-    public DoubleObjectColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public DoubleObjectColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
         Clazz = Double.class;
@@ -19,7 +19,7 @@ public class DoubleObjectColumn extends ObjectColumn<Double>
         // Convert Vector into double[] array first and then convert to Double[]
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         double[] PrimitiveResultArray = new double[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 4);
+        ResultVectorData.reinterpret((long)dbChunkSize * 4);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_DOUBLE, 0, PrimitiveResultArray, 0, dbChunkSize);
 
         Double[] ResultArray = new Double[dbChunkSize];

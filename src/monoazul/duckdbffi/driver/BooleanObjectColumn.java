@@ -7,7 +7,7 @@ import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
 public class BooleanObjectColumn extends ObjectColumn<Boolean>
 {
-    public BooleanObjectColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public BooleanObjectColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
         Clazz = Boolean.class;

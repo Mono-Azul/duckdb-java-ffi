@@ -80,7 +80,7 @@ public class __fsid_t {
         MemorySegment.copy(fieldValue, 0L, struct, __val$OFFSET, __val$LAYOUT.byteSize());
     }
 
-    private static long[] __val$DIMS = { 2 };
+    private static final long[] __val$DIMS = { 2 };
 
     /**
      * Dimensions for array field:

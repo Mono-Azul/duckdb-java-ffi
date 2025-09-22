@@ -1,5 +1,7 @@
 package monoazul.duckdbffi.driver;
 
+import monoazul.duckdbffi.jextractffi.duckdb_h;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,9 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-// FFI Imports
 import static monoazul.duckdbffi.jextractffi.duckdb_h.*;
-import monoazul.duckdbffi.jextractffi.*;
 
 public class Database implements AutoCloseable
 {
@@ -21,25 +21,33 @@ public class Database implements AutoCloseable
     // Copied from Duckdb JDBC driver class DuckDBNative - refactor!
     // Load shared object file that is included in the .jar.
     // The name depends on the architecture.
-    static {
-        try {
+    static
+    {
+        try
+        {
             String os_name = "";
             String os_arch;
             String os_name_detect = System.getProperty("os.name").toLowerCase().trim();
             String os_arch_detect = System.getProperty("os.arch").toLowerCase().trim();
 
-            os_arch = switch (os_arch_detect) {
+            os_arch = switch (os_arch_detect)
+            {
                 case "x86_64", "amd64" -> "amd64";
                 case "aarch64", "arm64" -> "arm64";
                 case "i386" -> "i386";
                 default -> throw new IllegalStateException("Unsupported system architecture");
             };
-            if (os_name_detect.startsWith("windows")) {
+            if (os_name_detect.startsWith("windows"))
+            {
                 os_name = "windows";
-            } else if (os_name_detect.startsWith("mac")) {
+            }
+            else if (os_name_detect.startsWith("mac"))
+            {
                 os_name = "osx";
                 os_arch = "universal";
-            } else if (os_name_detect.startsWith("linux")) {
+            }
+            else if (os_name_detect.startsWith("linux"))
+            {
                 os_name = "linux";
             }
             String lib_res_name = "/libduckdb_java.so"
@@ -47,27 +55,32 @@ public class Database implements AutoCloseable
 
             Path lib_file = Files.createTempFile("libduckdb_java", ".so");
             URL lib_res = Database.class.getResource(lib_res_name);
-            if (lib_res == null) {
-                System.load(Paths.get("libduckdb-" + os_name  + "-" + os_arch,
+            if (lib_res == null)
+            {
+                System.load(Paths.get("libduckdb-" + os_name + "-" + os_arch,
                         "libduckdb.so").normalize().toAbsolutePath().toString());
-            } else {
-                try (final InputStream lib_res_input_stream = lib_res.openStream()) {
+            }
+            else
+            {
+                try (final InputStream lib_res_input_stream = lib_res.openStream())
+                {
                     Files.copy(lib_res_input_stream, lib_file, StandardCopyOption.REPLACE_EXISTING);
                 }
                 new File(lib_file.toString()).deleteOnExit();
                 System.load(lib_file.toAbsolutePath().toString());
             }
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             throw new RuntimeException(e);
         }
     }
 
     private final String DatabaseFileName;
     private final Arena DatabaseArena;
-    private MemorySegment DuckDbDatabasePtr; // _duckdb_database
     private final MemorySegment DuckDbDatabase;
+    private MemorySegment DuckDbDatabasePtr; // _duckdb_database
 
-    public Database (String DatabaseFileName) throws Throwable
+    public Database(String DatabaseFileName) throws Throwable
     {
         DatabaseArena = Arena.ofShared();
         //DuckDbDatabasePtr = DatabaseArena.allocate(duckdb_database);

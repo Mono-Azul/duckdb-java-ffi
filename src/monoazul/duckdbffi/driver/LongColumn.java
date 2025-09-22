@@ -7,10 +7,12 @@ import java.util.List;
 
 import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
-public class LongColumn extends PrimitiveColumn<Long>{
+public class LongColumn extends PrimitiveColumn<Long>
+{
     final List<long[]> VectorArrays;
 
-    public LongColumn(String ColumnName, DuckDbDatatype ColumnDatatype) {
+    public LongColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
+    {
         super(ColumnName, ColumnDatatype);
 
         VectorArrays = new ArrayList<>();
@@ -28,17 +30,19 @@ public class LongColumn extends PrimitiveColumn<Long>{
         // Convert Vector into long[] array
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         long[] ResultArray = new long[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 8);
+        ResultVectorData.reinterpret((long)dbChunkSize * 8);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_LONG, 0, ResultArray, 0, dbChunkSize);
         this.VectorArrays.add(ResultArray);
     }
 
     @Override
-    public Long getValue(int pos) {
+    public Long getValue(int pos)
+    {
         // Division with floor because List is 0 based
         int arrayPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
-        if (getValidity(pos)) {
-            return (Long) VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
+        if (getValidity(pos))
+        {
+            return VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
         }
         // Null value
         return null;

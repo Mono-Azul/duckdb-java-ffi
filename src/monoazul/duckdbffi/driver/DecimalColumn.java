@@ -8,11 +8,10 @@ import java.lang.foreign.ValueLayout;
 import java.math.BigDecimal;
 
 import static monoazul.duckdbffi.jextractffi.duckdb_h.*;
-import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_create_hugeint;
 
 public class DecimalColumn extends ObjectColumn<BigDecimal>
 {
-    public DecimalColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public DecimalColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
         Clazz = BigDecimal.class;
@@ -30,31 +29,42 @@ public class DecimalColumn extends ObjectColumn<BigDecimal>
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         try (Arena ColumnArena = Arena.ofConfined())
         {
-            if (DecimalWidth < 5) {
+            if (DecimalWidth < 5)
+            {
                 short[] Decimal4Vector = new short[dbChunkSize];
                 MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_SHORT, 0, Decimal4Vector, 0, dbChunkSize);
 
-                for (int i = 0; i < dbChunkSize; i++) {
+                for (int i = 0; i < dbChunkSize; i++)
+                {
                     ResultArray[i] = BigDecimal.valueOf(Decimal4Vector[i], DecimalSize);
                 }
-            } else if (DecimalWidth < 10) {
+            }
+            else if (DecimalWidth < 10)
+            {
                 int[] Decimal4Vector = new int[dbChunkSize];
                 MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_INT, 0, Decimal4Vector, 0, dbChunkSize);
 
-                for (int i = 0; i < dbChunkSize; i++) {
+                for (int i = 0; i < dbChunkSize; i++)
+                {
                     ResultArray[i] = BigDecimal.valueOf(Decimal4Vector[i], DecimalSize);
                 }
-            } else if (DecimalWidth < 19) {
+            }
+            else if (DecimalWidth < 19)
+            {
                 long[] Decimal4Vector = new long[dbChunkSize];
                 MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_LONG, 0, Decimal4Vector, 0, dbChunkSize);
 
-                for (int i = 0; i < dbChunkSize; i++) {
+                for (int i = 0; i < dbChunkSize; i++)
+                {
                     ResultArray[i] = BigDecimal.valueOf(Decimal4Vector[i], DecimalSize);
                 }
-            } else {
+            }
+            else
+            {
                 MemorySegment HugeintVector = duckdb_hugeint.reinterpret(ResultVectorData, dbChunkSize, ColumnArena, null);
 
-                for (int i = 0; i < dbChunkSize; i++) {
+                for (int i = 0; i < dbChunkSize; i++)
+                {
                     MemorySegment OneHugeint = duckdb_hugeint.asSlice(HugeintVector, i);
                     MemorySegment HIntString = duckdb_value_to_string(duckdb_create_hugeint(OneHugeint));
                     ResultArray[i] = new BigDecimal(HIntString.getString(0)).movePointLeft(DecimalSize);

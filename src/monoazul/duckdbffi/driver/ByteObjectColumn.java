@@ -2,13 +2,12 @@ package monoazul.duckdbffi.driver;
 
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
-import java.util.Arrays;
 
 import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
 public class ByteObjectColumn extends ObjectColumn<Byte>
 {
-    public ByteObjectColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public ByteObjectColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
         Clazz = Byte.class;
@@ -20,7 +19,7 @@ public class ByteObjectColumn extends ObjectColumn<Byte>
         // Convert Vector into byte[] array first and then convert to Byte[]
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         byte[] PrimitiveResultArray = new byte[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 4);
+        ResultVectorData.reinterpret((long)dbChunkSize * 4);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_BYTE, 0, PrimitiveResultArray, 0, dbChunkSize);
 
         Byte[] ResultArray = new Byte[dbChunkSize];

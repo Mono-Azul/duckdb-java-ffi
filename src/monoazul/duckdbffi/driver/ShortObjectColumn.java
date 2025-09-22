@@ -7,7 +7,7 @@ import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
 public class ShortObjectColumn extends ObjectColumn<Short>
 {
-    public ShortObjectColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public ShortObjectColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
         Clazz = Short.class;
@@ -26,7 +26,7 @@ public class ShortObjectColumn extends ObjectColumn<Short>
         // Convert Vector into short[] array first and then convert to Short[]
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         short[] PrimitiveResultArray = new short[dbChunkSize];
-        ResultVectorData.reinterpret((long) dbChunkSize * 2);
+        ResultVectorData.reinterpret((long)dbChunkSize * 2);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_SHORT, 0, PrimitiveResultArray, 0, dbChunkSize);
 
         Short[] ResultArray = new Short[dbChunkSize];

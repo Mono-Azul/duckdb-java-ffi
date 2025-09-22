@@ -10,7 +10,7 @@ import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 // For hugeint and unsigned long
 public class BigIntegerColumn extends ObjectColumn<BigInteger>
 {
-    public BigIntegerColumn (String ColumnName, DuckDbDatatype ColumnDatatype)
+    public BigIntegerColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
         Clazz = BigInteger.class;
@@ -28,7 +28,7 @@ public class BigIntegerColumn extends ObjectColumn<BigInteger>
         }
     }
 
-    protected  void addVectorChunkHugeint(MemorySegment ResultVector, int dbChunkSize)
+    protected void addVectorChunkHugeint(MemorySegment ResultVector, int dbChunkSize)
     {
         // Convert whole vector to a byte array, switch endianness and then build BigIntegers step by step
         BigInteger[] ResultArray = new BigInteger[dbChunkSize];
