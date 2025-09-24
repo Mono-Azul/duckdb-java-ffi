@@ -31,12 +31,12 @@ public class Result
         primitivesAsObject = true;
     }
 
-    public Result(MemorySegment DuckDbResultPtr) throws Throwable
+    public Result(MemorySegment DuckDbResultPtr, MemorySegment DuckDbResult) throws Throwable
     {
-        this(DuckDbResultPtr, false);
+        this(DuckDbResultPtr, DuckDbResult, false);
     }
 
-    public Result(MemorySegment DuckDbResultPtr, boolean primitivesAsObject) throws Throwable
+    public Result(MemorySegment DuckDbResultPtr, MemorySegment DuckDbResult, boolean primitivesAsObject) throws Throwable
     {
         this.primitivesAsObject = primitivesAsObject;
         this.ErrorMessage = null;
@@ -49,34 +49,40 @@ public class Result
         duckdb_vector_size invoker = duckdb_vector_size.makeInvoker();
         final int maxVectorSize = (int)(long)invoker.handle().invokeExact();
 
+        int chunkCount = 0;
+        int rowCount = 0;
+        int dbChunkSize;
+
         try (Arena ResultArena = Arena.ofConfined())
         {
-            // Get first DbChunk and check if there are return columns
-            MemorySegment DuckDbResult = duckdb_result.reinterpret(DuckDbResultPtr, ResultArena, null);
-            MemorySegment DbChunk = duckdb_fetch_chunk(DuckDbResult);
+            // Get first DuckDbChunk and check if there are rows
+            MemorySegment DuckDbChunk = duckdb_fetch_chunk(DuckDbResult);
 
-            if (DbChunk.address() == 0)
+            if (DuckDbChunk.address() == 0)
             {
                 // Empty result
                 ResMetaData = new ResultMetaData(0, columnsCount, 0, maxVectorSize);
                 return;
             }
-            int chunkCount = 1;
-            int dbChunkSize = (int)duckdb_data_chunk_get_size(DbChunk);
-            int rowCount = dbChunkSize;
+
+            // Reinterpret for destruction method
+            MemorySegment ExistingDbChunk = DuckDbChunk.reinterpret(ResultArena, Result::destroyDuckDbChunk);
+
+            // There is one chunk and now we can ask for the numer of rows in it
+            chunkCount = 1;
+            dbChunkSize = (int)duckdb_data_chunk_get_size(DuckDbChunk);
+            rowCount = dbChunkSize;
 
             // Create subclasses of Column for all columns
             for (int col = 0; col < columnsCount; col++)
             {
-                MemorySegment ResultVector = duckdb_data_chunk_get_vector(DbChunk, col);
-                MemorySegment ResultVectorType = duckdb_vector_get_column_type(ResultVector);
-                DuckDbDatatype DbDatatype = new DuckDbDatatype((short)duckdb_get_type_id(ResultVectorType));
+                MemorySegment ResultVector = duckdb_data_chunk_get_vector(ExistingDbChunk, col);
+                MemorySegment ResultVectorLogicalType = duckdb_vector_get_column_type(ResultVector);
+                DuckDbDatatype DbDatatype = new DuckDbDatatype((short)duckdb_get_type_id(ResultVectorLogicalType));
                 String ColumnName = duckdb_column_name(DuckDbResultPtr, col).reinterpret(Integer.MAX_VALUE).getString(0);
 
                 // Destroy column_type, but we need a pointer first
-                MemorySegment ResultVectorTypePtr = ResultArena.allocate(C_POINTER);
-                ResultVectorTypePtr.set(ValueLayout.JAVA_LONG, 0, ResultVectorType.address());
-                duckdb_destroy_logical_type(ResultVectorTypePtr);
+                destroyDuckDbLogicalType(ResultVectorLogicalType);
 
                 // Create and add new column
                 this.Columns.add(createColumnByDatatype(ColumnName, DbDatatype, primitivesAsObject));
@@ -84,44 +90,43 @@ public class Result
                 // Add first vector as we have the result vector Segment at hand anyway
                 Columns.get(col).addVectorChunk(ResultVector, dbChunkSize);
             }
+        }
 
-            // We need a pointer to the Chunk in order to destroy it
-            MemorySegment DbChunkPtr = ResultArena.allocate(C_POINTER);
-            DbChunkPtr.set(ValueLayout.JAVA_LONG, 0, DbChunk.address());
-            duckdb_destroy_data_chunk(DbChunkPtr);
-
-            // Fill Columns chunk-wise
-            DbChunk = duckdb_fetch_chunk(DuckDbResult);
-
-            while (DbChunk.address() != 0)
+        while (true)
+        {
+            try (Arena ChunkArena = Arena.ofConfined())
             {
-                dbChunkSize = (int)duckdb_data_chunk_get_size(DbChunk);
-                rowCount = +dbChunkSize;
+                // Fill Columns chunk-wise
+                MemorySegment DuckDbChunkLoop = duckdb_fetch_chunk(DuckDbResult);
+
+                // Leave while loop if there are no more chunks
+                if (DuckDbChunkLoop.address() == 0)
+                {
+                    break;
+                }
+
+                dbChunkSize = (int)duckdb_data_chunk_get_size(DuckDbChunkLoop);
+                rowCount += dbChunkSize;
                 chunkCount++;
 
                 for (int col = 0; col < columnsCount; col++)
                 {
-                    MemorySegment ResultVector = duckdb_data_chunk_get_vector(DbChunk, col);
+                    MemorySegment ResultVector = duckdb_data_chunk_get_vector(DuckDbChunkLoop, col);
                     Columns.get(col).addVectorChunk(ResultVector, dbChunkSize);
                 }
-
-                DbChunkPtr.set(ValueLayout.JAVA_LONG, 0, DbChunk.address());
-                duckdb_destroy_data_chunk(DbChunk);
-                DbChunk = duckdb_fetch_chunk(DuckDbResult);
             }
+        }
 
-            ResMetaData = new ResultMetaData(rowCount, columnsCount, chunkCount, maxVectorSize);
-            // Add Result Metadata to Columns
-            for (int col = 0; col < columnsCount; col++)
-            {
-                Columns.get(col).addResultMetaData(ResMetaData);
-            }
+        ResMetaData = new ResultMetaData(rowCount, columnsCount, chunkCount, maxVectorSize);
+        // Add Result Metadata to Columns
+        for (int col = 0; col < columnsCount; col++)
+        {
+            Columns.get(col).addResultMetaData(ResMetaData);
         }
     }
 
     private static Column createColumnByDatatype(String ColumnName, DuckDbDatatype DbDatatype, boolean primitivesAsObject)
     {
-        System.out.println(DbDatatype.type);
         return switch (DbDatatype.type)
         {
             case DuckDbDatatype.DUCKDB_TYPE_INTEGER ->
@@ -160,6 +165,36 @@ public class Result
             case DuckDbDatatype.DUCKDB_TYPE_INTERVAL -> new IntervalColumn(ColumnName, DbDatatype);
             default -> new UnknownColumn(ColumnName, DbDatatype);
         };
+    }
+
+    // Separate Consumer method to destroy the DuckDbChunk, because a pointer is needed
+    private static void destroyDuckDbChunk(MemorySegment DuckDbChunk)
+    {
+        try (Arena ClosingArena = Arena.ofConfined())
+        {
+            MemorySegment DbChunkPtr = ClosingArena.allocate(8);
+            DbChunkPtr.set(ValueLayout.JAVA_LONG, 0, DuckDbChunk.address());
+            duckdb_destroy_data_chunk(DbChunkPtr);
+        }
+        catch (Throwable e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Separate Consumer method to destroy the DuckDbLogicalType, because a pointer is needed
+    private static void destroyDuckDbLogicalType(MemorySegment DuckDbLogicalType)
+    {
+        try (Arena ClosingArena = Arena.ofConfined())
+        {
+            MemorySegment DuckDbLogicalTypePtr = ClosingArena.allocate(8);
+            DuckDbLogicalTypePtr.set(ValueLayout.JAVA_LONG, 0, DuckDbLogicalType.address());
+            duckdb_destroy_logical_type(DuckDbLogicalTypePtr);
+        }
+        catch (Throwable e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<Object> getRow(int row)

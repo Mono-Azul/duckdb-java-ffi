@@ -78,7 +78,7 @@ public class Database implements AutoCloseable
     private final String DatabaseFileName;
     private final Arena DatabaseArena;
     private final MemorySegment DuckDbDatabase;
-    private MemorySegment DuckDbDatabasePtr; // _duckdb_database
+    private final MemorySegment DuckDbDatabasePtr; // _duckdb_database
 
     public Database(String DatabaseFileName) throws Throwable
     {
@@ -86,23 +86,20 @@ public class Database implements AutoCloseable
         //DuckDbDatabasePtr = DatabaseArena.allocate(duckdb_database);
 
         // There could be problems with double freeing otherwise
-        DuckDbDatabasePtr = DatabaseArena.allocate(8);
-        DuckDbDatabasePtr = DuckDbDatabasePtr.reinterpret(DatabaseArena, duckdb_h::duckdb_close);
+        DuckDbDatabasePtr = DatabaseArena.allocate(8).reinterpret(DatabaseArena, duckdb_h::duckdb_close);
 
         // Move DB file name into MemorySegment
-        MemorySegment DatabaseFileNameNative = DatabaseArena.allocateFrom(DatabaseFileName);
+        MemorySegment DbFileNameNative = DatabaseArena.allocateFrom(DatabaseFileName);
         this.DatabaseFileName = DatabaseFileName;
 
-        // Open DB
-        //int duckDbState = duckdb_open(DatabaseFileNameNative, DuckDbDatabasePtr);
-
         MemorySegment ErrorMessagePtr = DatabaseArena.allocate(C_POINTER);
-        int duckDbState = duckdb_open_ext(DatabaseFileNameNative, DuckDbDatabasePtr, MemorySegment.NULL, ErrorMessagePtr);
+        int duckDbState = duckdb_open_ext(DbFileNameNative, DuckDbDatabasePtr, MemorySegment.NULL, ErrorMessagePtr);
 
         if (duckDbState == DuckDBError())
         {
             System.out.println("Error opening DB!");
             System.out.println(ErrorMessagePtr.get(C_POINTER, 0).getString(0));
+            MemorySegment ErrorMessagePtrFree = ErrorMessagePtr.reinterpret(DatabaseArena, duckdb_h::duckdb_free);
             throw new Exception();
         }
 
