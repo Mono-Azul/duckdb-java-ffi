@@ -28,10 +28,6 @@ public class UuidColumn extends ObjectColumn<UUID>
 
         for (int pos = 0; pos < dbChunkSize; pos++)
         {
-            System.out.println("Neue UUID:");
-            System.out.println(PrimitiveResultArray[pos * 2]);
-            System.out.println(PrimitiveResultArray[pos * 2 + 1]);
-
             // We have to flip the msb because of some ordering rules in DuckDB => XOR with mask
             ResultArray[pos] = new UUID(PrimitiveResultArray[pos * 2 + 1] ^ mask, PrimitiveResultArray[pos * 2]);
         }
