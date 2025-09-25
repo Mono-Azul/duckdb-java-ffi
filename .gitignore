@@ -9,6 +9,8 @@ gen/
 # jextract
 jextract/
 
+jar-test/
+
 # not needed libduckdb files
 *.hpp
 *.a
