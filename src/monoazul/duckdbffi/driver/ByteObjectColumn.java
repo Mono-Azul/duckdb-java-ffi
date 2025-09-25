@@ -29,6 +29,6 @@ public class ByteObjectColumn extends ObjectColumn<Byte>
         }
 
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

@@ -31,6 +31,6 @@ public class LocalDateColumn extends ObjectColumn<LocalDate>
         }
 
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

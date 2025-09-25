@@ -10,15 +10,17 @@ import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_validity
 
 abstract public class PrimitiveColumn<T> extends Column<T>
 {
-    final List<BitSet> ValidityMasks;
+    private final List<BitSet> ValidityChunkMasks;
+    public BitSet ValidityMask;
 
     public PrimitiveColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
-        ValidityMasks = new ArrayList<>();
+        ValidityChunkMasks = new ArrayList<>();
     }
 
-    abstract public List<?> getVectorArrays();
+    //abstract public List<?> getChunkArrays();
+    abstract public T getValue(int pos);
 
     private void buildValidityMask(MemorySegment ResultVector, int DbChunkSize)
     {
@@ -32,21 +34,35 @@ abstract public class PrimitiveColumn<T> extends Column<T>
         if (ValidityPtr.address() != 0)
         {
             tmpValidityMask = BitSet.valueOf(ValidityPtr.reinterpret(validityMaskSize).toArray(ValueLayout.JAVA_BYTE));
-            ValidityMasks.add(tmpValidityMask);
+            ValidityChunkMasks.add(tmpValidityMask);
         }
+    }
+
+    void compactValidityBitSet()
+    {
+        ValidityMask = new BitSet(ResMetaData.columnsCount());
+        byte[] tmpArray = new byte[ResMetaData.columnsCount()];
+        int startPos = 0;
+
+        // Concat all Arrays
+        for (BitSet bSet : ValidityChunkMasks)
+        {
+            System.arraycopy(bSet.toByteArray(), 0, tmpArray, startPos, bSet.size());
+            startPos += bSet.size();
+        }
+        ValidityMask = BitSet.valueOf(tmpArray);
+
+        // Empty Validity Masks from Chunks
+        ValidityChunkMasks.clear();
     }
 
     public boolean getValidity(int pos)
     {
         // No Mask => no NULLs
-        if (ValidityMasks.isEmpty())
+        if (ValidityChunkMasks.isEmpty())
         {
             return true;
         }
-
-        // Division with floor because List is 0 based
-        int maskPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
-        var ValidityMaskBitSet = ValidityMasks.get(maskPosInList);
-        return ValidityMaskBitSet.get(pos % ResMetaData.maxVectorSize());
+        return ValidityMask.get(pos);
     }
 }

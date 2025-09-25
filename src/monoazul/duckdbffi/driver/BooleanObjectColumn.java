@@ -32,6 +32,6 @@ public class BooleanObjectColumn extends ObjectColumn<Boolean>
         }
 
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

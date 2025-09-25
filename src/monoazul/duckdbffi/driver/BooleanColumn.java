@@ -9,19 +9,30 @@ import static monoazul.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
 public class BooleanColumn extends PrimitiveColumn<Boolean>
 {
-    final List<boolean[]> VectorArrays;
+    final private List<boolean[]> ChunkArrays;
+    public boolean[] VectorArray;
 
     public BooleanColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
 
-        VectorArrays = new ArrayList<>();
+        ChunkArrays = new ArrayList<>();
     }
 
     @Override
-    public List<boolean[]> getVectorArrays()
+    protected void compactChunks()
     {
-        return VectorArrays;
+        VectorArray = new boolean[ResMetaData.rowCount()];
+        int startPos = 0;
+
+        // Concat all Arrays
+        for (boolean[] arr : ChunkArrays)
+        {
+            System.arraycopy(arr, 0, VectorArray, startPos, arr.length);
+            startPos += arr.length;
+        }
+        // Empty ChunkArrays
+        ChunkArrays.clear();
     }
 
     @Override
@@ -42,43 +53,23 @@ public class BooleanColumn extends PrimitiveColumn<Boolean>
             ResultArray[pos] = TmpResultArray[pos] == 1;
         }
 
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 
     @Override
     public Boolean getValue(int pos)
     {
-        // Division with floor because List is 0 based
-        int arrayPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
         if (getValidity(pos))
         {
-            return VectorArrays.get(arrayPosInList)[pos % ResMetaData.maxVectorSize()];
+            return VectorArray[pos];
         }
         // Null value
         return null;
     }
 
-    // Make one great Array from all parts
-    public boolean[] getAsArray()
-    {
-        boolean[] retArray = new boolean[ResMetaData.columnsCount()];
-        int startPos = 0;
-
-        // Concat all Arrays
-        for (boolean[] arr : VectorArrays)
-        {
-            System.arraycopy(arr, 0, retArray, startPos, arr.length);
-            startPos += arr.length;
-        }
-        return retArray;
-    }
-
     // Don't forget to check Validity before using the value as it could be null
     public boolean getPrimitiveValue(int pos)
     {
-        // Division with floor because List is 0 based
-        int arrayPosInList = Math.floorDiv(pos, ResMetaData.maxVectorSize());
-        boolean[] VectorArray = VectorArrays.get(arrayPosInList);
-        return VectorArray[pos % ResMetaData.maxVectorSize()];
+        return VectorArray[pos];
     }
 }

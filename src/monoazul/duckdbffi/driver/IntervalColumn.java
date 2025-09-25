@@ -37,6 +37,6 @@ public class IntervalColumn extends ObjectColumn<Interval>
 
             setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         }
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

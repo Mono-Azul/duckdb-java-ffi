@@ -28,7 +28,7 @@ public class Result
         this.ErrorNumber = ErrorNumber;
         this.Columns = null;
         this.ResMetaData = new ResultMetaData(0, 0, 0, 0);
-        primitivesAsObject = true;
+        primitivesAsObject = false;
     }
 
     public Result(MemorySegment DuckDbResultPtr, MemorySegment DuckDbResult) throws Throwable
@@ -79,8 +79,8 @@ public class Result
                 MemorySegment ResultVector = duckdb_data_chunk_get_vector(ExistingDbChunk, col);
                 MemorySegment ResultVectorLogicalType = duckdb_vector_get_column_type(ResultVector);
                 DuckDbDatatype DbDatatype = new DuckDbDatatype((short)duckdb_get_type_id(ResultVectorLogicalType));
-                String ColumnName = duckdb_column_name(DuckDbResultPtr, col).reinterpret(Integer.MAX_VALUE).getString(0);
-
+                //String ColumnName = duckdb_column_name(DuckDbResultPtr, col).reinterpret(Integer.MAX_VALUE).getString(0);
+                String ColumnName = "thiscolumn";
                 // Destroy column_type, but we need a pointer first
                 destroyDuckDbLogicalType(ResultVectorLogicalType);
 
@@ -105,6 +105,9 @@ public class Result
                     break;
                 }
 
+                // Reinterpret for destruction method
+                MemorySegment ExistingDbChunkLoop = DuckDbChunkLoop.reinterpret(ChunkArena, Result::destroyDuckDbChunk);
+
                 dbChunkSize = (int)duckdb_data_chunk_get_size(DuckDbChunkLoop);
                 rowCount += dbChunkSize;
                 chunkCount++;
@@ -119,9 +122,18 @@ public class Result
 
         ResMetaData = new ResultMetaData(rowCount, columnsCount, chunkCount, maxVectorSize);
         // Add Result Metadata to Columns
+        // Compact Chunks
         for (int col = 0; col < columnsCount; col++)
         {
-            Columns.get(col).addResultMetaData(ResMetaData);
+            Column Col = Columns.get(col);
+            Col.addResultMetaData(ResMetaData);
+            Col.compactChunks();
+
+            if (Col instanceof PrimitiveColumn)
+            {
+                PrimitiveColumn PCol = (PrimitiveColumn)Col;
+                PCol.compactValidityBitSet();
+            }
         }
     }
 

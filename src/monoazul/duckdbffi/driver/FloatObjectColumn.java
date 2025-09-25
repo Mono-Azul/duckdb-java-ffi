@@ -29,6 +29,6 @@ public class FloatObjectColumn extends ObjectColumn<Float>
         }
 
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

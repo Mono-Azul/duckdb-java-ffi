@@ -5,7 +5,6 @@ import java.lang.foreign.MemorySegment;
 abstract public class Column<T>
 {
     public final DuckDbDatatype ColumnDuckDbDataype;
-    //public final JavaDatatype ColumnJavaDatatype;
     public final String ColumnName;
     public ResultMetaData ResMetaData;
 
@@ -14,6 +13,8 @@ abstract public class Column<T>
         this.ColumnName = ColumnName;
         this.ColumnDuckDbDataype = ColumnDatatype;
     }
+
+    protected abstract void compactChunks();
 
     protected void addResultMetaData(ResultMetaData ResMetaData)
     {

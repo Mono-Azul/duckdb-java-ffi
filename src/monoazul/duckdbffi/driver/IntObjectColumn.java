@@ -33,7 +33,7 @@ public class IntObjectColumn extends ObjectColumn<Integer>
 
         Integer[] ResultArray = Arrays.stream(PrimitiveResultArray).boxed().toArray(Integer[]::new);
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 
     protected void addVectorChunkUnsignedShort(MemorySegment ResultVector, int dbChunkSize)
@@ -52,6 +52,6 @@ public class IntObjectColumn extends ObjectColumn<Integer>
         }
 
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

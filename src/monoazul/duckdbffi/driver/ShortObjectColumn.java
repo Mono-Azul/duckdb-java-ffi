@@ -37,7 +37,7 @@ public class ShortObjectColumn extends ObjectColumn<Short>
 
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
 
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 
     protected void addVectorChunkUnsignedByte(MemorySegment ResultVector, int dbChunkSize)
@@ -56,6 +56,6 @@ public class ShortObjectColumn extends ObjectColumn<Short>
         }
 
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

@@ -45,7 +45,7 @@ public class Connection implements AutoCloseable
             MemorySegment DuckDbResultPtr = MemorySegment.ofAddress(DuckDbResult.address());
 
             // Run query
-            int duckDbState = duckdb_query(DuckDbConnection, ConnectionArena.allocateFrom(sql), DuckDbResultPtr);
+            int duckDbState = duckdb_query(DuckDbConnection, ResultArena.allocateFrom(sql), DuckDbResultPtr);
 
             if (duckDbState == DuckDBError())
             {
@@ -57,7 +57,7 @@ public class Connection implements AutoCloseable
                 return new Result(ErrorMessage, ErrorNumber);
             }
 
-            return new Result(DuckDbResultPtr, DuckDbResult, true);
+            return new Result(DuckDbResultPtr, DuckDbResult, false);
         }
     }
 

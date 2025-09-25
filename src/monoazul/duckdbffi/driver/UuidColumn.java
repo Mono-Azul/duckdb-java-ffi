@@ -33,6 +33,6 @@ public class UuidColumn extends ObjectColumn<UUID>
         }
 
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

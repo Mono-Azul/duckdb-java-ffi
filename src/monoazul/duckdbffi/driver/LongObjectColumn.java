@@ -33,7 +33,7 @@ public class LongObjectColumn extends ObjectColumn<Long>
         Long[] ResultArray = Arrays.stream(PrimitiveResultArray).boxed().toArray(Long[]::new);
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
 
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 
     protected void addVectorChunkUnsignedInt(MemorySegment ResultVector, int dbChunkSize)
@@ -52,6 +52,6 @@ public class LongObjectColumn extends ObjectColumn<Long>
         }
 
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

@@ -53,6 +53,6 @@ public class StringColumn extends ObjectColumn<String>
             }
             setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         }
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

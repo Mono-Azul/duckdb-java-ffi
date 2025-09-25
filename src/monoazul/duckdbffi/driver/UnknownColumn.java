@@ -20,6 +20,6 @@ public class UnknownColumn extends ObjectColumn<NullValue>
         {
             ResultArray[pos] = new NullValue();
         }
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }

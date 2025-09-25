@@ -42,6 +42,6 @@ public class LocalTimeColumn extends ObjectColumn<LocalTime>
             }
         }
         setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
-        this.VectorArrays.add(ResultArray);
+        this.ChunkArrays.add(ResultArray);
     }
 }
