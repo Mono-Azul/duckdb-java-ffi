@@ -69,14 +69,15 @@ public class Result
             dbChunkSize = (int)duckdb_data_chunk_get_size(DuckDbChunk);
             rowCount = dbChunkSize;
 
+
             // Create subclasses of Column for all columns
             for (int col = 0; col < columnsCount; col++)
             {
                 MemorySegment ResultVector = duckdb_data_chunk_get_vector(ExistingDbChunk, col);
                 MemorySegment ResultVectorLogicalType = duckdb_vector_get_column_type(ResultVector);
                 DuckDbDatatype DbDatatype = new DuckDbDatatype((short)duckdb_get_type_id(ResultVectorLogicalType));
-                //String ColumnName = duckdb_column_name(DuckDbResultPtr, col).reinterpret(Integer.MAX_VALUE).getString(0);
-                String ColumnName = "thiscolumn";
+                String ColumnName = duckdb_column_name(DuckDbResultPtr, col).reinterpret(Integer.MAX_VALUE).getString(0);
+
                 // Destroy column_type, but we need a pointer first
                 destroyDuckDbLogicalType(ResultVectorLogicalType);
 
@@ -218,6 +219,11 @@ public class Result
         return ResMetaData.columnsCount();
     }
 
+    public String[] getColumnNames()
+    {
+        return Columns.stream().map(c -> c.ColumnName).toArray(String[]::new);
+    }
+
     public int getRowCount()
     {
         return ResMetaData.rowCount();
@@ -226,11 +232,6 @@ public class Result
     public int getMaxVectorSize()
     {
         return ResMetaData.maxVectorSize();
-    }
-
-    public int getChunkCount()
-    {
-        return ResMetaData.chunkCount();
     }
 
     public boolean hasError()
