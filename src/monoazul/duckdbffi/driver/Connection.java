@@ -5,7 +5,6 @@ import monoazul.duckdbffi.jextractffi.duckdb_result;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
-import java.lang.foreign.ValueLayout;
 
 import static monoazul.duckdbffi.jextractffi.duckdb_h.*;
 

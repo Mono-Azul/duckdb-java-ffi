@@ -1,8 +1,5 @@
 package monoazul.duckdbffi.driver;
 
-import monoazul.duckdbffi.jextractffi.duckdb_h;
-import monoazul.duckdbffi.jextractffi.duckdb_result;
-
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
@@ -15,11 +12,10 @@ public class Result
 {
     public final List<Column> Columns;
     public final ResultMetaData ResMetaData;
-    private final String ErrorMessage;
-    private final Integer ErrorNumber;
-
     // Configuration
     public final boolean primitivesAsObject;
+    private final String ErrorMessage;
+    private final Integer ErrorNumber;
 
     // Constructor for Error Result
     public Result(String ErrorMessage, Integer ErrorNumber)
@@ -187,8 +183,7 @@ public class Result
             MemorySegment DbChunkPtr = ClosingArena.allocate(8);
             DbChunkPtr.set(ValueLayout.JAVA_LONG, 0, DuckDbChunk.address());
             duckdb_destroy_data_chunk(DbChunkPtr);
-        }
-        catch (Throwable e)
+        } catch (Throwable e)
         {
             throw new RuntimeException(e);
         }
@@ -202,8 +197,7 @@ public class Result
             MemorySegment DuckDbLogicalTypePtr = ClosingArena.allocate(8);
             DuckDbLogicalTypePtr.set(ValueLayout.JAVA_LONG, 0, DuckDbLogicalType.address());
             duckdb_destroy_logical_type(DuckDbLogicalTypePtr);
-        }
-        catch (Throwable e)
+        } catch (Throwable e)
         {
             throw new RuntimeException(e);
         }

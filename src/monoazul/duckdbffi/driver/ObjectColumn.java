@@ -30,7 +30,7 @@ abstract public class ObjectColumn<T> extends Column<T>
     {
         // Make one great Array from all parts
         //noinspection unchecked
-        VectorArray= (T[])Array.newInstance(Clazz, ResMetaData.rowCount());
+        VectorArray = (T[])Array.newInstance(Clazz, ResMetaData.rowCount());
         int startPos = 0;
 
         // Concat all Arrays
