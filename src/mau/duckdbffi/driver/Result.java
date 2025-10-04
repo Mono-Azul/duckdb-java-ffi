@@ -27,12 +27,12 @@ public class Result
         primitivesAsObject = false;
     }
 
-    public Result(MemorySegment DuckDbResultPtr, MemorySegment DuckDbResult) throws Throwable
+    public Result(MemorySegment DuckDbResultPtr, MemorySegment DuckDbResult)
     {
         this(DuckDbResultPtr, DuckDbResult, false);
     }
 
-    public Result(MemorySegment DuckDbResultPtr, MemorySegment DuckDbResult, boolean primitivesAsObject) throws Throwable
+    public Result(MemorySegment DuckDbResultPtr, MemorySegment DuckDbResult, boolean primitivesAsObject)
     {
         this.primitivesAsObject = primitivesAsObject;
         this.ErrorMessage = null;
@@ -43,7 +43,17 @@ public class Result
 
         // Maximum Vector size
         duckdb_vector_size invoker = duckdb_vector_size.makeInvoker();
-        final int maxVectorSize = (int)(long)invoker.handle().invokeExact();
+        final int maxVectorSize;
+        try
+        {
+            maxVectorSize = (int)(long)invoker.handle().invokeExact();
+        } catch (Throwable e)
+        {
+            // Should never happen
+            // Empty result
+            ResMetaData = new ResultMetaData(0, columnsCount, 0, 0);
+            return;
+        }
 
         int chunkCount = 0;
         int rowCount = 0;
@@ -126,11 +136,11 @@ public class Result
             Col.addResultMetaData(ResMetaData);
             Col.compactChunks();
 
-            if (Col instanceof PrimitiveColumn)
-            {
-                PrimitiveColumn PCol = (PrimitiveColumn)Col;
-                PCol.compactValidityBitSet();
-            }
+//            if (Col instanceof PrimitiveColumn)
+//            {
+//                PrimitiveColumn PCol = (PrimitiveColumn)Col;
+//                PCol.compactValidityBitSet();
+//            }
         }
     }
 

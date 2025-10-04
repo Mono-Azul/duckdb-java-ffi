@@ -80,7 +80,7 @@ public class Database implements AutoCloseable
     private final MemorySegment DuckDbDatabase;
     private final MemorySegment DuckDbDatabasePtr; // _duckdb_database
 
-    public Database(String DatabaseFileName) throws Throwable
+    public Database(String DatabaseFileName) throws DuckDbException
     {
         DatabaseArena = Arena.ofShared();
         //DuckDbDatabasePtr = DatabaseArena.allocate(duckdb_database);
@@ -97,23 +97,28 @@ public class Database implements AutoCloseable
 
         if (duckDbState == DuckDBError())
         {
-            System.out.println("Error opening DB!");
-            System.out.println(ErrorMessagePtr.get(C_POINTER, 0).getString(0));
+            String DuckDbErrorMsg = ErrorMessagePtr.get(C_POINTER, 0).getString(0);
             MemorySegment ErrorMessagePtrFree = ErrorMessagePtr.reinterpret(DatabaseArena, duckdb_h::duckdb_free);
-            throw new Exception();
+            throw new DuckDbException(DuckDbErrorMsg);
         }
 
         DuckDbDatabase = DuckDbDatabasePtr.get(C_POINTER, 0);
     }
 
-    public Connection getConnection() throws Exception
+    public Connection getConnection() throws DuckDbException
     {
         return new Connection(DuckDbDatabase);
     }
 
     @Override
-    public void close() throws Exception
+    public void close() throws DuckDbException
     {
-        DatabaseArena.close();
+        try
+        {
+            DatabaseArena.close();
+        } catch (Exception e)
+        {
+            throw new DuckDbException(e);
+        }
     }
 }

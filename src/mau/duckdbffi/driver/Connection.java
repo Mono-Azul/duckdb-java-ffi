@@ -15,7 +15,7 @@ public class Connection implements AutoCloseable
     private final MemorySegment DuckDbConnection; // _duckdb_connection
     private final MemorySegment DuckDbConnectionPtr;
 
-    public Connection(MemorySegment DuckDbDatabase) throws Exception
+    public Connection(MemorySegment DuckDbDatabase) throws DuckDbException
     {
         ConnectionArena = Arena.ofConfined();
 
@@ -27,14 +27,18 @@ public class Connection implements AutoCloseable
 
         if (duckDbState == DuckDBError())
         {
-            System.out.println("Error creating connection!");
-            throw new Exception();
+            throw new DuckDbException("Error creating connection!");
         }
 
         DuckDbConnection = DuckDbConnectionPtr.get(C_POINTER, 0);
     }
 
-    public Result query(String sql) throws Throwable
+    public Result query(String sql)
+    {
+        return query(sql, false);
+    }
+
+    public Result query(String sql, boolean primitivesAsObjects)
     {
         try (Arena ResultArena = Arena.ofConfined())
         {
@@ -56,13 +60,19 @@ public class Connection implements AutoCloseable
                 return new Result(ErrorMessage, ErrorNumber);
             }
 
-            return new Result(DuckDbResultPtr, DuckDbResult, false);
+            return new Result(DuckDbResultPtr, DuckDbResult, primitivesAsObjects);
         }
     }
 
     @Override
-    public void close() throws Exception
+    public void close() throws DuckDbException
     {
-        ConnectionArena.close();
+        try
+        {
+            ConnectionArena.close();
+        } catch (Exception e)
+        {
+            throw new DuckDbException(e);
+        }
     }
 }
