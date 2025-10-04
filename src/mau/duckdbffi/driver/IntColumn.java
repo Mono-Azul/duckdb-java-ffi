@@ -43,6 +43,7 @@ public class IntColumn extends PrimitiveColumn<Integer>
         ResultVectorData.reinterpret((long)dbChunkSize * 4);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_INT, 0, ResultArray, 0, dbChunkSize);
         this.ChunkArrays.add(ResultArray);
+        buildValidityMask(ResultVector, dbChunkSize);
     }
 
     @Override

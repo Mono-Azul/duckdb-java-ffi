@@ -10,56 +10,57 @@ import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_validity;
 
 abstract public class PrimitiveColumn<T> extends Column<T>
 {
-    private final List<BitSet> ValidityChunkMasks;
-    public BitSet ValidityMask;
+    public BitSet ValidityMask = new BitSet();
 
     public PrimitiveColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
         super(ColumnName, ColumnDatatype);
-        ValidityChunkMasks = new ArrayList<>();
     }
 
     //abstract public List<?> getChunkArrays();
     abstract public T getValue(int pos);
 
-    private void buildValidityMask(MemorySegment ResultVector, int DbChunkSize)
+    protected void buildValidityMask(MemorySegment ResultVector, int DbChunkSize)
     {
         // Create Validity Mask if necessary
         // Size is ChunkSize / 8 (8 results per byte) and rounded up
         long validityMaskSize = Math.ceilDiv(DbChunkSize, 8);
-        BitSet tmpValidityMask = null;
         MemorySegment ValidityPtr = duckdb_vector_get_validity(ResultVector);
 
+        int startPos = ValidityMask.length();
         // Null pointer indicates no need for mask => no nulls
+        // We still add a Validity Mask with all true
         if (ValidityPtr.address() != 0)
         {
-            tmpValidityMask = BitSet.valueOf(ValidityPtr.reinterpret(validityMaskSize).toArray(ValueLayout.JAVA_BYTE));
-            ValidityChunkMasks.add(tmpValidityMask);
+            BitSet tmpValidityMask = BitSet.valueOf(ValidityPtr.reinterpret(validityMaskSize).toArray(ValueLayout.JAVA_BYTE));
+
+            for (int pos = 0; pos < DbChunkSize; pos++)
+            {
+                ValidityMask.set(startPos + pos, tmpValidityMask.get(pos));
+            }
+        }
+        else
+        {
+            for (int pos = 0; pos < DbChunkSize; pos++)
+            {
+                ValidityMask.set(startPos + pos, true);
+            }
         }
     }
 
     void compactValidityBitSet()
     {
-        ValidityMask = new BitSet(ResMetaData.columnsCount());
-        byte[] tmpArray = new byte[ResMetaData.columnsCount()];
-        int startPos = 0;
-
-        // Concat all Arrays
-        for (BitSet bSet : ValidityChunkMasks)
+        // All rows have a value => avoid checks completely
+        if (ValidityMask.length() == ValidityMask.cardinality())
         {
-            System.arraycopy(bSet.toByteArray(), 0, tmpArray, startPos, bSet.size());
-            startPos += bSet.size();
+            ValidityMask = null;
         }
-        ValidityMask = BitSet.valueOf(tmpArray);
-
-        // Empty Validity Masks from Chunks
-        ValidityChunkMasks.clear();
     }
 
     public boolean getValidity(int pos)
     {
         // No Mask => no NULLs
-        if (ValidityChunkMasks.isEmpty())
+        if (ValidityMask == null)
         {
             return true;
         }

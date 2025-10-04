@@ -61,7 +61,7 @@ abstract public class ObjectColumn<T> extends Column<T>
 
         for (int pos = 0; pos < dbChunkSize; pos++)
         {
-            if (!VectorValidityMask.get(pos % dbChunkSize))
+            if (!VectorValidityMask.get(pos))
             {
                 ResultArray[pos] = null;
             }
