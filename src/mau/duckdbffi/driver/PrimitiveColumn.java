@@ -11,6 +11,8 @@ import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_validity;
 abstract public class PrimitiveColumn<T> extends Column<T>
 {
     public BitSet ValidityMask = new BitSet();
+    // Unfortunately .length() does not count false bits at the end of the set => we have to keep the score
+    public int validityMaskLength = 0;
 
     public PrimitiveColumn(String ColumnName, DuckDbDatatype ColumnDatatype)
     {
@@ -20,38 +22,39 @@ abstract public class PrimitiveColumn<T> extends Column<T>
     //abstract public List<?> getChunkArrays();
     abstract public T getValue(int pos);
 
-    protected void buildValidityMask(MemorySegment ResultVector, int DbChunkSize)
+    protected void buildValidityMask(MemorySegment ResultVector, int dbChunkSize)
     {
         // Create Validity Mask if necessary
         // Size is ChunkSize / 8 (8 results per byte) and rounded up
-        long validityMaskSize = Math.ceilDiv(DbChunkSize, 8);
+        long validityMaskSize = Math.ceilDiv(dbChunkSize, 8);
         MemorySegment ValidityPtr = duckdb_vector_get_validity(ResultVector);
 
-        int startPos = ValidityMask.length();
+        int startPos = validityMaskLength;
         // Null pointer indicates no need for mask => no nulls
         // We still add a Validity Mask with all true
         if (ValidityPtr.address() != 0)
         {
             BitSet tmpValidityMask = BitSet.valueOf(ValidityPtr.reinterpret(validityMaskSize).toArray(ValueLayout.JAVA_BYTE));
 
-            for (int pos = 0; pos < DbChunkSize; pos++)
+            for (int pos = 0; pos < dbChunkSize; pos++)
             {
                 ValidityMask.set(startPos + pos, tmpValidityMask.get(pos));
             }
         }
         else
         {
-            for (int pos = 0; pos < DbChunkSize; pos++)
+            for (int pos = 0; pos < dbChunkSize; pos++)
             {
                 ValidityMask.set(startPos + pos, true);
             }
         }
+        validityMaskLength += dbChunkSize;
     }
 
     void compactValidityBitSet()
     {
         // All rows have a value => avoid checks completely
-        if (ValidityMask.length() == ValidityMask.cardinality())
+        if (validityMaskLength == ValidityMask.cardinality())
         {
             ValidityMask = null;
         }

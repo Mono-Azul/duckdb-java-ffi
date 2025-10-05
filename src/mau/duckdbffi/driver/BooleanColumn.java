@@ -54,6 +54,7 @@ public class BooleanColumn extends PrimitiveColumn<Boolean>
         }
 
         this.ChunkArrays.add(ResultArray);
+        buildValidityMask(ResultVector, dbChunkSize);
     }
 
     @Override

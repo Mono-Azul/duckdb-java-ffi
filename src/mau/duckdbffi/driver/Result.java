@@ -136,11 +136,11 @@ public class Result
             Col.addResultMetaData(ResMetaData);
             Col.compactChunks();
 
-//            if (Col instanceof PrimitiveColumn)
-//            {
-//                PrimitiveColumn PCol = (PrimitiveColumn)Col;
-//                PCol.compactValidityBitSet();
-//            }
+            if (Col instanceof PrimitiveColumn)
+            {
+                PrimitiveColumn PCol = (PrimitiveColumn)Col;
+                PCol.compactValidityBitSet();
+            }
         }
     }
 
