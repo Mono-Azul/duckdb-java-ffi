@@ -20,7 +20,7 @@ public class TestIntColumn
         Connection con = DbForTestRun.getConnection();
 
         con.query("CREATE TABLE IntTest (ID INT4, NullValue INT4);");
-        con.query("INSERT INTO IntTest (SELECT *, 1 FROM RANGE(100));");
+        con.query("INSERT INTO IntTest (SELECT *, 1 FROM RANGE(10000));");
         con.query("INSERT INTO IntTest (ID) VALUES (-1);");
     }
 
@@ -33,11 +33,11 @@ public class TestIntColumn
     @Test
     void testIntArray()
     {
-        int[] compArray = new int[] {99, 98, 97, 96, 95};
+        int[] compArray = new int[] {9999, 9998, 9997, 9996, 9995};
 
         try (Connection con = DbForTestRun.getConnection())
         {
-            Result res = con.query("select ID, NullValue from IntTest order by id desc limit 5;");
+            Result res = con.query("SELECT ID, NullValue FROM IntTest ORDER BY id DESC LIMIT 5;");
 
             IntColumn Col = (IntColumn)res.Columns.getFirst();
 
@@ -52,15 +52,13 @@ public class TestIntColumn
     @Test
     void testIntRows()
     {
-        int[] compArray = new int[] {99, 98, 97, 96, 95};
-
         try (Connection con = DbForTestRun.getConnection())
         {
-            Result res = con.query("select ID, NullValue from IntTest order by id desc limit 5;");
+            Result res = con.query("SELECT ID, NullValue FROM IntTest WHERE ID >= 0 ORDER BY id LIMIT 3000;");
 
-            for (int row = 0; row < 5; row++)
+            for (int row = 0; row < 3000; row++)
             {
-                assertEquals(compArray[row], (int)res.getRow(row).getFirst());
+                assertEquals(row, (int)res.getRow(row).getFirst());
             }
         }
         catch (DuckDbException e)
@@ -74,10 +72,10 @@ public class TestIntColumn
     {
         try (Connection con = DbForTestRun.getConnection())
         {
-            Result res = con.query("select ID, NullValue from IntTest order by id asc limit 5;");
+            Result res = con.query("select ID, NullValue from IntTest WHERE ID = -1;");
 
             assertNull(res.getRow(0).get(1));
-            assertEquals(1, res.getRow(1).get(1));
+            assertEquals(-1, res.getRow(0).get(0));
         }
         catch (DuckDbException e)
         {
