@@ -44,6 +44,7 @@ public class DoubleColumn extends PrimitiveColumn<Double>
         ResultVectorData.reinterpret((long)dbChunkSize * 4);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_DOUBLE, 0, ResultArray, 0, dbChunkSize);
         this.ChunkArrays.add(ResultArray);
+        buildValidityMask(ResultVector, dbChunkSize);
     }
 
     @Override

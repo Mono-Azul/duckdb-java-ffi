@@ -44,6 +44,7 @@ public class ShortColumn extends PrimitiveColumn<Short>
         ResultVectorData.reinterpret((long)dbChunkSize * 2);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_SHORT, 0, ResultArray, 0, dbChunkSize);
         this.ChunkArrays.add(ResultArray);
+        buildValidityMask(ResultVector, dbChunkSize);
     }
 
     @Override

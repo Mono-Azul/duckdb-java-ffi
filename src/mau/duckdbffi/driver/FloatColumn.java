@@ -44,6 +44,7 @@ public class FloatColumn extends PrimitiveColumn<Float>
         ResultVectorData.reinterpret((long)dbChunkSize * 4);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_FLOAT, 0, ResultArray, 0, dbChunkSize);
         this.ChunkArrays.add(ResultArray);
+        buildValidityMask(ResultVector, dbChunkSize);
     }
 
     @Override

@@ -44,6 +44,7 @@ public class LongColumn extends PrimitiveColumn<Long>
         ResultVectorData.reinterpret((long)dbChunkSize * 8);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_LONG, 0, ResultArray, 0, dbChunkSize);
         this.ChunkArrays.add(ResultArray);
+        buildValidityMask(ResultVector, dbChunkSize);
     }
 
     @Override

@@ -44,6 +44,7 @@ public class ByteColumn extends PrimitiveColumn<Byte>
         ResultVectorData.reinterpret(dbChunkSize);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_BYTE, 0, ResultArray, 0, dbChunkSize);
         this.ChunkArrays.add(ResultArray);
+        buildValidityMask(ResultVector, dbChunkSize);
     }
 
     @Override
