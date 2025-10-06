@@ -40,6 +40,7 @@ public class BigIntegerColumn extends ObjectColumn<BigInteger>
             byte[] swappedArray = swapEndianness16(Arrays.copyOfRange(ResultByteArray, pos * 16, pos * 16 + 16));
             ResultArray[pos] = new BigInteger(swappedArray, 0, 16);
         }
+        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         this.ChunkArrays.add(ResultArray);
     }
 
@@ -55,6 +56,7 @@ public class BigIntegerColumn extends ObjectColumn<BigInteger>
             byte[] swappedArray = swapEndianness8(Arrays.copyOfRange(ResultByteArray, pos * 8, pos * 8 + 8));
             ResultArray[pos] = new BigInteger(1, swappedArray, 0, 8);
         }
+        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         this.ChunkArrays.add(ResultArray);
     }
 
@@ -70,6 +72,7 @@ public class BigIntegerColumn extends ObjectColumn<BigInteger>
             byte[] swappedArray = swapEndianness16(Arrays.copyOfRange(ResultByteArray, pos * 16, pos * 16 + 16));
             ResultArray[pos] = new BigInteger(1, swappedArray, 0, 16);
         }
+        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         this.ChunkArrays.add(ResultArray);
     }
 
