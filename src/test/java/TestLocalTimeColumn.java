@@ -5,13 +5,15 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class TestBigIntegerColumn
+public class TestLocalTimeColumn
 {
     static Database DbForTestRun;
 
@@ -21,9 +23,9 @@ public class TestBigIntegerColumn
         DbForTestRun = new Database(":memory:");
         Connection con = DbForTestRun.getConnection();
 
-        con.query("CREATE TABLE BigIntTest (ID INT4, NullValue INT128);");
-        con.query("INSERT INTO BigIntTest (SELECT rng, rng::hugeint + 10000000000 FROM (SELECT * AS rng FROM RANGE(10000)));");
-        con.query("INSERT INTO BigIntTest (ID) VALUES (-1);");
+        con.query("CREATE TABLE LocalTimeTest (ID INT4, NullValue TIME);");
+        con.query("INSERT INTO LocalTimeTest (SELECT rng, make_timestamp_ms(rng * 1000000000) FROM (SELECT * AS rng FROM RANGE(10000)));");
+        con.query("INSERT INTO LocalTimeTest (ID) VALUES (-1);");
     }
 
     @AfterAll
@@ -33,20 +35,20 @@ public class TestBigIntegerColumn
     }
 
     @Test
-    void testBigIntegerArray()
+    void testLocalTimeArray()
     {
-        BigInteger[] compArray = new BigInteger[5];
-        compArray[0] = new BigInteger("10000009999");
-        compArray[1] = new BigInteger("10000009998");
-        compArray[2] = new BigInteger("10000009997");
-        compArray[3] = new BigInteger("10000009996");
-        compArray[4] = new BigInteger("10000009995");
+        LocalTime[] compArray = new LocalTime[5];
+        compArray[0] = LocalTime.parse("04:00:00");
+        compArray[1] = LocalTime.parse("14:13:20");
+        compArray[2] = LocalTime.parse("00:26:40");
+        compArray[3] = LocalTime.parse("10:40:00");
+        compArray[4] = LocalTime.parse("20:53:20");
 
         try (Connection con = DbForTestRun.getConnection())
         {
-            Result res = con.query("SELECT NullValue, ID FROM BigIntTest ORDER BY id DESC LIMIT 5;");
+            Result res = con.query("SELECT NullValue, ID FROM LocalTimeTest ORDER BY id DESC LIMIT 5;");
 
-            BigIntegerColumn Col = (BigIntegerColumn)res.Columns.getFirst();
+            LocalTimeColumn Col = (LocalTimeColumn)res.Columns.getFirst();
 
             assertEquals(0, Arrays.compare(compArray, Col.VectorArray));
         }
@@ -57,15 +59,15 @@ public class TestBigIntegerColumn
     }
 
     @Test
-    void testBigIntegerRows()
+    void testLocalTimeRows()
     {
         try (Connection con = DbForTestRun.getConnection())
         {
-            Result res = con.query("SELECT NullValue, ID FROM BigIntTest WHERE ID >= 0 ORDER BY id LIMIT 3000;");
+            Result res = con.query("SELECT NullValue, ID FROM LocalTimeTest WHERE ID >= 0 ORDER BY id LIMIT 3000;");
 
-            for (BigInteger row = BigInteger.ZERO; row.compareTo(BigInteger.ZERO) > 0; row = row.subtract(BigInteger.ONE))
+            for (int row = 0; row < 3000; row++)
             {
-                assertEquals((BigInteger)res.getRow(row.intValue()).getFirst(), row);
+                assertEquals((LocalTime)res.getRow(row).getFirst(), LocalTime.ofSecondOfDay((row * 49600) % 86400));
             }
         }
         catch (DuckDbException e)
@@ -75,11 +77,11 @@ public class TestBigIntegerColumn
     }
 
     @Test
-    void testBigIntegerNull()
+    void testLocalTimeNull()
     {
         try (Connection con = DbForTestRun.getConnection())
         {
-            Result res = con.query("SELECT ID, NullValue FROM BigIntTest WHERE ID = -1;");
+            Result res = con.query("SELECT ID, NullValue FROM LocalTimeTest WHERE ID = -1;");
 
             assertNull(res.getRow(0).get(1));
             assertEquals(-1, res.getRow(0).get(0));
