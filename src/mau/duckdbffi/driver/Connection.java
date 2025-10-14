@@ -5,6 +5,7 @@ import mau.duckdbffi.jextractffi.duckdb_result;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
+import java.util.List;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.*;
 
@@ -61,6 +62,42 @@ public class Connection implements AutoCloseable
             }
 
             return new Result(DuckDbResultPtr, DuckDbResult, primitivesAsObjects);
+        }
+    }
+
+    public PreparedStatement createPreparedStatement(String sql)
+    {
+        return new PreparedStatement(DuckDbConnection, sql);
+    }
+
+    public Result queryWithParameters(String sql, List<Object> Parameters)
+    {
+        return queryWithParameters(sql, Parameters, false);
+    }
+
+    public Result queryWithParameters(String sql, List<Object> Parameters, boolean primitivesAsObjects)
+    {
+        // Create PreparedStmt + Bind + Run in one step
+        try (PreparedStatement PrepStmt = createPreparedStatement(sql))
+        {
+            if (PrepStmt.hasError())
+            {
+                return new Result(PrepStmt.getErrorMessage(), 0);
+            }
+
+            if (Parameters != null && !Parameters.isEmpty())
+            {
+                for (int pos = 0; pos < Parameters.size(); pos++)
+                {
+                    // Binding starts with 1 and not 0!
+                    PrepStmt.bindObject(Parameters.get(pos), pos + 1);
+                }
+            }
+
+            return PrepStmt.executeStatement(primitivesAsObjects);
+        } catch (DuckDbException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 
