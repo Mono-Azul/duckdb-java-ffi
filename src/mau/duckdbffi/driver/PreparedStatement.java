@@ -1,9 +1,6 @@
 package mau.duckdbffi.driver;
 
-import mau.duckdbffi.jextractffi.duckdb_decimal;
-import mau.duckdbffi.jextractffi.duckdb_h;
-import mau.duckdbffi.jextractffi.duckdb_interval;
-import mau.duckdbffi.jextractffi.duckdb_result;
+import mau.duckdbffi.jextractffi.*;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
@@ -13,6 +10,7 @@ import java.math.BigInteger;
 import java.time.*;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.*;
 
@@ -74,7 +72,9 @@ public class PreparedStatement implements AutoCloseable
             case Interval intv -> duckDbState = duckdb_bind_interval(PreparedStmtSegment, pos,
                     interval2Interval(intv, BindArena));
             case String str -> duckDbState = duckdb_bind_varchar(PreparedStmtSegment, pos, BindArena.allocateFrom(str));
-            //case UUID uuid -> duckDbState = duckdb_bind_(PreparedStmtSegment, pos, s);
+            case UUID uuid -> duckDbState =
+                    //duckdb_bind_hugeint(PreparedStmtSegment, pos, uuid2hugeint(uuid, BindArena));
+                    duckdb_bind_varchar(PreparedStmtSegment, pos, BindArena.allocateFrom(uuid.toString()));
             default -> duckDbState = 1;
         }
 
@@ -193,10 +193,10 @@ public class PreparedStatement implements AutoCloseable
 
     private MemorySegment bigDecimal2Decimal(BigDecimal BigDec, Arena BindArena)
     {
-        MemorySegment IntervallSegment = BindArena.allocate(duckdb_decimal.sizeof());
+        MemorySegment DecimaSegment = BindArena.allocate(duckdb_decimal.sizeof());
 
-        IntervallSegment.set(ValueLayout.JAVA_BYTE, 0, (byte)BigDec.precision());
-        IntervallSegment.set(ValueLayout.JAVA_BYTE, 1, (byte)BigDec.scale());
+        DecimaSegment.set(ValueLayout.JAVA_BYTE, 0, (byte)BigDec.precision());
+        DecimaSegment.set(ValueLayout.JAVA_BYTE, 1, (byte)BigDec.scale());
 
         var byteArray = BigDec.unscaledValue().toByteArray();
 
@@ -206,9 +206,24 @@ public class PreparedStatement implements AutoCloseable
         {
             // Swap pos 0 => array length and then going backwards to last pos in source = target 0 (only little endian)
             // Memory layout due to alignment means the hugeint should start at byte 8
-            IntervallSegment.set(ValueLayout.JAVA_BYTE, pos + 8, bigDecimalAsArray[bigDecimalAsArray.length - 1 - pos]);
+            DecimaSegment.set(ValueLayout.JAVA_BYTE, pos + 8, bigDecimalAsArray[bigDecimalAsArray.length - 1 - pos]);
         }
 
-        return IntervallSegment;
+        return DecimaSegment;
     }
+
+    private MemorySegment uuid2hugeint(UUID Uuid, Arena BindArena)
+    {
+        MemorySegment UuidSegment = BindArena.allocate(duckdb_hugeint.sizeof());
+
+        // We have to flip the msb because of some ordering rules in DuckDB => XOR with mask
+        //long mask = (1L << 63);
+        //long msbLong = Uuid.getMostSignificantBits() ^mask;
+
+        UuidSegment.set(ValueLayout.JAVA_LONG, 0, Uuid.getLeastSignificantBits());
+        UuidSegment.set(ValueLayout.JAVA_LONG, 8, Uuid.getMostSignificantBits());
+
+        return UuidSegment;
+    }
+
 }
