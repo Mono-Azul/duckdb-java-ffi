@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.time.*;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.*;
@@ -42,7 +43,7 @@ public class PreparedStatement implements AutoCloseable
 
     public int bindObject(Object BindValue, int pos)
     {
-        int duckDbState = 0;
+        int duckDbState = 1;
 
         // Special case for NULL
         if (BindValue == null)
@@ -51,31 +52,35 @@ public class PreparedStatement implements AutoCloseable
         }
 
         Arena BindArena = Arena.ofConfined();
+        MemorySegment BindSegment = null;
 
         switch(BindValue)
         {
-            case Boolean bo -> duckDbState = duckdb_bind_boolean(PreparedStmtSegment, pos, bo);
-            case Byte b -> duckDbState = duckdb_bind_int8(PreparedStmtSegment, pos, b);
-            case Short s -> duckDbState = duckdb_bind_int16(PreparedStmtSegment, pos, s);
-            case Integer i -> duckDbState = duckdb_bind_int32(PreparedStmtSegment, pos, i);
-            case Long l -> duckDbState = duckdb_bind_int64(PreparedStmtSegment, pos, l);
-            case BigInteger bi -> duckDbState = duckdb_bind_hugeint(PreparedStmtSegment, pos, bigInteger2Hugeint(bi));
-            case BigDecimal bd -> duckDbState = duckdb_bind_decimal(PreparedStmtSegment, pos,
-                    bigDecimal2Decimal(bd, BindArena));
-            case Float f -> duckDbState = duckdb_bind_float(PreparedStmtSegment, pos, f);
-            case Double d -> duckDbState = duckdb_bind_double(PreparedStmtSegment, pos, d);
-            case LocalTime lt -> duckDbState = duckdb_bind_time(PreparedStmtSegment, pos, localTime2Long(lt));
-            case LocalDate ld -> duckDbState = duckdb_bind_date(PreparedStmtSegment, pos, localDate2Int(ld));
-            case LocalDateTime ldt -> duckDbState = duckdb_bind_timestamp(PreparedStmtSegment, pos,
-                    localDateTime2Long(ldt));
-            case Instant inst -> duckDbState = duckdb_bind_timestamp_tz(PreparedStmtSegment, pos, instant2Long(inst));
-            case Interval intv -> duckDbState = duckdb_bind_interval(PreparedStmtSegment, pos,
-                    interval2Interval(intv, BindArena));
-            case String str -> duckDbState = duckdb_bind_varchar(PreparedStmtSegment, pos, BindArena.allocateFrom(str));
-            case UUID uuid -> duckDbState =
-                    //duckdb_bind_hugeint(PreparedStmtSegment, pos, uuid2hugeint(uuid, BindArena));
-                    duckdb_bind_varchar(PreparedStmtSegment, pos, BindArena.allocateFrom(uuid.toString()));
+            case Boolean bo -> BindSegment = duckdb_create_bool(bo); //duckDbState = duckdb_bind_boolean(PreparedStmtSegment, pos, bo);
+            case Byte b -> BindSegment = duckdb_create_int8(b); // duckDbState = duckdb_bind_int8(PreparedStmtSegment, pos, b);
+            case Short s -> BindSegment = duckdb_create_int16(s); //duckDbState = duckdb_bind_int16(PreparedStmtSegment, pos, s);
+            case Integer i -> BindSegment = duckdb_create_int32(i); //duckDbState = duckdb_bind_int32(PreparedStmtSegment, pos, i);
+            case Long l -> BindSegment = duckdb_create_int64(l);//duckDbState = duckdb_bind_int64(PreparedStmtSegment, pos, l);
+            case BigInteger bi -> BindSegment = duckdb_create_hugeint(bigInteger2Hugeint(bi));//duckDbState = duckdb_bind_hugeint(PreparedStmtSegment, pos, bigInteger2Hugeint(bi));
+            case BigDecimal bd -> BindSegment = duckdb_create_decimal(bigDecimal2Decimal(bd, BindArena));//duckDbState = duckdb_bind_decimal(PreparedStmtSegment, pos, bigDecimal2Decimal(bd, BindArena));
+            case Float f -> BindSegment = duckdb_create_float(f); //duckDbState = duckdb_bind_float(PreparedStmtSegment, pos, f);
+            case Double d -> BindSegment = duckdb_create_double(d); //duckDbState = duckdb_bind_double(PreparedStmtSegment, pos, d);
+            case LocalTime lt -> BindSegment = duckdb_create_time(localTime2Long(lt)); //duckDbState = duckdb_bind_time(PreparedStmtSegment, pos, localTime2Long(lt));
+            case LocalDate ld -> BindSegment = duckdb_create_date(localDate2Int(ld)); //duckDbState = duckdb_bind_date(PreparedStmtSegment, pos, localDate2Int(ld));
+            case LocalDateTime ldt -> BindSegment = duckdb_create_timestamp(localDateTime2Long(ldt)); //duckDbState = duckdb_bind_timestamp(PreparedStmtSegment, pos,localDateTime2Long(ldt));
+            case Instant inst -> BindSegment = duckdb_create_timestamp_tz(instant2Long(inst)); //duckDbState = duckdb_bind_timestamp_tz(PreparedStmtSegment, pos, instant2Long(inst));
+            case Interval intv -> BindSegment = duckdb_create_interval(interval2Interval(intv, BindArena)); //duckDbState = duckdb_bind_interval(PreparedStmtSegment, pos,interval2Interval(intv, BindArena));
+            case String str -> BindSegment = duckdb_create_varchar(BindArena.allocateFrom(str)); //duckDbState = duckdb_bind_varchar(PreparedStmtSegment, pos, BindArena.allocateFrom(str));
+            case UUID uuid -> BindSegment = duckdb_create_uuid(uuid2hugeint(uuid, BindArena)); //duckdb_bind_varchar(PreparedStmtSegment, pos, BindArena.allocateFrom(uuid.toString()));
             default -> duckDbState = 1;
+        }
+
+        if (BindSegment != null)
+        {
+            MemorySegment BindSegmentPtr = BindArena.allocate(8);
+            BindSegmentPtr.set(ValueLayout.JAVA_LONG, 0, BindSegment.address());
+            duckDbState = duckdb_bind_value(PreparedStmtSegment, pos, BindSegment);
+            duckdb_destroy_value(BindSegmentPtr);
         }
 
         BindArena.close();
@@ -133,8 +138,13 @@ public class PreparedStatement implements AutoCloseable
     private MemorySegment bigInteger2Hugeint(BigInteger BigInt)
     {
         var byteArray = BigInt.toByteArray();
-
         byte[] swappedArray = new byte[16];
+
+        // Negative values need an "all 1" array as basis
+        if (BigInt.compareTo(BigInteger.ZERO) < 0)
+        {
+            Arrays.fill(swappedArray, (byte)-1); // -1 => all bits = 1
+        }
 
         for (int pos = 0; pos < byteArray.length; pos++)
         {
@@ -198,8 +208,6 @@ public class PreparedStatement implements AutoCloseable
         DecimaSegment.set(ValueLayout.JAVA_BYTE, 0, (byte)BigDec.precision());
         DecimaSegment.set(ValueLayout.JAVA_BYTE, 1, (byte)BigDec.scale());
 
-        var byteArray = BigDec.unscaledValue().toByteArray();
-
         byte[] bigDecimalAsArray = BigDec.unscaledValue().toByteArray();
 
         for (int pos = 0; pos < bigDecimalAsArray.length; pos++)
@@ -209,16 +217,23 @@ public class PreparedStatement implements AutoCloseable
             DecimaSegment.set(ValueLayout.JAVA_BYTE, pos + 8, bigDecimalAsArray[bigDecimalAsArray.length - 1 - pos]);
         }
 
+        // Negative values need "all one" array as basis
+        if (BigDec.compareTo(BigDecimal.ZERO) < 0)
+        {
+            for (int pos = bigDecimalAsArray.length; pos < 16; pos++)
+            {
+                // Set remaining bytes to -1 = "all one"
+                // Memory layout due to alignment means the hugeint should start at byte 8
+                DecimaSegment.set(ValueLayout.JAVA_BYTE, pos + 8, (byte)-1);
+            }
+        }
+
         return DecimaSegment;
     }
 
     private MemorySegment uuid2hugeint(UUID Uuid, Arena BindArena)
     {
         MemorySegment UuidSegment = BindArena.allocate(duckdb_hugeint.sizeof());
-
-        // We have to flip the msb because of some ordering rules in DuckDB => XOR with mask
-        //long mask = (1L << 63);
-        //long msbLong = Uuid.getMostSignificantBits() ^mask;
 
         UuidSegment.set(ValueLayout.JAVA_LONG, 0, Uuid.getLeastSignificantBits());
         UuidSegment.set(ValueLayout.JAVA_LONG, 8, Uuid.getMostSignificantBits());
