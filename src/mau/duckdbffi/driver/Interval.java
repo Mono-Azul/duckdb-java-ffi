@@ -17,4 +17,9 @@ public record Interval(Period Period, Duration Duration)
                     .thenComparing((Interval i) -> i.Period().getDays())
                     // Finally, compare Duration
                     .thenComparing(Interval::Duration);
+
+    public Interval normalized()
+    {
+        return new Interval(Period.normalized(), Duration);
+    }
 }
