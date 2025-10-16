@@ -1,1 +1,1 @@
-./jextract/bin/jextract --output ./src --target-package monoazul.duckdbffi.jextractffi ./libduckdb-linux-amd64/duckdb.h
+./jextract/bin/jextract --output ./src --target-package mau.duckdbffi.jextractffi ./libduckdb-linux-amd64/duckdb.h

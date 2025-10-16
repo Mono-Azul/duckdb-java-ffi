@@ -1,1 +1,1 @@
-jar cf duckdb-java-ffi.jar -C ./out/production/duckdb-java-ffi/ monoazul -C ./libduckdb-linux-amd64/ libduckdb.so_linux_amd64
+jar cf duckdb-java-ffi.jar -C ./out/production/duckdb-java-ffi/ mau -C ./libduckdb-linux-amd64/ libduckdb.so_linux_amd64
