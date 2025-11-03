@@ -20,9 +20,7 @@ package mau.duckdbffi.driver;
 
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
-import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.List;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_validity;
 

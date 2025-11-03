@@ -34,19 +34,6 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.*;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_date;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_decimal;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_double;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_float;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_hugeint;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_int32;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_int64;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_interval;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_time;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_timestamp;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_timestamp_tz;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_uuid;
-import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_varchar;
 
 // A lot helper functions to make a duckdb_value from an Object
 class DuckDbValue
