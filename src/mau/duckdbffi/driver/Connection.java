@@ -88,12 +88,12 @@ public class Connection implements AutoCloseable
         return new PreparedStatement(DuckDbConnection, sql);
     }
 
-    public Result queryWithParameters(String sql, List<Object> Parameters)
+    public Result queryWithParameters(String sql, List<Object> Parameters) throws DuckDbException
     {
         return queryWithParameters(sql, Parameters, false);
     }
 
-    public Result queryWithParameters(String sql, List<Object> Parameters, boolean primitivesAsObjects)
+    public Result queryWithParameters(String sql, List<Object> Parameters, boolean primitivesAsObjects) throws DuckDbException
     {
         // Create PreparedStmt + Bind + Run in one step
         try (PreparedStatement PrepStmt = createPreparedStatement(sql))
@@ -113,9 +113,6 @@ public class Connection implements AutoCloseable
             }
 
             return PrepStmt.executeStatement(primitivesAsObjects);
-        } catch (DuckDbException e)
-        {
-            throw new RuntimeException(e);
         }
     }
 

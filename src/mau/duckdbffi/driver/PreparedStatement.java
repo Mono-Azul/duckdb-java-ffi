@@ -59,7 +59,7 @@ public class PreparedStatement implements AutoCloseable
         this.ErrorMessage = ErrorMessage;
     }
 
-    public int bindObject(Object BindValue, int pos)
+    public int bindObject(Object BindValue, int pos) throws DuckDbException
     {
         int duckDbState = 1;
 
@@ -72,22 +72,12 @@ public class PreparedStatement implements AutoCloseable
         Arena BindArena = Arena.ofConfined();
         MemorySegment BindSegment = null;
 
-        try
-        {
-            BindSegment = DuckDbValue.createDuckDbValueFromObject(BindValue, BindArena);
-        }
-        catch (DuckDbException ex)
-        {
+        BindSegment = DuckDbValue.createDuckDbValueFromObject(BindValue, BindArena);
 
-        }
-
-        if (BindSegment != null)
-        {
-            MemorySegment BindSegmentPtr = BindArena.allocate(8);
-            BindSegmentPtr.set(ValueLayout.JAVA_LONG, 0, BindSegment.address());
-            duckDbState = duckdb_bind_value(PreparedStmtSegment, pos, BindSegment);
-            duckdb_destroy_value(BindSegmentPtr);
-        }
+        MemorySegment BindSegmentPtr = BindArena.allocate(8);
+        BindSegmentPtr.set(ValueLayout.JAVA_LONG, 0, BindSegment.address());
+        duckDbState = duckdb_bind_value(PreparedStmtSegment, pos, BindSegment);
+        duckdb_destroy_value(BindSegmentPtr);
 
         BindArena.close();
 
