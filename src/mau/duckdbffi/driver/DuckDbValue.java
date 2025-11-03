@@ -18,7 +18,9 @@
 
 package mau.duckdbffi.driver;
 
-import mau.duckdbffi.jextractffi.*;
+import mau.duckdbffi.jextractffi.duckdb_decimal;
+import mau.duckdbffi.jextractffi.duckdb_hugeint;
+import mau.duckdbffi.jextractffi.duckdb_interval;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
@@ -32,116 +34,57 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.*;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_date;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_decimal;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_double;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_float;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_hugeint;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_int32;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_int64;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_interval;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_time;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_timestamp;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_timestamp_tz;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_uuid;
+import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_create_varchar;
 
-public class PreparedStatement implements AutoCloseable
+// A lot helper functions to make a duckdb_value from an Object
+class DuckDbValue
 {
-    private final Arena PreparedStatementArena;
-    private final MemorySegment PreparedStmtSegment;
-    private final String ErrorMessage;
-
-    public PreparedStatement(MemorySegment DuckDbConnection, String sql)
+    protected static MemorySegment createDuckDbValueFromObject(Object Value, Arena ValueArene) throws DuckDbException
     {
-        PreparedStatementArena = Arena.ofConfined();
-
-        MemorySegment PreparedStmtSegmentPtr = PreparedStatementArena.allocate(8)
-                .reinterpret(PreparedStatementArena, duckdb_h::duckdb_destroy_prepare);
-        int duckDbState = duckdb_prepare(DuckDbConnection, PreparedStatementArena.allocateFrom(sql)
-                , PreparedStmtSegmentPtr);
-
-        this.PreparedStmtSegment = PreparedStmtSegmentPtr.get(C_POINTER, 0);
-        String ErrorMessage = null;
-
-        if (duckDbState == DuckDBError())
+        if (Value == null)
         {
-            System.out.println("Error preparing query: " + sql);
-            ErrorMessage = duckdb_prepare_error(PreparedStmtSegment).getString(0);
+            throw new DuckDbException("DuckDbValue creation from null!");
         }
-        this.ErrorMessage = ErrorMessage;
+
+        MemorySegment DuckDbValueSegment = null;
+
+        switch(Value)
+        {
+            case Boolean bo -> DuckDbValueSegment = duckdb_create_bool(bo);
+            case Byte b -> DuckDbValueSegment = duckdb_create_int8(b);
+            case Short s -> DuckDbValueSegment = duckdb_create_int16(s);
+            case Integer i -> DuckDbValueSegment = duckdb_create_int32(i);
+            case Long l -> DuckDbValueSegment = duckdb_create_int64(l);
+            case BigInteger bi -> DuckDbValueSegment = duckdb_create_hugeint(bigInteger2Hugeint(bi));
+            case BigDecimal bd -> DuckDbValueSegment = duckdb_create_decimal(bigDecimal2Decimal(bd, ValueArene));
+            case Float f -> DuckDbValueSegment = duckdb_create_float(f);
+            case Double d -> DuckDbValueSegment = duckdb_create_double(d);
+            case LocalTime lt -> DuckDbValueSegment = duckdb_create_time(localTime2Long(lt));
+            case LocalDate ld -> DuckDbValueSegment = duckdb_create_date(localDate2Int(ld));
+            case LocalDateTime ldt -> DuckDbValueSegment = duckdb_create_timestamp(localDateTime2Long(ldt));
+            case Instant inst -> DuckDbValueSegment = duckdb_create_timestamp_tz(instant2Long(inst));
+            case Interval intv -> DuckDbValueSegment = duckdb_create_interval(interval2Interval(intv, ValueArene));
+            case String str -> DuckDbValueSegment = duckdb_create_varchar(ValueArene.allocateFrom(str));
+            case UUID uuid -> DuckDbValueSegment = duckdb_create_uuid(uuid2hugeint(uuid, ValueArene));
+            default -> throw new DuckDbException("DuckDbValue creation from unknown type!");
+        }
+
+        return DuckDbValueSegment;
     }
 
-    public int bindObject(Object BindValue, int pos)
-    {
-        int duckDbState = 1;
-
-        // Special case for NULL
-        if (BindValue == null)
-        {
-             return duckdb_bind_null(PreparedStmtSegment, pos);
-        }
-
-        Arena BindArena = Arena.ofConfined();
-        MemorySegment BindSegment = null;
-
-        try
-        {
-            BindSegment = DuckDbValue.createDuckDbValueFromObject(BindValue, BindArena);
-        }
-        catch (DuckDbException ex)
-        {
-
-        }
-
-        if (BindSegment != null)
-        {
-            MemorySegment BindSegmentPtr = BindArena.allocate(8);
-            BindSegmentPtr.set(ValueLayout.JAVA_LONG, 0, BindSegment.address());
-            duckDbState = duckdb_bind_value(PreparedStmtSegment, pos, BindSegment);
-            duckdb_destroy_value(BindSegmentPtr);
-        }
-
-        BindArena.close();
-
-        return duckDbState;
-    }
-
-    public Result executeStatement(boolean primitivesAsObjects)
-    {
-        try (Arena ResultArena = Arena.ofConfined())
-        {
-            // Create duckdb_result struct
-            MemorySegment DuckDbResult = ResultArena.allocate(duckdb_result.sizeof())
-                    .reinterpret(ResultArena, duckdb_h::duckdb_destroy_result);
-            MemorySegment DuckDbResultPtr = MemorySegment.ofAddress(DuckDbResult.address());
-
-            int duckDbState = duckdb_execute_prepared(PreparedStmtSegment, DuckDbResultPtr);
-
-            if (duckDbState == DuckDBError())
-            {
-                String ErrorMessage = duckdb_result_error(DuckDbResultPtr).getString(0);
-                Integer ErrorNumber = duckdb_result_error_type(DuckDbResultPtr);
-                return new Result(ErrorMessage, ErrorNumber);
-            }
-            return new Result(DuckDbResultPtr, DuckDbResult, primitivesAsObjects);
-        }
-    }
-
-    public boolean hasError()
-    {
-        return ErrorMessage != null;
-    }
-
-    public String getErrorMessage()
-    {
-        if (!hasError())
-        {
-            return "No errors!";
-        }
-        return ErrorMessage;
-    }
-
-    @Override
-    public void close() throws DuckDbException
-    {
-        try
-        {
-            PreparedStatementArena.close();
-        } catch (Exception e)
-        {
-            throw new DuckDbException(e);
-        }
-    }
-
-    private MemorySegment bigInteger2Hugeint(BigInteger BigInt)
+    protected static MemorySegment bigInteger2Hugeint(BigInteger BigInt)
     {
         var byteArray = BigInt.toByteArray();
         byte[] swappedArray = new byte[16];
@@ -161,21 +104,21 @@ public class PreparedStatement implements AutoCloseable
         return MemorySegment.ofArray(swappedArray);
     }
 
-    private MemorySegment localTime2Long(LocalTime LocTime)
+    protected static MemorySegment localTime2Long(LocalTime LocTime)
     {
         long[] larray = new long[] {LocTime.toNanoOfDay() / 1000};
 
         return MemorySegment.ofArray(larray);
     }
 
-    private MemorySegment localDate2Int(LocalDate LocDate)
+    protected static MemorySegment localDate2Int(LocalDate LocDate)
     {
         int[] larray = new int[] {(int)LocDate.getLong(ChronoField.EPOCH_DAY)};
 
         return MemorySegment.ofArray(larray);
     }
 
-    private MemorySegment localDateTime2Long(LocalDateTime LocDateTime)
+    protected static MemorySegment localDateTime2Long(LocalDateTime LocDateTime)
     {
 
         long[] larray = new long[] {LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC)
@@ -184,7 +127,7 @@ public class PreparedStatement implements AutoCloseable
         return MemorySegment.ofArray(larray);
     }
 
-    private MemorySegment instant2Long(Instant Inst)
+    protected static MemorySegment instant2Long(Instant Inst)
     {
 
         long[] larray = new long[] {Instant.EPOCH.until(Inst, ChronoUnit.MICROS)};
@@ -192,7 +135,7 @@ public class PreparedStatement implements AutoCloseable
         return MemorySegment.ofArray(larray);
     }
 
-    private MemorySegment interval2Interval(Interval Intv, Arena BindArena)
+    protected static MemorySegment interval2Interval(Interval Intv, Arena BindArena)
     {
         MemorySegment IntervallSegment = BindArena.allocate(duckdb_interval.sizeof());
 
@@ -207,7 +150,7 @@ public class PreparedStatement implements AutoCloseable
         return IntervallSegment;
     }
 
-    private MemorySegment bigDecimal2Decimal(BigDecimal BigDec, Arena BindArena)
+    protected static MemorySegment bigDecimal2Decimal(BigDecimal BigDec, Arena BindArena)
     {
         MemorySegment DecimaSegment = BindArena.allocate(duckdb_decimal.sizeof());
 
@@ -237,7 +180,7 @@ public class PreparedStatement implements AutoCloseable
         return DecimaSegment;
     }
 
-    private MemorySegment uuid2hugeint(UUID Uuid, Arena BindArena)
+    protected static MemorySegment uuid2hugeint(UUID Uuid, Arena BindArena)
     {
         MemorySegment UuidSegment = BindArena.allocate(duckdb_hugeint.sizeof());
 
@@ -246,5 +189,4 @@ public class PreparedStatement implements AutoCloseable
 
         return UuidSegment;
     }
-
 }

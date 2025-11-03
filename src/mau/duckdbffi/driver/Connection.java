@@ -119,6 +119,22 @@ public class Connection implements AutoCloseable
         }
     }
 
+    public Appender createAppender(String table) throws DuckDbException
+    {
+        var Res = query("SELECT value FROM duckdb_settings() WHERE name = 'schema';");
+
+        if (Res.getRowCount() == 1)
+        {
+            return createAppender((String)(Res.getRow(0).getFirst()), table);
+        }
+        throw new DuckDbException("No default schema found!");
+    }
+
+    public Appender createAppender(String schema, String table) throws DuckDbException
+    {
+        return new Appender(DuckDbConnection, schema, table);
+    }
+
     @Override
     public void close() throws DuckDbException
     {
