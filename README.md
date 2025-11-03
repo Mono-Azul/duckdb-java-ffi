@@ -82,7 +82,7 @@ The number of columns and rows is available from the Result object. The order of
 
 #### Getting results as rows
 
-Calling the getRow() method returns a List<Object> containing all values, which then needs to be cast to the appropriate data type.
+Calling the getRow() method returns a List\<Object> containing all values, which then needs to be cast to the appropriate data type.
 
 ```
 Short col3 = (Short)res.getRow(0).get(2);
