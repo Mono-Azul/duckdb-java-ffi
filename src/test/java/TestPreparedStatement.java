@@ -25,15 +25,11 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.time.Period;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -323,6 +319,30 @@ public class TestPreparedStatement
             assertFalse(res.hasError());
 
             res = con.queryWithParameters("SELECT LocDate FROM PrepStmtTest WHERE LocDate = ?;", Paras);
+
+            assertFalse(res.hasError());
+            assertEquals(res.getRow(0).getFirst(), Paras.getFirst());
+        }
+        catch (DuckDbException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void testLocalDateTime()
+    {
+        try (Connection con = DbForTestRun.getConnection())
+        {
+            List Paras = new ArrayList<>();
+            var LocDt = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+            Paras.add(LocDt);
+
+            Result res = con.queryWithParameters("INSERT INTO PrepStmtTest (LocTs) VALUES (?);", Paras);
+
+            assertFalse(res.hasError());
+
+            res = con.queryWithParameters("SELECT LocTs FROM PrepStmtTest WHERE LocTs = ?;", Paras);
 
             assertFalse(res.hasError());
             assertEquals(res.getRow(0).getFirst(), Paras.getFirst());
