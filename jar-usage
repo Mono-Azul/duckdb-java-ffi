@@ -1,1 +1,2 @@
-jar cf duckdb-java-ffi.jar -C ./out/production/duckdb-java-ffi/ mau -C ./libduckdb-linux-amd64/ libduckdb.so_linux_amd64
+jar cfm duckdb-java-ffi.jar Manifest.txt DuckDB_LICENSE -C ./out/production/duckdb-java-ffi/ mau -C ./libduckdb-linux-amd64/ libduckdb.so_windows_amd64 -C ./libduckdb-linux-amd64/ libduckdb.so_linux_amd64 -C ./libduckdb-linux-amd64/ libduckdb.so_osx_universal
+

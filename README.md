@@ -7,7 +7,6 @@ This is an independent project that is not linked to DuckDB in any way, except t
 Status: ALPHA
 
 Not all data types are supported, especially nested types.
-The appender is not yet supported.
 The way to use it may change if needed.
 
 ## Versioning
@@ -23,6 +22,8 @@ Due to FFI, a fairly recent version is necessary. Java 23+
 ## Rational: Why another client?
 
 The JDBC is great for achieving compatibility with many tools and services that support it. However, it also has a lot of methods that are not strictly necessary. Many of these methods perform actions that can be carried out using simple queries.
+
+Only the 'sane' date and time classes from java.time are used, thereby avoiding all the problems with java.util.Date.
 
 With DuckDB, connection handling can be simplified. Creating a new connection does not create a new session on another server. Reuse it for the task at hand, but there is no need to keep a pool of connections open.
 
@@ -97,5 +98,16 @@ ShortObjectColumn Col = (ShortObjectColumn)res.Columns.getFirst();
 var arr = Col.VectorArray
 ```
 
+### Appender
 
+Create an Appender instance from a connection. Use the the beginRow, appendXXX and endRow methods to create new rows. In between commits can be done with flush.
 
+```
+try (var appender = con.createAppender("tableName")) {
+    appender.beginRow();
+    appender.appendValue((byte)0);   
+    appender.appendNull();
+    appender.appendDefault();
+    appender.endRow();
+}
+```

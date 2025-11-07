@@ -36,7 +36,7 @@ import static mau.duckdbffi.jextractffi.duckdb_h.*;
 public class Database implements AutoCloseable
 {
 
-    // Copied from Duckdb JDBC driver class DuckDBNative - refactor!
+    // Copied from Duckdb JDBC driver class DuckDBNative - refactored!
     // Load shared object file that is included in the .jar.
     // The name depends on the architecture.
     static
@@ -73,10 +73,14 @@ public class Database implements AutoCloseable
 
             Path lib_file = Files.createTempFile("libduckdb", ".so");
             URL lib_res = Database.class.getResource(lib_res_name);
+
+            // Here without jar => development setup with Linux
             if (lib_res == null)
             {
-                System.load(Paths.get("libduckdb-" + os_name + "-" + os_arch,
-                        "libduckdb.so").normalize().toAbsolutePath().toString());
+                LibPath = Paths.get("libduckdb-linux-amd64","libduckdb.so").normalize()
+                        .toAbsolutePath().toString();
+                System.load(Paths.get("libduckdb-linux-amd64","libduckdb.so").normalize()
+                        .toAbsolutePath().toString());
             }
             else
             {
@@ -85,6 +89,7 @@ public class Database implements AutoCloseable
                     Files.copy(lib_res_input_stream, lib_file, StandardCopyOption.REPLACE_EXISTING);
                 }
                 new File(lib_file.toString()).deleteOnExit();
+                LibPath = lib_file.toAbsolutePath().toString();
                 System.load(lib_file.toAbsolutePath().toString());
             }
         } catch (IOException e)
@@ -93,6 +98,7 @@ public class Database implements AutoCloseable
         }
     }
 
+    public static final String LibPath;
     private final String DatabaseFileName;
     private final Arena DatabaseArena;
     private final MemorySegment DuckDbDatabase;
