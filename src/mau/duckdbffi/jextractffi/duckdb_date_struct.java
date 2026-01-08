@@ -2,8 +2,12 @@
 
 package mau.duckdbffi.jextractffi;
 
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
@@ -49,7 +53,7 @@ public class duckdb_date_struct {
         return year$LAYOUT;
     }
 
-    private static final long year$OFFSET = 0;
+    private static final long year$OFFSET = $LAYOUT.byteOffset(groupElement("year"));
 
     /**
      * Offset for field:
@@ -93,7 +97,7 @@ public class duckdb_date_struct {
         return month$LAYOUT;
     }
 
-    private static final long month$OFFSET = 4;
+    private static final long month$OFFSET = $LAYOUT.byteOffset(groupElement("month"));
 
     /**
      * Offset for field:
@@ -137,7 +141,7 @@ public class duckdb_date_struct {
         return day$LAYOUT;
     }
 
-    private static final long day$OFFSET = 5;
+    private static final long day$OFFSET = $LAYOUT.byteOffset(groupElement("day"));
 
     /**
      * Offset for field:

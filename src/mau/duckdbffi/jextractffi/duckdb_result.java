@@ -2,8 +2,12 @@
 
 package mau.duckdbffi.jextractffi;
 
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
@@ -54,7 +58,7 @@ public class duckdb_result {
         return deprecated_column_count$LAYOUT;
     }
 
-    private static final long deprecated_column_count$OFFSET = 0;
+    private static final long deprecated_column_count$OFFSET = $LAYOUT.byteOffset(groupElement("deprecated_column_count"));
 
     /**
      * Offset for field:
@@ -98,7 +102,7 @@ public class duckdb_result {
         return deprecated_row_count$LAYOUT;
     }
 
-    private static final long deprecated_row_count$OFFSET = 8;
+    private static final long deprecated_row_count$OFFSET = $LAYOUT.byteOffset(groupElement("deprecated_row_count"));
 
     /**
      * Offset for field:
@@ -142,7 +146,7 @@ public class duckdb_result {
         return deprecated_rows_changed$LAYOUT;
     }
 
-    private static final long deprecated_rows_changed$OFFSET = 16;
+    private static final long deprecated_rows_changed$OFFSET = $LAYOUT.byteOffset(groupElement("deprecated_rows_changed"));
 
     /**
      * Offset for field:
@@ -186,7 +190,7 @@ public class duckdb_result {
         return deprecated_columns$LAYOUT;
     }
 
-    private static final long deprecated_columns$OFFSET = 24;
+    private static final long deprecated_columns$OFFSET = $LAYOUT.byteOffset(groupElement("deprecated_columns"));
 
     /**
      * Offset for field:
@@ -230,7 +234,7 @@ public class duckdb_result {
         return deprecated_error_message$LAYOUT;
     }
 
-    private static final long deprecated_error_message$OFFSET = 32;
+    private static final long deprecated_error_message$OFFSET = $LAYOUT.byteOffset(groupElement("deprecated_error_message"));
 
     /**
      * Offset for field:
@@ -274,7 +278,7 @@ public class duckdb_result {
         return internal_data$LAYOUT;
     }
 
-    private static final long internal_data$OFFSET = 40;
+    private static final long internal_data$OFFSET = $LAYOUT.byteOffset(groupElement("internal_data"));
 
     /**
      * Offset for field:

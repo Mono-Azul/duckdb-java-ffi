@@ -4,15 +4,22 @@ package mau.duckdbffi.jextractffi;
 
 import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+
+import static java.lang.foreign.ValueLayout.*;
+import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 /**
  * {@snippet lang=c :
  * typedef void (*duckdb_replacement_callback_t)(duckdb_replacement_scan_info, const char *, void *)
  * }
  */
-public class duckdb_replacement_callback_t {
+public final class duckdb_replacement_callback_t {
 
-    duckdb_replacement_callback_t() {
+    private duckdb_replacement_callback_t() {
         // Should not be called directly
     }
 
@@ -51,9 +58,11 @@ public class duckdb_replacement_callback_t {
     /**
      * Invoke the upcall stub {@code funcPtr}, with given parameters
      */
-    public static void invoke(MemorySegment funcPtr,MemorySegment info, MemorySegment table_name, MemorySegment data) {
+    public static void invoke(MemorySegment funcPtr, MemorySegment info, MemorySegment table_name, MemorySegment data) {
         try {
              DOWN$MH.invokeExact(funcPtr, info, table_name, data);
+        } catch (Error | RuntimeException ex) {
+            throw ex;
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }

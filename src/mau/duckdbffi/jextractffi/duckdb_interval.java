@@ -2,8 +2,12 @@
 
 package mau.duckdbffi.jextractffi;
 
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
@@ -48,7 +52,7 @@ public class duckdb_interval {
         return months$LAYOUT;
     }
 
-    private static final long months$OFFSET = 0;
+    private static final long months$OFFSET = $LAYOUT.byteOffset(groupElement("months"));
 
     /**
      * Offset for field:
@@ -92,7 +96,7 @@ public class duckdb_interval {
         return days$LAYOUT;
     }
 
-    private static final long days$OFFSET = 4;
+    private static final long days$OFFSET = $LAYOUT.byteOffset(groupElement("days"));
 
     /**
      * Offset for field:
@@ -136,7 +140,7 @@ public class duckdb_interval {
         return micros$LAYOUT;
     }
 
-    private static final long micros$OFFSET = 8;
+    private static final long micros$OFFSET = $LAYOUT.byteOffset(groupElement("micros"));
 
     /**
      * Offset for field:

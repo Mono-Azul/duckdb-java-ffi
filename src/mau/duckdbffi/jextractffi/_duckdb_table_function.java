@@ -2,9 +2,14 @@
 
 package mau.duckdbffi.jextractffi;
 
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
+import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 /**
@@ -43,7 +48,7 @@ public class _duckdb_table_function {
         return internal_ptr$LAYOUT;
     }
 
-    private static final long internal_ptr$OFFSET = 0;
+    private static final long internal_ptr$OFFSET = $LAYOUT.byteOffset(groupElement("internal_ptr"));
 
     /**
      * Offset for field:

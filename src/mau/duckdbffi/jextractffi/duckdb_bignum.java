@@ -2,8 +2,12 @@
 
 package mau.duckdbffi.jextractffi;
 
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
@@ -49,7 +53,7 @@ public class duckdb_bignum {
         return data$LAYOUT;
     }
 
-    private static final long data$OFFSET = 0;
+    private static final long data$OFFSET = $LAYOUT.byteOffset(groupElement("data"));
 
     /**
      * Offset for field:
@@ -93,7 +97,7 @@ public class duckdb_bignum {
         return size$LAYOUT;
     }
 
-    private static final long size$OFFSET = 8;
+    private static final long size$OFFSET = $LAYOUT.byteOffset(groupElement("size"));
 
     /**
      * Offset for field:
@@ -137,7 +141,7 @@ public class duckdb_bignum {
         return is_negative$LAYOUT;
     }
 
-    private static final long is_negative$OFFSET = 16;
+    private static final long is_negative$OFFSET = $LAYOUT.byteOffset(groupElement("is_negative"));
 
     /**
      * Offset for field:

@@ -2,8 +2,12 @@
 
 package mau.duckdbffi.jextractffi;
 
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
@@ -53,7 +57,7 @@ public class duckdb_column {
         return deprecated_data$LAYOUT;
     }
 
-    private static final long deprecated_data$OFFSET = 0;
+    private static final long deprecated_data$OFFSET = $LAYOUT.byteOffset(groupElement("deprecated_data"));
 
     /**
      * Offset for field:
@@ -97,7 +101,7 @@ public class duckdb_column {
         return deprecated_nullmask$LAYOUT;
     }
 
-    private static final long deprecated_nullmask$OFFSET = 8;
+    private static final long deprecated_nullmask$OFFSET = $LAYOUT.byteOffset(groupElement("deprecated_nullmask"));
 
     /**
      * Offset for field:
@@ -141,7 +145,7 @@ public class duckdb_column {
         return deprecated_type$LAYOUT;
     }
 
-    private static final long deprecated_type$OFFSET = 16;
+    private static final long deprecated_type$OFFSET = $LAYOUT.byteOffset(groupElement("deprecated_type"));
 
     /**
      * Offset for field:
@@ -185,7 +189,7 @@ public class duckdb_column {
         return deprecated_name$LAYOUT;
     }
 
-    private static final long deprecated_name$OFFSET = 24;
+    private static final long deprecated_name$OFFSET = $LAYOUT.byteOffset(groupElement("deprecated_name"));
 
     /**
      * Offset for field:
@@ -229,7 +233,7 @@ public class duckdb_column {
         return internal_data$LAYOUT;
     }
 
-    private static final long internal_data$OFFSET = 32;
+    private static final long internal_data$OFFSET = $LAYOUT.byteOffset(groupElement("internal_data"));
 
     /**
      * Offset for field:

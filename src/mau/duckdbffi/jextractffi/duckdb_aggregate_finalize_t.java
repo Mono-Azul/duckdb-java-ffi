@@ -4,15 +4,22 @@ package mau.duckdbffi.jextractffi;
 
 import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+
+import static java.lang.foreign.ValueLayout.*;
+import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 /**
  * {@snippet lang=c :
  * typedef void (*duckdb_aggregate_finalize_t)(duckdb_function_info, duckdb_aggregate_state *, duckdb_vector, idx_t, idx_t)
  * }
  */
-public class duckdb_aggregate_finalize_t {
+public final class duckdb_aggregate_finalize_t {
 
-    duckdb_aggregate_finalize_t() {
+    private duckdb_aggregate_finalize_t() {
         // Should not be called directly
     }
 
@@ -53,9 +60,11 @@ public class duckdb_aggregate_finalize_t {
     /**
      * Invoke the upcall stub {@code funcPtr}, with given parameters
      */
-    public static void invoke(MemorySegment funcPtr,MemorySegment info, MemorySegment source, MemorySegment result, long count, long offset) {
+    public static void invoke(MemorySegment funcPtr, MemorySegment info, MemorySegment source, MemorySegment result, long count, long offset) {
         try {
              DOWN$MH.invokeExact(funcPtr, info, source, result, count, offset);
+        } catch (Error | RuntimeException ex) {
+            throw ex;
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }

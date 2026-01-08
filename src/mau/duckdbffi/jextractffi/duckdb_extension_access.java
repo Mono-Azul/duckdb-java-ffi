@@ -4,8 +4,12 @@ package mau.duckdbffi.jextractffi;
 
 import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
+import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 /**
@@ -41,9 +45,9 @@ public class duckdb_extension_access {
      * void (*set_error)(duckdb_extension_info, const char *)
      * }
      */
-    public static class set_error {
+    public final static class set_error {
 
-        set_error() {
+        private set_error() {
             // Should not be called directly
         }
 
@@ -81,9 +85,11 @@ public class duckdb_extension_access {
         /**
          * Invoke the upcall stub {@code funcPtr}, with given parameters
          */
-        public static void invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1) {
+        public static void invoke(MemorySegment funcPtr, MemorySegment _x0, MemorySegment _x1) {
             try {
                  DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+            } catch (Error | RuntimeException ex) {
+                throw ex;
             } catch (Throwable ex$) {
                 throw new AssertionError("should not reach here", ex$);
             }
@@ -102,7 +108,7 @@ public class duckdb_extension_access {
         return set_error$LAYOUT;
     }
 
-    private static final long set_error$OFFSET = 0;
+    private static final long set_error$OFFSET = $LAYOUT.byteOffset(groupElement("set_error"));
 
     /**
      * Offset for field:
@@ -139,9 +145,9 @@ public class duckdb_extension_access {
      * duckdb_database *(*get_database)(duckdb_extension_info)
      * }
      */
-    public static class get_database {
+    public final static class get_database {
 
-        get_database() {
+        private get_database() {
             // Should not be called directly
         }
 
@@ -179,9 +185,11 @@ public class duckdb_extension_access {
         /**
          * Invoke the upcall stub {@code funcPtr}, with given parameters
          */
-        public static MemorySegment invoke(MemorySegment funcPtr,MemorySegment _x0) {
+        public static MemorySegment invoke(MemorySegment funcPtr, MemorySegment _x0) {
             try {
                 return (MemorySegment) DOWN$MH.invokeExact(funcPtr, _x0);
+            } catch (Error | RuntimeException ex) {
+                throw ex;
             } catch (Throwable ex$) {
                 throw new AssertionError("should not reach here", ex$);
             }
@@ -200,7 +208,7 @@ public class duckdb_extension_access {
         return get_database$LAYOUT;
     }
 
-    private static final long get_database$OFFSET = 8;
+    private static final long get_database$OFFSET = $LAYOUT.byteOffset(groupElement("get_database"));
 
     /**
      * Offset for field:
@@ -237,9 +245,9 @@ public class duckdb_extension_access {
      * const void *(*get_api)(duckdb_extension_info, const char *)
      * }
      */
-    public static class get_api {
+    public final static class get_api {
 
-        get_api() {
+        private get_api() {
             // Should not be called directly
         }
 
@@ -278,9 +286,11 @@ public class duckdb_extension_access {
         /**
          * Invoke the upcall stub {@code funcPtr}, with given parameters
          */
-        public static MemorySegment invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1) {
+        public static MemorySegment invoke(MemorySegment funcPtr, MemorySegment _x0, MemorySegment _x1) {
             try {
                 return (MemorySegment) DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+            } catch (Error | RuntimeException ex) {
+                throw ex;
             } catch (Throwable ex$) {
                 throw new AssertionError("should not reach here", ex$);
             }
@@ -299,7 +309,7 @@ public class duckdb_extension_access {
         return get_api$LAYOUT;
     }
 
-    private static final long get_api$OFFSET = 16;
+    private static final long get_api$OFFSET = $LAYOUT.byteOffset(groupElement("get_api"));
 
     /**
      * Offset for field:

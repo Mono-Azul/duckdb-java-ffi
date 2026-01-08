@@ -2,8 +2,12 @@
 
 package mau.duckdbffi.jextractffi;
 
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
@@ -49,7 +53,7 @@ public class duckdb_decimal {
         return width$LAYOUT;
     }
 
-    private static final long width$OFFSET = 0;
+    private static final long width$OFFSET = $LAYOUT.byteOffset(groupElement("width"));
 
     /**
      * Offset for field:
@@ -93,7 +97,7 @@ public class duckdb_decimal {
         return scale$LAYOUT;
     }
 
-    private static final long scale$OFFSET = 1;
+    private static final long scale$OFFSET = $LAYOUT.byteOffset(groupElement("scale"));
 
     /**
      * Offset for field:
@@ -137,7 +141,7 @@ public class duckdb_decimal {
         return value$LAYOUT;
     }
 
-    private static final long value$OFFSET = 8;
+    private static final long value$OFFSET = $LAYOUT.byteOffset(groupElement("value"));
 
     /**
      * Offset for field:

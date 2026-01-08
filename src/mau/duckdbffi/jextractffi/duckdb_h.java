@@ -4,67 +4,25 @@ package mau.duckdbffi.jextractffi;
 
 import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
+import static java.lang.foreign.MemoryLayout.PathElement.*;
 
-public class duckdb_h {
+public class duckdb_h extends duckdb_h$shared {
 
     duckdb_h() {
         // Should not be called directly
     }
 
     static final Arena LIBRARY_ARENA = Arena.ofAuto();
-    static final boolean TRACE_DOWNCALLS = Boolean.getBoolean("jextract.trace.downcalls");
-
-    static void traceDowncall(String name, Object... args) {
-         String traceArgs = Arrays.stream(args)
-                       .map(Object::toString)
-                       .collect(Collectors.joining(", "));
-         System.out.printf("%s(%s)\n", name, traceArgs);
-    }
-
-    static MemorySegment findOrThrow(String symbol) {
-        return SYMBOL_LOOKUP.find(symbol)
-            .orElseThrow(() -> new UnsatisfiedLinkError("unresolved symbol: " + symbol));
-    }
-
-    static MethodHandle upcallHandle(Class<?> fi, String name, FunctionDescriptor fdesc) {
-        try {
-            return MethodHandles.lookup().findVirtual(fi, name, fdesc.toMethodType());
-        } catch (ReflectiveOperationException ex) {
-            throw new AssertionError(ex);
-        }
-    }
-
-    static MemoryLayout align(MemoryLayout layout, long align) {
-        return switch (layout) {
-            case PaddingLayout p -> p;
-            case ValueLayout v -> v.withByteAlignment(align);
-            case GroupLayout g -> {
-                MemoryLayout[] alignedMembers = g.memberLayouts().stream()
-                        .map(m -> align(m, align)).toArray(MemoryLayout[]::new);
-                yield g instanceof StructLayout ?
-                        MemoryLayout.structLayout(alignedMembers) : MemoryLayout.unionLayout(alignedMembers);
-            }
-            case SequenceLayout s -> MemoryLayout.sequenceLayout(s.elementCount(), align(s.elementLayout(), align));
-        };
-    }
 
     static final SymbolLookup SYMBOL_LOOKUP = SymbolLookup.loaderLookup()
             .or(Linker.nativeLinker().defaultLookup());
 
-    public static final ValueLayout.OfBoolean C_BOOL = ValueLayout.JAVA_BOOLEAN;
-    public static final ValueLayout.OfByte C_CHAR = ValueLayout.JAVA_BYTE;
-    public static final ValueLayout.OfShort C_SHORT = ValueLayout.JAVA_SHORT;
-    public static final ValueLayout.OfInt C_INT = ValueLayout.JAVA_INT;
-    public static final ValueLayout.OfLong C_LONG_LONG = ValueLayout.JAVA_LONG;
-    public static final ValueLayout.OfFloat C_FLOAT = ValueLayout.JAVA_FLOAT;
-    public static final ValueLayout.OfDouble C_DOUBLE = ValueLayout.JAVA_DOUBLE;
-    public static final AddressLayout C_POINTER = ValueLayout.ADDRESS
-            .withTargetLayout(MemoryLayout.sequenceLayout(java.lang.Long.MAX_VALUE, JAVA_BYTE));
-    public static final ValueLayout.OfLong C_LONG = ValueLayout.JAVA_LONG;
     private static final int true_ = (int)1L;
     /**
      * {@snippet lang=c :
@@ -380,10 +338,10 @@ public class duckdb_h {
     public static int __GLIBC__() {
         return __GLIBC__;
     }
-    private static final int __GLIBC_MINOR__ = (int)41L;
+    private static final int __GLIBC_MINOR__ = (int)42L;
     /**
      * {@snippet lang=c :
-     * #define __GLIBC_MINOR__ 41
+     * #define __GLIBC_MINOR__ 42
      * }
      */
     public static int __GLIBC_MINOR__() {
@@ -2594,7 +2552,7 @@ public class duckdb_h {
     public static class duckdb_create_instance_cache {
         private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
                 duckdb_h.C_POINTER        );
-        private static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_instance_cache");
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_instance_cache");
 
         private final MethodHandle handle;
         private final FunctionDescriptor descriptor;
@@ -2665,7 +2623,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_or_create_from_cache");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_or_create_from_cache");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2712,6 +2670,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_or_create_from_cache", instance_cache, path, out_database, config, out_error);
             }
             return (int)mh$.invokeExact(instance_cache, path, out_database, config, out_error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2722,7 +2682,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_instance_cache");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_instance_cache");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2769,6 +2729,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_instance_cache", instance_cache);
             }
             mh$.invokeExact(instance_cache);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2781,7 +2743,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_open");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_open");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2828,6 +2790,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_open", path, out_database);
             }
             return (int)mh$.invokeExact(path, out_database);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2842,7 +2806,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_open_ext");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_open_ext");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2889,6 +2853,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_open_ext", path, out_database, config, out_error);
             }
             return (int)mh$.invokeExact(path, out_database, config, out_error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2899,7 +2865,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_close");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_close");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2946,6 +2912,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_close", database);
             }
             mh$.invokeExact(database);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2958,7 +2926,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_connect");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_connect");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3005,6 +2973,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_connect", database, out_connection);
             }
             return (int)mh$.invokeExact(database, out_connection);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3015,7 +2985,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_interrupt");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_interrupt");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3062,6 +3032,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_interrupt", connection);
             }
             mh$.invokeExact(connection);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3073,7 +3045,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_query_progress");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_query_progress");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3120,6 +3092,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_query_progress", allocator, connection);
             }
             return (MemorySegment)mh$.invokeExact(allocator, connection);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3130,7 +3104,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_disconnect");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_disconnect");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3177,6 +3151,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_disconnect", connection);
             }
             mh$.invokeExact(connection);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3188,7 +3164,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_connection_get_client_context");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_connection_get_client_context");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3235,6 +3211,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_connection_get_client_context", connection, out_context);
             }
             mh$.invokeExact(connection, out_context);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3246,7 +3224,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_connection_get_arrow_options");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_connection_get_arrow_options");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3293,6 +3271,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_connection_get_arrow_options", connection, out_arrow_options);
             }
             mh$.invokeExact(connection, out_arrow_options);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3304,7 +3284,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_client_context_get_connection_id");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_client_context_get_connection_id");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3351,6 +3331,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_client_context_get_connection_id", context);
             }
             return (long)mh$.invokeExact(context);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3361,7 +3343,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_client_context");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_client_context");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3408,6 +3390,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_client_context", context);
             }
             mh$.invokeExact(context);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3418,7 +3402,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_arrow_options");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_arrow_options");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3465,6 +3449,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_arrow_options", arrow_options);
             }
             mh$.invokeExact(arrow_options);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3479,7 +3465,7 @@ public class duckdb_h {
     public static class duckdb_library_version {
         private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
                 duckdb_h.C_POINTER        );
-        private static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_library_version");
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_library_version");
 
         private final MethodHandle handle;
         private final FunctionDescriptor descriptor;
@@ -3548,7 +3534,7 @@ public class duckdb_h {
             duckdb_h.C_BOOL
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_table_names");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_table_names");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3595,6 +3581,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_table_names", connection, query, qualified);
             }
             return (MemorySegment)mh$.invokeExact(connection, query, qualified);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3606,7 +3594,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_config");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_config");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3653,6 +3641,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_config", out_config);
             }
             return (int)mh$.invokeExact(out_config);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3667,7 +3657,7 @@ public class duckdb_h {
     public static class duckdb_config_count {
         private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
                 duckdb_h.C_LONG        );
-        private static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_config_count");
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_config_count");
 
         private final MethodHandle handle;
         private final FunctionDescriptor descriptor;
@@ -3736,7 +3726,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_config_flag");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_config_flag");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3783,6 +3773,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_config_flag", index, out_name, out_description);
             }
             return (int)mh$.invokeExact(index, out_name, out_description);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3796,7 +3788,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_set_config");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_set_config");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3843,6 +3835,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_set_config", config, name, option);
             }
             return (int)mh$.invokeExact(config, name, option);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3853,7 +3847,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_config");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_config");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3900,6 +3894,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_config", config);
             }
             mh$.invokeExact(config);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3912,7 +3908,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_error_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_error_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3959,6 +3955,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_error_data", type, message);
             }
             return (MemorySegment)mh$.invokeExact(type, message);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3969,7 +3967,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_error_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_error_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4016,6 +4014,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_error_data", error_data);
             }
             mh$.invokeExact(error_data);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4027,7 +4027,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_error_data_error_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_error_data_error_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4074,6 +4074,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_error_data_error_type", error_data);
             }
             return (int)mh$.invokeExact(error_data);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4085,7 +4087,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_error_data_message");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_error_data_message");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4132,6 +4134,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_error_data_message", error_data);
             }
             return (MemorySegment)mh$.invokeExact(error_data);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4143,7 +4147,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_error_data_has_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_error_data_has_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4190,6 +4194,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_error_data_has_error", error_data);
             }
             return (boolean)mh$.invokeExact(error_data);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4203,7 +4209,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_query");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_query");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4250,6 +4256,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_query", connection, query, out_result);
             }
             return (int)mh$.invokeExact(connection, query, out_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4260,7 +4268,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_result");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_result");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4307,6 +4315,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_result", result);
             }
             mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4319,7 +4329,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_column_name");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_column_name");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4366,6 +4376,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_column_name", result, col);
             }
             return (MemorySegment)mh$.invokeExact(result, col);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4378,7 +4390,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_column_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_column_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4425,6 +4437,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_column_type", result, col);
             }
             return (int)mh$.invokeExact(result, col);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4436,7 +4450,7 @@ public class duckdb_h {
             duckdb_result.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_result_statement_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_result_statement_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4483,6 +4497,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_result_statement_type", result);
             }
             return (int)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4495,7 +4511,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_column_logical_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_column_logical_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4542,6 +4558,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_column_logical_type", result, col);
             }
             return (MemorySegment)mh$.invokeExact(result, col);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4553,7 +4571,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_result_get_arrow_options");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_result_get_arrow_options");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4600,6 +4618,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_result_get_arrow_options", result);
             }
             return (MemorySegment)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4611,7 +4631,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_column_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_column_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4658,6 +4678,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_column_count", result);
             }
             return (long)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4669,7 +4691,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_row_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_row_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4716,6 +4738,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_row_count", result);
             }
             return (long)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4727,7 +4751,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_rows_changed");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_rows_changed");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4774,6 +4798,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_rows_changed", result);
             }
             return (long)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4786,7 +4812,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_column_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_column_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4833,6 +4859,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_column_data", result, col);
             }
             return (MemorySegment)mh$.invokeExact(result, col);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4845,7 +4873,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_nullmask_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_nullmask_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4892,6 +4920,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_nullmask_data", result, col);
             }
             return (MemorySegment)mh$.invokeExact(result, col);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4903,7 +4933,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_result_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_result_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -4950,6 +4980,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_result_error", result);
             }
             return (MemorySegment)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -4961,7 +4993,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_result_error_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_result_error_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5008,6 +5040,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_result_error_type", result);
             }
             return (int)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5020,7 +5054,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_result_get_chunk");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_result_get_chunk");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5067,6 +5101,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_result_get_chunk", result, chunk_index);
             }
             return (MemorySegment)mh$.invokeExact(result, chunk_index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5078,7 +5114,7 @@ public class duckdb_h {
             duckdb_result.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_result_is_streaming");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_result_is_streaming");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5125,6 +5161,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_result_is_streaming", result);
             }
             return (boolean)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5136,7 +5174,7 @@ public class duckdb_h {
             duckdb_result.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_result_chunk_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_result_chunk_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5183,6 +5221,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_result_chunk_count", result);
             }
             return (long)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5194,7 +5234,7 @@ public class duckdb_h {
             duckdb_result.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_result_return_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_result_return_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5241,6 +5281,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_result_return_type", result);
             }
             return (int)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5254,7 +5296,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_boolean");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_boolean");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5301,6 +5343,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_boolean", result, col, row);
             }
             return (boolean)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5314,7 +5358,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_int8");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_int8");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5361,6 +5405,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_int8", result, col, row);
             }
             return (byte)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5374,7 +5420,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_int16");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_int16");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5421,6 +5467,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_int16", result, col, row);
             }
             return (short)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5434,7 +5482,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_int32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_int32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5481,6 +5529,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_int32", result, col, row);
             }
             return (int)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5494,7 +5544,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_int64");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_int64");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5541,6 +5591,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_int64", result, col, row);
             }
             return (long)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5554,7 +5606,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_hugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_hugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5601,6 +5653,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_hugeint", allocator, result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(allocator, result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5614,7 +5668,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_uhugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_uhugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5661,6 +5715,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_uhugeint", allocator, result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(allocator, result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5674,7 +5730,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_decimal");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_decimal");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5721,6 +5777,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_decimal", allocator, result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(allocator, result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5734,7 +5792,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_uint8");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_uint8");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5781,6 +5839,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_uint8", result, col, row);
             }
             return (byte)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5794,7 +5854,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_uint16");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_uint16");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5841,6 +5901,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_uint16", result, col, row);
             }
             return (short)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5854,7 +5916,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_uint32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_uint32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5901,6 +5963,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_uint32", result, col, row);
             }
             return (int)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5914,7 +5978,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_uint64");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_uint64");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -5961,6 +6025,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_uint64", result, col, row);
             }
             return (long)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -5974,7 +6040,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_float");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_float");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6021,6 +6087,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_float", result, col, row);
             }
             return (float)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6034,7 +6102,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_double");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_double");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6081,6 +6149,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_double", result, col, row);
             }
             return (double)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6094,7 +6164,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_date");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_date");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6141,6 +6211,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_date", allocator, result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(allocator, result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6154,7 +6226,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_time");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_time");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6201,6 +6273,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_time", allocator, result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(allocator, result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6214,7 +6288,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_timestamp");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_timestamp");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6261,6 +6335,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_timestamp", allocator, result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(allocator, result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6274,7 +6350,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_interval");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_interval");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6321,6 +6397,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_interval", allocator, result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(allocator, result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6334,7 +6412,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_varchar");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_varchar");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6381,6 +6459,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_varchar", result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6394,7 +6474,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_string");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_string");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6441,6 +6521,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_string", allocator, result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(allocator, result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6454,7 +6536,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_varchar_internal");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_varchar_internal");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6501,6 +6583,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_varchar_internal", result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6514,7 +6598,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_string_internal");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_string_internal");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6561,6 +6645,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_string_internal", allocator, result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(allocator, result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6574,7 +6660,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_blob");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_blob");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6621,6 +6707,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_blob", allocator, result, col, row);
             }
             return (MemorySegment)mh$.invokeExact(allocator, result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6634,7 +6722,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_is_null");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_is_null");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6681,6 +6769,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_is_null", result, col, row);
             }
             return (boolean)mh$.invokeExact(result, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6692,7 +6782,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_malloc");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_malloc");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6739,6 +6829,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_malloc", size);
             }
             return (MemorySegment)mh$.invokeExact(size);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6749,7 +6841,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_free");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_free");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6796,6 +6888,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_free", ptr);
             }
             mh$.invokeExact(ptr);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6810,7 +6904,7 @@ public class duckdb_h {
     public static class duckdb_vector_size {
         private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
                 duckdb_h.C_LONG        );
-        private static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_vector_size");
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_vector_size");
 
         private final MethodHandle handle;
         private final FunctionDescriptor descriptor;
@@ -6877,7 +6971,7 @@ public class duckdb_h {
             duckdb_string_t.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_string_is_inlined");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_string_is_inlined");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6924,6 +7018,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_string_is_inlined", string);
             }
             return (boolean)mh$.invokeExact(string);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6935,7 +7031,7 @@ public class duckdb_h {
             duckdb_string_t.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_string_t_length");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_string_t_length");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -6982,6 +7078,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_string_t_length", string);
             }
             return (int)mh$.invokeExact(string);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -6993,7 +7091,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_string_t_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_string_t_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7040,6 +7138,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_string_t_data", string);
             }
             return (MemorySegment)mh$.invokeExact(string);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7051,7 +7151,7 @@ public class duckdb_h {
             duckdb_date.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_from_date");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_from_date");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7098,6 +7198,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_from_date", allocator, date);
             }
             return (MemorySegment)mh$.invokeExact(allocator, date);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7109,7 +7211,7 @@ public class duckdb_h {
             duckdb_date_struct.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_to_date");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_to_date");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7156,6 +7258,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_to_date", allocator, date);
             }
             return (MemorySegment)mh$.invokeExact(allocator, date);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7167,7 +7271,7 @@ public class duckdb_h {
             duckdb_date.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_is_finite_date");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_is_finite_date");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7214,6 +7318,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_is_finite_date", date);
             }
             return (boolean)mh$.invokeExact(date);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7225,7 +7331,7 @@ public class duckdb_h {
             duckdb_time.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_from_time");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_from_time");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7272,6 +7378,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_from_time", allocator, time);
             }
             return (MemorySegment)mh$.invokeExact(allocator, time);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7284,7 +7392,7 @@ public class duckdb_h {
             duckdb_h.C_INT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_time_tz");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_time_tz");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7331,6 +7439,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_time_tz", allocator, micros, offset);
             }
             return (MemorySegment)mh$.invokeExact(allocator, micros, offset);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7342,7 +7452,7 @@ public class duckdb_h {
             duckdb_time_tz.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_from_time_tz");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_from_time_tz");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7389,6 +7499,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_from_time_tz", allocator, micros);
             }
             return (MemorySegment)mh$.invokeExact(allocator, micros);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7400,7 +7512,7 @@ public class duckdb_h {
             duckdb_time_struct.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_to_time");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_to_time");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7447,6 +7559,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_to_time", allocator, time);
             }
             return (MemorySegment)mh$.invokeExact(allocator, time);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7458,7 +7572,7 @@ public class duckdb_h {
             duckdb_timestamp.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_from_timestamp");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_from_timestamp");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7505,6 +7619,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_from_timestamp", allocator, ts);
             }
             return (MemorySegment)mh$.invokeExact(allocator, ts);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7516,7 +7632,7 @@ public class duckdb_h {
             duckdb_timestamp_struct.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_to_timestamp");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_to_timestamp");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7563,6 +7679,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_to_timestamp", allocator, ts);
             }
             return (MemorySegment)mh$.invokeExact(allocator, ts);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7574,7 +7692,7 @@ public class duckdb_h {
             duckdb_timestamp.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_is_finite_timestamp");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_is_finite_timestamp");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7621,6 +7739,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_is_finite_timestamp", ts);
             }
             return (boolean)mh$.invokeExact(ts);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7632,7 +7752,7 @@ public class duckdb_h {
             duckdb_timestamp_s.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_is_finite_timestamp_s");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_is_finite_timestamp_s");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7679,6 +7799,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_is_finite_timestamp_s", ts);
             }
             return (boolean)mh$.invokeExact(ts);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7690,7 +7812,7 @@ public class duckdb_h {
             duckdb_timestamp_ms.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_is_finite_timestamp_ms");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_is_finite_timestamp_ms");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7737,6 +7859,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_is_finite_timestamp_ms", ts);
             }
             return (boolean)mh$.invokeExact(ts);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7748,7 +7872,7 @@ public class duckdb_h {
             duckdb_timestamp_ns.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_is_finite_timestamp_ns");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_is_finite_timestamp_ns");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7795,6 +7919,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_is_finite_timestamp_ns", ts);
             }
             return (boolean)mh$.invokeExact(ts);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7806,7 +7932,7 @@ public class duckdb_h {
             duckdb_hugeint.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_hugeint_to_double");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_hugeint_to_double");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7853,6 +7979,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_hugeint_to_double", val);
             }
             return (double)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7864,7 +7992,7 @@ public class duckdb_h {
             duckdb_h.C_DOUBLE
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_double_to_hugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_double_to_hugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7911,6 +8039,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_double_to_hugeint", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7922,7 +8052,7 @@ public class duckdb_h {
             duckdb_uhugeint.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_uhugeint_to_double");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_uhugeint_to_double");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -7969,6 +8099,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_uhugeint_to_double", val);
             }
             return (double)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -7980,7 +8112,7 @@ public class duckdb_h {
             duckdb_h.C_DOUBLE
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_double_to_uhugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_double_to_uhugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8027,6 +8159,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_double_to_uhugeint", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8040,7 +8174,7 @@ public class duckdb_h {
             duckdb_h.C_CHAR
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_double_to_decimal");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_double_to_decimal");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8087,6 +8221,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_double_to_decimal", allocator, val, width, scale);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val, width, scale);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8098,7 +8234,7 @@ public class duckdb_h {
             duckdb_decimal.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_decimal_to_double");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_decimal_to_double");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8145,6 +8281,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_decimal_to_double", val);
             }
             return (double)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8158,7 +8296,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_prepare");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_prepare");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8205,6 +8343,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_prepare", connection, query, out_prepared_statement);
             }
             return (int)mh$.invokeExact(connection, query, out_prepared_statement);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8215,7 +8355,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_prepare");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_prepare");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8262,6 +8402,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_prepare", prepared_statement);
             }
             mh$.invokeExact(prepared_statement);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8273,7 +8415,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_prepare_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_prepare_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8320,6 +8462,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_prepare_error", prepared_statement);
             }
             return (MemorySegment)mh$.invokeExact(prepared_statement);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8331,7 +8475,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_nparams");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_nparams");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8378,6 +8522,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_nparams", prepared_statement);
             }
             return (long)mh$.invokeExact(prepared_statement);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8390,7 +8536,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_parameter_name");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_parameter_name");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8437,6 +8583,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_parameter_name", prepared_statement, index);
             }
             return (MemorySegment)mh$.invokeExact(prepared_statement, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8449,7 +8597,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_param_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_param_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8496,6 +8644,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_param_type", prepared_statement, param_idx);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8508,7 +8658,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_param_logical_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_param_logical_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8555,6 +8705,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_param_logical_type", prepared_statement, param_idx);
             }
             return (MemorySegment)mh$.invokeExact(prepared_statement, param_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8566,7 +8718,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_clear_bindings");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_clear_bindings");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8613,6 +8765,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_clear_bindings", prepared_statement);
             }
             return (int)mh$.invokeExact(prepared_statement);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8624,7 +8778,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_prepared_statement_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_prepared_statement_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8671,6 +8825,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_prepared_statement_type", statement);
             }
             return (int)mh$.invokeExact(statement);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8682,7 +8838,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_prepared_statement_column_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_prepared_statement_column_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8729,6 +8885,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_prepared_statement_column_count", prepared_statement);
             }
             return (long)mh$.invokeExact(prepared_statement);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8741,7 +8899,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_prepared_statement_column_name");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_prepared_statement_column_name");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8788,6 +8946,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_prepared_statement_column_name", prepared_statement, col_idx);
             }
             return (MemorySegment)mh$.invokeExact(prepared_statement, col_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8800,7 +8960,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_prepared_statement_column_logical_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_prepared_statement_column_logical_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8847,6 +9007,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_prepared_statement_column_logical_type", prepared_statement, col_idx);
             }
             return (MemorySegment)mh$.invokeExact(prepared_statement, col_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8859,7 +9021,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_prepared_statement_column_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_prepared_statement_column_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8906,6 +9068,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_prepared_statement_column_type", prepared_statement, col_idx);
             }
             return (int)mh$.invokeExact(prepared_statement, col_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8919,7 +9083,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -8966,6 +9130,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_value", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -8979,7 +9145,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_parameter_index");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_parameter_index");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9026,6 +9192,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_parameter_index", prepared_statement, param_idx_out, name);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx_out, name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9039,7 +9207,7 @@ public class duckdb_h {
             duckdb_h.C_BOOL
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_boolean");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_boolean");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9086,6 +9254,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_boolean", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9099,7 +9269,7 @@ public class duckdb_h {
             duckdb_h.C_CHAR
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_int8");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_int8");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9146,6 +9316,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_int8", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9159,7 +9331,7 @@ public class duckdb_h {
             duckdb_h.C_SHORT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_int16");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_int16");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9206,6 +9378,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_int16", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9219,7 +9393,7 @@ public class duckdb_h {
             duckdb_h.C_INT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_int32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_int32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9266,6 +9440,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_int32", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9279,7 +9455,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_int64");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_int64");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9326,6 +9502,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_int64", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9339,7 +9517,7 @@ public class duckdb_h {
             duckdb_hugeint.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_hugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_hugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9386,6 +9564,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_hugeint", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9399,7 +9579,7 @@ public class duckdb_h {
             duckdb_uhugeint.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_uhugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_uhugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9446,6 +9626,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_uhugeint", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9459,7 +9641,7 @@ public class duckdb_h {
             duckdb_decimal.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_decimal");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_decimal");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9506,6 +9688,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_decimal", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9519,7 +9703,7 @@ public class duckdb_h {
             duckdb_h.C_CHAR
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_uint8");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_uint8");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9566,6 +9750,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_uint8", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9579,7 +9765,7 @@ public class duckdb_h {
             duckdb_h.C_SHORT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_uint16");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_uint16");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9626,6 +9812,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_uint16", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9639,7 +9827,7 @@ public class duckdb_h {
             duckdb_h.C_INT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_uint32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_uint32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9686,6 +9874,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_uint32", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9699,7 +9889,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_uint64");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_uint64");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9746,6 +9936,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_uint64", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9759,7 +9951,7 @@ public class duckdb_h {
             duckdb_h.C_FLOAT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_float");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_float");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9806,6 +9998,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_float", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9819,7 +10013,7 @@ public class duckdb_h {
             duckdb_h.C_DOUBLE
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_double");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_double");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9866,6 +10060,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_double", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9879,7 +10075,7 @@ public class duckdb_h {
             duckdb_date.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_date");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_date");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9926,6 +10122,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_date", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9939,7 +10137,7 @@ public class duckdb_h {
             duckdb_time.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_time");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_time");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -9986,6 +10184,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_time", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -9999,7 +10199,7 @@ public class duckdb_h {
             duckdb_timestamp.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_timestamp");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_timestamp");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10046,6 +10246,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_timestamp", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10059,7 +10261,7 @@ public class duckdb_h {
             duckdb_timestamp.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_timestamp_tz");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_timestamp_tz");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10106,6 +10308,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_timestamp_tz", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10119,7 +10323,7 @@ public class duckdb_h {
             duckdb_interval.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_interval");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_interval");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10166,6 +10370,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_interval", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10179,7 +10385,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_varchar");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_varchar");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10226,6 +10432,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_varchar", prepared_statement, param_idx, val);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10240,7 +10448,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_varchar_length");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_varchar_length");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10287,6 +10495,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_varchar_length", prepared_statement, param_idx, val, length);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, val, length);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10301,7 +10511,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_blob");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_blob");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10348,6 +10558,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_blob", prepared_statement, param_idx, data, length);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx, data, length);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10360,7 +10572,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_null");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_null");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10407,6 +10619,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_null", prepared_statement, param_idx);
             }
             return (int)mh$.invokeExact(prepared_statement, param_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10419,7 +10633,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_execute_prepared");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_execute_prepared");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10466,6 +10680,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_execute_prepared", prepared_statement, out_result);
             }
             return (int)mh$.invokeExact(prepared_statement, out_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10478,7 +10694,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_execute_prepared_streaming");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_execute_prepared_streaming");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10525,6 +10741,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_execute_prepared_streaming", prepared_statement, out_result);
             }
             return (int)mh$.invokeExact(prepared_statement, out_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10538,7 +10756,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_extract_statements");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_extract_statements");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10585,6 +10803,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_extract_statements", connection, query, out_extracted_statements);
             }
             return (long)mh$.invokeExact(connection, query, out_extracted_statements);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10599,7 +10819,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_prepare_extracted_statement");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_prepare_extracted_statement");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10646,6 +10866,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_prepare_extracted_statement", connection, extracted_statements, index, out_prepared_statement);
             }
             return (int)mh$.invokeExact(connection, extracted_statements, index, out_prepared_statement);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10657,7 +10879,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_extract_statements_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_extract_statements_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10704,6 +10926,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_extract_statements_error", extracted_statements);
             }
             return (MemorySegment)mh$.invokeExact(extracted_statements);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10714,7 +10938,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_extracted");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_extracted");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10761,6 +10985,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_extracted", extracted_statements);
             }
             mh$.invokeExact(extracted_statements);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10773,7 +10999,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_pending_prepared");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_pending_prepared");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10820,6 +11046,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_pending_prepared", prepared_statement, out_result);
             }
             return (int)mh$.invokeExact(prepared_statement, out_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10832,7 +11060,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_pending_prepared_streaming");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_pending_prepared_streaming");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10879,6 +11107,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_pending_prepared_streaming", prepared_statement, out_result);
             }
             return (int)mh$.invokeExact(prepared_statement, out_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10889,7 +11119,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_pending");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_pending");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10936,6 +11166,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_pending", pending_result);
             }
             mh$.invokeExact(pending_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -10947,7 +11179,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_pending_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_pending_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -10994,6 +11226,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_pending_error", pending_result);
             }
             return (MemorySegment)mh$.invokeExact(pending_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11005,7 +11239,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_pending_execute_task");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_pending_execute_task");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11052,6 +11286,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_pending_execute_task", pending_result);
             }
             return (int)mh$.invokeExact(pending_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11063,7 +11299,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_pending_execute_check_state");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_pending_execute_check_state");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11110,6 +11346,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_pending_execute_check_state", pending_result);
             }
             return (int)mh$.invokeExact(pending_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11122,7 +11360,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_execute_pending");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_execute_pending");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11169,6 +11407,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_execute_pending", pending_result, out_result);
             }
             return (int)mh$.invokeExact(pending_result, out_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11180,7 +11420,7 @@ public class duckdb_h {
             duckdb_h.C_INT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_pending_execution_is_finished");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_pending_execution_is_finished");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11227,6 +11467,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_pending_execution_is_finished", pending_state);
             }
             return (boolean)mh$.invokeExact(pending_state);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11237,7 +11479,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11284,6 +11526,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_value", value);
             }
             mh$.invokeExact(value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11295,7 +11539,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_varchar");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_varchar");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11342,6 +11586,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_varchar", text);
             }
             return (MemorySegment)mh$.invokeExact(text);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11354,7 +11600,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_varchar_length");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_varchar_length");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11401,6 +11647,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_varchar_length", text, length);
             }
             return (MemorySegment)mh$.invokeExact(text, length);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11412,7 +11660,7 @@ public class duckdb_h {
             duckdb_h.C_BOOL
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_bool");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_bool");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11459,6 +11707,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_bool", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11470,7 +11720,7 @@ public class duckdb_h {
             duckdb_h.C_CHAR
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_int8");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_int8");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11517,6 +11767,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_int8", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11528,7 +11780,7 @@ public class duckdb_h {
             duckdb_h.C_CHAR
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_uint8");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_uint8");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11575,6 +11827,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_uint8", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11586,7 +11840,7 @@ public class duckdb_h {
             duckdb_h.C_SHORT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_int16");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_int16");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11633,6 +11887,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_int16", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11644,7 +11900,7 @@ public class duckdb_h {
             duckdb_h.C_SHORT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_uint16");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_uint16");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11691,6 +11947,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_uint16", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11702,7 +11960,7 @@ public class duckdb_h {
             duckdb_h.C_INT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_int32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_int32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11749,6 +12007,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_int32", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11760,7 +12020,7 @@ public class duckdb_h {
             duckdb_h.C_INT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_uint32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_uint32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11807,6 +12067,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_uint32", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11818,7 +12080,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_uint64");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_uint64");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11865,6 +12127,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_uint64", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11876,7 +12140,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_int64");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_int64");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11923,6 +12187,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_int64", val);
             }
             return (MemorySegment)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11934,7 +12200,7 @@ public class duckdb_h {
             duckdb_hugeint.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_hugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_hugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -11981,6 +12247,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_hugeint", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -11992,7 +12260,7 @@ public class duckdb_h {
             duckdb_uhugeint.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_uhugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_uhugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12039,6 +12307,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_uhugeint", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12050,7 +12320,7 @@ public class duckdb_h {
             duckdb_bignum.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_bignum");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_bignum");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12097,6 +12367,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_bignum", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12108,7 +12380,7 @@ public class duckdb_h {
             duckdb_decimal.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_decimal");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_decimal");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12155,6 +12427,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_decimal", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12166,7 +12440,7 @@ public class duckdb_h {
             duckdb_h.C_FLOAT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_float");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_float");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12213,6 +12487,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_float", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12224,7 +12500,7 @@ public class duckdb_h {
             duckdb_h.C_DOUBLE
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_double");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_double");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12271,6 +12547,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_double", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12282,7 +12560,7 @@ public class duckdb_h {
             duckdb_date.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_date");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_date");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12329,6 +12607,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_date", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12340,7 +12620,7 @@ public class duckdb_h {
             duckdb_time.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_time");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_time");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12387,6 +12667,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_time", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12398,7 +12680,7 @@ public class duckdb_h {
             duckdb_time_ns.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_time_ns");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_time_ns");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12445,6 +12727,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_time_ns", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12456,7 +12740,7 @@ public class duckdb_h {
             duckdb_time_tz.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_time_tz_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_time_tz_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12503,6 +12787,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_time_tz_value", value);
             }
             return (MemorySegment)mh$.invokeExact(value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12514,7 +12800,7 @@ public class duckdb_h {
             duckdb_timestamp.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_timestamp");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_timestamp");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12561,6 +12847,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_timestamp", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12572,7 +12860,7 @@ public class duckdb_h {
             duckdb_timestamp.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_timestamp_tz");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_timestamp_tz");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12619,6 +12907,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_timestamp_tz", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12630,7 +12920,7 @@ public class duckdb_h {
             duckdb_timestamp_s.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_timestamp_s");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_timestamp_s");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12677,6 +12967,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_timestamp_s", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12688,7 +12980,7 @@ public class duckdb_h {
             duckdb_timestamp_ms.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_timestamp_ms");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_timestamp_ms");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12735,6 +13027,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_timestamp_ms", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12746,7 +13040,7 @@ public class duckdb_h {
             duckdb_timestamp_ns.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_timestamp_ns");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_timestamp_ns");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12793,6 +13087,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_timestamp_ns", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12804,7 +13100,7 @@ public class duckdb_h {
             duckdb_interval.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_interval");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_interval");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12851,6 +13147,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_interval", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12863,7 +13161,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_blob");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_blob");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12910,6 +13208,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_blob", data, length);
             }
             return (MemorySegment)mh$.invokeExact(data, length);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12921,7 +13221,7 @@ public class duckdb_h {
             duckdb_bit.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_bit");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_bit");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -12968,6 +13268,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_bit", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -12979,7 +13281,7 @@ public class duckdb_h {
             duckdb_uhugeint.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_uuid");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_uuid");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13026,6 +13328,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_uuid", input);
             }
             return (MemorySegment)mh$.invokeExact(input);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13037,7 +13341,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_bool");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_bool");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13084,6 +13388,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_bool", val);
             }
             return (boolean)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13095,7 +13401,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_int8");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_int8");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13142,6 +13448,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_int8", val);
             }
             return (byte)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13153,7 +13461,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_uint8");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_uint8");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13200,6 +13508,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_uint8", val);
             }
             return (byte)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13211,7 +13521,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_int16");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_int16");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13258,6 +13568,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_int16", val);
             }
             return (short)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13269,7 +13581,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_uint16");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_uint16");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13316,6 +13628,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_uint16", val);
             }
             return (short)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13327,7 +13641,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_int32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_int32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13374,6 +13688,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_int32", val);
             }
             return (int)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13385,7 +13701,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_uint32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_uint32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13432,6 +13748,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_uint32", val);
             }
             return (int)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13443,7 +13761,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_int64");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_int64");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13490,6 +13808,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_int64", val);
             }
             return (long)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13501,7 +13821,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_uint64");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_uint64");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13548,6 +13868,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_uint64", val);
             }
             return (long)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13559,7 +13881,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_hugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_hugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13606,6 +13928,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_hugeint", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13617,7 +13941,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_uhugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_uhugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13664,6 +13988,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_uhugeint", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13675,7 +14001,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_bignum");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_bignum");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13722,6 +14048,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_bignum", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13733,7 +14061,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_decimal");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_decimal");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13780,6 +14108,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_decimal", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13791,7 +14121,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_float");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_float");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13838,6 +14168,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_float", val);
             }
             return (float)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13849,7 +14181,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_double");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_double");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13896,6 +14228,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_double", val);
             }
             return (double)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13907,7 +14241,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_date");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_date");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -13954,6 +14288,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_date", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -13965,7 +14301,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_time");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_time");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14012,6 +14348,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_time", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14023,7 +14361,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_time_ns");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_time_ns");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14070,6 +14408,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_time_ns", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14081,7 +14421,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_time_tz");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_time_tz");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14128,6 +14468,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_time_tz", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14139,7 +14481,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_timestamp");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_timestamp");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14186,6 +14528,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_timestamp", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14197,7 +14541,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_timestamp_tz");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_timestamp_tz");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14244,6 +14588,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_timestamp_tz", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14255,7 +14601,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_timestamp_s");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_timestamp_s");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14302,6 +14648,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_timestamp_s", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14313,7 +14661,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_timestamp_ms");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_timestamp_ms");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14360,6 +14708,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_timestamp_ms", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14371,7 +14721,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_timestamp_ns");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_timestamp_ns");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14418,6 +14768,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_timestamp_ns", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14429,7 +14781,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_interval");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_interval");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14476,6 +14828,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_interval", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14487,7 +14841,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_value_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_value_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14534,6 +14888,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_value_type", val);
             }
             return (MemorySegment)mh$.invokeExact(val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14545,7 +14901,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_blob");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_blob");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14592,6 +14948,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_blob", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14603,7 +14961,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_bit");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_bit");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14650,6 +15008,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_bit", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14661,7 +15021,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_uuid");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_uuid");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14708,6 +15068,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_uuid", allocator, val);
             }
             return (MemorySegment)mh$.invokeExact(allocator, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14719,7 +15081,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_varchar");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_varchar");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14766,6 +15128,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_varchar", value);
             }
             return (MemorySegment)mh$.invokeExact(value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14778,7 +15142,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_struct_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_struct_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14825,6 +15189,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_struct_value", type, values);
             }
             return (MemorySegment)mh$.invokeExact(type, values);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14838,7 +15204,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_list_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_list_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14885,6 +15251,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_list_value", type, values, value_count);
             }
             return (MemorySegment)mh$.invokeExact(type, values, value_count);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14898,7 +15266,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_array_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_array_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -14945,6 +15313,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_array_value", type, values, value_count);
             }
             return (MemorySegment)mh$.invokeExact(type, values, value_count);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -14959,7 +15329,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_map_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_map_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15006,6 +15376,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_map_value", map_type, keys, values, entry_count);
             }
             return (MemorySegment)mh$.invokeExact(map_type, keys, values, entry_count);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15019,7 +15391,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_union_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_union_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15066,6 +15438,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_union_value", union_type, tag_index, value);
             }
             return (MemorySegment)mh$.invokeExact(union_type, tag_index, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15077,7 +15451,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_map_size");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_map_size");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15124,6 +15498,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_map_size", value);
             }
             return (long)mh$.invokeExact(value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15136,7 +15512,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_map_key");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_map_key");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15183,6 +15559,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_map_key", value, index);
             }
             return (MemorySegment)mh$.invokeExact(value, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15195,7 +15573,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_map_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_map_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15242,6 +15620,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_map_value", value, index);
             }
             return (MemorySegment)mh$.invokeExact(value, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15253,7 +15633,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_is_null_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_is_null_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15300,6 +15680,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_is_null_value", value);
             }
             return (boolean)mh$.invokeExact(value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15314,7 +15696,7 @@ public class duckdb_h {
     public static class duckdb_create_null_value {
         private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
                 duckdb_h.C_POINTER        );
-        private static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_null_value");
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_null_value");
 
         private final MethodHandle handle;
         private final FunctionDescriptor descriptor;
@@ -15381,7 +15763,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_list_size");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_list_size");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15428,6 +15810,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_list_size", value);
             }
             return (long)mh$.invokeExact(value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15440,7 +15824,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_list_child");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_list_child");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15487,6 +15871,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_list_child", value, index);
             }
             return (MemorySegment)mh$.invokeExact(value, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15499,7 +15885,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_enum_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_enum_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15546,6 +15932,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_enum_value", type, value);
             }
             return (MemorySegment)mh$.invokeExact(type, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15557,7 +15945,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_enum_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_enum_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15604,6 +15992,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_enum_value", value);
             }
             return (long)mh$.invokeExact(value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15616,7 +16006,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_struct_child");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_struct_child");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15663,6 +16053,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_struct_child", value, index);
             }
             return (MemorySegment)mh$.invokeExact(value, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15674,7 +16066,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_value_to_string");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_value_to_string");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15721,6 +16113,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_value_to_string", value);
             }
             return (MemorySegment)mh$.invokeExact(value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15732,7 +16126,7 @@ public class duckdb_h {
             duckdb_h.C_INT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_logical_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_logical_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15779,6 +16173,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_logical_type", type);
             }
             return (MemorySegment)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15790,7 +16186,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_logical_type_get_alias");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_logical_type_get_alias");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15837,6 +16233,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_logical_type_get_alias", type);
             }
             return (MemorySegment)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15848,7 +16246,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_logical_type_set_alias");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_logical_type_set_alias");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15895,6 +16293,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_logical_type_set_alias", type, alias);
             }
             mh$.invokeExact(type, alias);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15906,7 +16306,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_list_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_list_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -15953,6 +16353,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_list_type", type);
             }
             return (MemorySegment)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -15965,7 +16367,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_array_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_array_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16012,6 +16414,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_array_type", type, array_size);
             }
             return (MemorySegment)mh$.invokeExact(type, array_size);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16024,7 +16428,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_map_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_map_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16071,6 +16475,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_map_type", key_type, value_type);
             }
             return (MemorySegment)mh$.invokeExact(key_type, value_type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16084,7 +16490,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_union_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_union_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16131,6 +16537,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_union_type", member_types, member_names, member_count);
             }
             return (MemorySegment)mh$.invokeExact(member_types, member_names, member_count);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16144,7 +16552,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_struct_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_struct_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16191,6 +16599,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_struct_type", member_types, member_names, member_count);
             }
             return (MemorySegment)mh$.invokeExact(member_types, member_names, member_count);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16203,7 +16613,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_enum_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_enum_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16250,6 +16660,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_enum_type", member_names, member_count);
             }
             return (MemorySegment)mh$.invokeExact(member_names, member_count);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16262,7 +16674,7 @@ public class duckdb_h {
             duckdb_h.C_CHAR
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_decimal_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_decimal_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16309,6 +16721,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_decimal_type", width, scale);
             }
             return (MemorySegment)mh$.invokeExact(width, scale);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16320,7 +16734,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_type_id");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_type_id");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16367,6 +16781,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_type_id", type);
             }
             return (int)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16378,7 +16794,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_decimal_width");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_decimal_width");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16425,6 +16841,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_decimal_width", type);
             }
             return (byte)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16436,7 +16854,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_decimal_scale");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_decimal_scale");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16483,6 +16901,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_decimal_scale", type);
             }
             return (byte)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16494,7 +16914,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_decimal_internal_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_decimal_internal_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16541,6 +16961,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_decimal_internal_type", type);
             }
             return (int)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16552,7 +16974,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_enum_internal_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_enum_internal_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16599,6 +17021,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_enum_internal_type", type);
             }
             return (int)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16610,7 +17034,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_enum_dictionary_size");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_enum_dictionary_size");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16657,6 +17081,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_enum_dictionary_size", type);
             }
             return (int)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16669,7 +17095,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_enum_dictionary_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_enum_dictionary_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16716,6 +17142,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_enum_dictionary_value", type, index);
             }
             return (MemorySegment)mh$.invokeExact(type, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16727,7 +17155,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_list_type_child_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_list_type_child_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16774,6 +17202,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_list_type_child_type", type);
             }
             return (MemorySegment)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16785,7 +17215,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_array_type_child_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_array_type_child_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16832,6 +17262,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_array_type_child_type", type);
             }
             return (MemorySegment)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16843,7 +17275,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_array_type_array_size");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_array_type_array_size");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16890,6 +17322,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_array_type_array_size", type);
             }
             return (long)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16901,7 +17335,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_map_type_key_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_map_type_key_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -16948,6 +17382,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_map_type_key_type", type);
             }
             return (MemorySegment)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -16959,7 +17395,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_map_type_value_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_map_type_value_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17006,6 +17442,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_map_type_value_type", type);
             }
             return (MemorySegment)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17017,7 +17455,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_struct_type_child_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_struct_type_child_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17064,6 +17502,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_struct_type_child_count", type);
             }
             return (long)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17076,7 +17516,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_struct_type_child_name");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_struct_type_child_name");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17123,6 +17563,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_struct_type_child_name", type, index);
             }
             return (MemorySegment)mh$.invokeExact(type, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17135,7 +17577,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_struct_type_child_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_struct_type_child_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17182,6 +17624,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_struct_type_child_type", type, index);
             }
             return (MemorySegment)mh$.invokeExact(type, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17193,7 +17637,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_union_type_member_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_union_type_member_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17240,6 +17684,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_union_type_member_count", type);
             }
             return (long)mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17252,7 +17698,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_union_type_member_name");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_union_type_member_name");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17299,6 +17745,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_union_type_member_name", type, index);
             }
             return (MemorySegment)mh$.invokeExact(type, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17311,7 +17759,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_union_type_member_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_union_type_member_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17358,6 +17806,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_union_type_member_type", type, index);
             }
             return (MemorySegment)mh$.invokeExact(type, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17368,7 +17818,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_logical_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_logical_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17415,6 +17865,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_logical_type", type);
             }
             mh$.invokeExact(type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17428,7 +17880,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_register_logical_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_register_logical_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17475,6 +17927,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_register_logical_type", con, type, info);
             }
             return (int)mh$.invokeExact(con, type, info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17487,7 +17941,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_data_chunk");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_data_chunk");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17534,6 +17988,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_data_chunk", types, column_count);
             }
             return (MemorySegment)mh$.invokeExact(types, column_count);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17544,7 +18000,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_data_chunk");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_data_chunk");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17591,6 +18047,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_data_chunk", chunk);
             }
             mh$.invokeExact(chunk);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17601,7 +18059,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_data_chunk_reset");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_data_chunk_reset");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17648,6 +18106,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_data_chunk_reset", chunk);
             }
             mh$.invokeExact(chunk);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17659,7 +18119,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_data_chunk_get_column_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_data_chunk_get_column_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17706,6 +18166,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_data_chunk_get_column_count", chunk);
             }
             return (long)mh$.invokeExact(chunk);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17718,7 +18180,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_data_chunk_get_vector");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_data_chunk_get_vector");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17765,6 +18227,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_data_chunk_get_vector", chunk, col_idx);
             }
             return (MemorySegment)mh$.invokeExact(chunk, col_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17776,7 +18240,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_data_chunk_get_size");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_data_chunk_get_size");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17823,6 +18287,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_data_chunk_get_size", chunk);
             }
             return (long)mh$.invokeExact(chunk);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17834,7 +18300,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_data_chunk_set_size");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_data_chunk_set_size");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17881,6 +18347,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_data_chunk_set_size", chunk, size);
             }
             mh$.invokeExact(chunk, size);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17893,7 +18361,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_vector");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_vector");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17940,6 +18408,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_vector", type, capacity);
             }
             return (MemorySegment)mh$.invokeExact(type, capacity);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -17950,7 +18420,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_vector");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_vector");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -17997,6 +18467,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_vector", vector);
             }
             mh$.invokeExact(vector);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18008,7 +18480,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_vector_get_column_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_vector_get_column_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18055,6 +18527,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_vector_get_column_type", vector);
             }
             return (MemorySegment)mh$.invokeExact(vector);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18066,7 +18540,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_vector_get_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_vector_get_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18113,6 +18587,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_vector_get_data", vector);
             }
             return (MemorySegment)mh$.invokeExact(vector);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18124,7 +18600,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_vector_get_validity");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_vector_get_validity");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18171,6 +18647,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_vector_get_validity", vector);
             }
             return (MemorySegment)mh$.invokeExact(vector);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18181,7 +18659,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_vector_ensure_validity_writable");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_vector_ensure_validity_writable");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18228,6 +18706,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_vector_ensure_validity_writable", vector);
             }
             mh$.invokeExact(vector);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18240,7 +18720,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_vector_assign_string_element");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_vector_assign_string_element");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18287,6 +18767,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_vector_assign_string_element", vector, index, str);
             }
             mh$.invokeExact(vector, index, str);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18300,7 +18782,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_vector_assign_string_element_len");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_vector_assign_string_element_len");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18347,6 +18829,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_vector_assign_string_element_len", vector, index, str, str_len);
             }
             mh$.invokeExact(vector, index, str, str_len);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18358,7 +18842,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_list_vector_get_child");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_list_vector_get_child");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18405,6 +18889,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_list_vector_get_child", vector);
             }
             return (MemorySegment)mh$.invokeExact(vector);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18416,7 +18902,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_list_vector_get_size");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_list_vector_get_size");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18463,6 +18949,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_list_vector_get_size", vector);
             }
             return (long)mh$.invokeExact(vector);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18475,7 +18963,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_list_vector_set_size");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_list_vector_set_size");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18522,6 +19010,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_list_vector_set_size", vector, size);
             }
             return (int)mh$.invokeExact(vector, size);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18534,7 +19024,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_list_vector_reserve");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_list_vector_reserve");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18581,6 +19071,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_list_vector_reserve", vector, required_capacity);
             }
             return (int)mh$.invokeExact(vector, required_capacity);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18593,7 +19085,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_struct_vector_get_child");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_struct_vector_get_child");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18640,6 +19132,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_struct_vector_get_child", vector, index);
             }
             return (MemorySegment)mh$.invokeExact(vector, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18651,7 +19145,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_array_vector_get_child");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_array_vector_get_child");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18698,6 +19192,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_array_vector_get_child", vector);
             }
             return (MemorySegment)mh$.invokeExact(vector);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18710,7 +19206,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_slice_vector");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_slice_vector");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18757,6 +19253,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_slice_vector", vector, sel, len);
             }
             mh$.invokeExact(vector, sel, len);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18772,7 +19270,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_vector_copy_sel");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_vector_copy_sel");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18819,6 +19317,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_vector_copy_sel", src, dst, sel, src_count, src_offset, dst_offset);
             }
             mh$.invokeExact(src, dst, sel, src_count, src_offset, dst_offset);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18830,7 +19330,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_vector_reference_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_vector_reference_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18877,6 +19377,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_vector_reference_value", vector, value);
             }
             mh$.invokeExact(vector, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18888,7 +19390,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_vector_reference_vector");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_vector_reference_vector");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18935,6 +19437,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_vector_reference_vector", to_vector, from_vector);
             }
             mh$.invokeExact(to_vector, from_vector);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -18947,7 +19451,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_validity_row_is_valid");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_validity_row_is_valid");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -18994,6 +19498,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_validity_row_is_valid", validity, row);
             }
             return (boolean)mh$.invokeExact(validity, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19006,7 +19512,7 @@ public class duckdb_h {
             duckdb_h.C_BOOL
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_validity_set_row_validity");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_validity_set_row_validity");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19053,6 +19559,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_validity_set_row_validity", validity, row, valid);
             }
             mh$.invokeExact(validity, row, valid);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19064,7 +19572,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_validity_set_row_invalid");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_validity_set_row_invalid");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19111,6 +19619,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_validity_set_row_invalid", validity, row);
             }
             mh$.invokeExact(validity, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19122,7 +19632,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_validity_set_row_valid");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_validity_set_row_valid");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19169,6 +19679,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_validity_set_row_valid", validity, row);
             }
             mh$.invokeExact(validity, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19183,7 +19695,7 @@ public class duckdb_h {
     public static class duckdb_create_scalar_function {
         private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
                 duckdb_h.C_POINTER        );
-        private static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_scalar_function");
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_scalar_function");
 
         private final MethodHandle handle;
         private final FunctionDescriptor descriptor;
@@ -19249,7 +19761,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_scalar_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_scalar_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19296,6 +19808,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_scalar_function", scalar_function);
             }
             mh$.invokeExact(scalar_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19307,7 +19821,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_name");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_name");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19354,6 +19868,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_name", scalar_function, name);
             }
             mh$.invokeExact(scalar_function, name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19365,7 +19881,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_varargs");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_varargs");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19412,6 +19928,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_varargs", scalar_function, type);
             }
             mh$.invokeExact(scalar_function, type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19422,7 +19940,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_special_handling");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_special_handling");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19469,6 +19987,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_special_handling", scalar_function);
             }
             mh$.invokeExact(scalar_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19479,7 +19999,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_volatile");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_volatile");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19526,6 +20046,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_volatile", scalar_function);
             }
             mh$.invokeExact(scalar_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19537,7 +20059,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_add_parameter");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_add_parameter");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19584,6 +20106,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_add_parameter", scalar_function, type);
             }
             mh$.invokeExact(scalar_function, type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19595,7 +20119,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_return_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_return_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19642,6 +20166,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_return_type", scalar_function, type);
             }
             mh$.invokeExact(scalar_function, type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19654,7 +20180,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19701,6 +20227,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_extra_info", scalar_function, extra_info, destroy);
             }
             mh$.invokeExact(scalar_function, extra_info, destroy);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19712,7 +20240,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_bind");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_bind");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19759,6 +20287,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_bind", scalar_function, bind);
             }
             mh$.invokeExact(scalar_function, bind);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19771,7 +20301,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_bind_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_bind_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19818,6 +20348,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_bind_data", info, bind_data, destroy);
             }
             mh$.invokeExact(info, bind_data, destroy);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19829,7 +20361,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_bind_data_copy");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_bind_data_copy");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19876,6 +20408,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_bind_data_copy", info, copy);
             }
             mh$.invokeExact(info, copy);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19887,7 +20421,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_bind_set_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_bind_set_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19934,6 +20468,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_bind_set_error", info, error);
             }
             mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -19945,7 +20481,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -19992,6 +20528,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_function", scalar_function, function);
             }
             mh$.invokeExact(scalar_function, function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20004,7 +20542,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_register_scalar_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_register_scalar_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20051,6 +20589,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_register_scalar_function", con, scalar_function);
             }
             return (int)mh$.invokeExact(con, scalar_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20062,7 +20602,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_get_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_get_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20109,6 +20649,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_get_extra_info", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20120,7 +20662,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_bind_get_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_bind_get_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20167,6 +20709,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_bind_get_extra_info", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20178,7 +20722,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_get_bind_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_get_bind_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20225,6 +20769,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_get_bind_data", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20236,7 +20782,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_get_client_context");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_get_client_context");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20283,6 +20829,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_get_client_context", info, out_context);
             }
             mh$.invokeExact(info, out_context);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20294,7 +20842,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_set_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20341,6 +20889,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_set_error", info, error);
             }
             mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20352,7 +20902,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_scalar_function_set");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_scalar_function_set");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20399,6 +20949,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_scalar_function_set", name);
             }
             return (MemorySegment)mh$.invokeExact(name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20409,7 +20961,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_scalar_function_set");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_scalar_function_set");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20456,6 +21008,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_scalar_function_set", scalar_function_set);
             }
             mh$.invokeExact(scalar_function_set);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20468,7 +21022,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_add_scalar_function_to_set");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_add_scalar_function_to_set");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20515,6 +21069,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_add_scalar_function_to_set", set, function);
             }
             return (int)mh$.invokeExact(set, function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20527,7 +21083,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_register_scalar_function_set");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_register_scalar_function_set");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20574,6 +21130,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_register_scalar_function_set", con, set);
             }
             return (int)mh$.invokeExact(con, set);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20585,7 +21143,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_bind_get_argument_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_bind_get_argument_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20632,6 +21190,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_bind_get_argument_count", info);
             }
             return (long)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20644,7 +21204,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_scalar_function_bind_get_argument");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_bind_get_argument");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20691,6 +21251,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_scalar_function_bind_get_argument", info, index);
             }
             return (MemorySegment)mh$.invokeExact(info, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20702,7 +21264,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_selection_vector");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_selection_vector");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20749,6 +21311,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_selection_vector", size);
             }
             return (MemorySegment)mh$.invokeExact(size);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20759,7 +21323,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_selection_vector");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_selection_vector");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20806,6 +21370,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_selection_vector", sel);
             }
             mh$.invokeExact(sel);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20817,7 +21383,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_selection_vector_get_data_ptr");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_selection_vector_get_data_ptr");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20864,6 +21430,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_selection_vector_get_data_ptr", sel);
             }
             return (MemorySegment)mh$.invokeExact(sel);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -20878,7 +21446,7 @@ public class duckdb_h {
     public static class duckdb_create_aggregate_function {
         private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
                 duckdb_h.C_POINTER        );
-        private static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_aggregate_function");
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_aggregate_function");
 
         private final MethodHandle handle;
         private final FunctionDescriptor descriptor;
@@ -20944,7 +21512,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_aggregate_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_aggregate_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -20991,6 +21559,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_aggregate_function", aggregate_function);
             }
             mh$.invokeExact(aggregate_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21002,7 +21572,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_aggregate_function_set_name");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_aggregate_function_set_name");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21049,6 +21619,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_aggregate_function_set_name", aggregate_function, name);
             }
             mh$.invokeExact(aggregate_function, name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21060,7 +21632,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_aggregate_function_add_parameter");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_aggregate_function_add_parameter");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21107,6 +21679,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_aggregate_function_add_parameter", aggregate_function, type);
             }
             mh$.invokeExact(aggregate_function, type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21118,7 +21692,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_aggregate_function_set_return_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_aggregate_function_set_return_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21165,6 +21739,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_aggregate_function_set_return_type", aggregate_function, type);
             }
             mh$.invokeExact(aggregate_function, type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21180,7 +21756,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_aggregate_function_set_functions");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_aggregate_function_set_functions");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21227,6 +21803,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_aggregate_function_set_functions", aggregate_function, state_size, state_init, update, combine, finalize);
             }
             mh$.invokeExact(aggregate_function, state_size, state_init, update, combine, finalize);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21238,7 +21816,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_aggregate_function_set_destructor");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_aggregate_function_set_destructor");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21285,6 +21863,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_aggregate_function_set_destructor", aggregate_function, destroy);
             }
             mh$.invokeExact(aggregate_function, destroy);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21297,7 +21877,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_register_aggregate_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_register_aggregate_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21344,6 +21924,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_register_aggregate_function", con, aggregate_function);
             }
             return (int)mh$.invokeExact(con, aggregate_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21354,7 +21936,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_aggregate_function_set_special_handling");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_aggregate_function_set_special_handling");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21401,6 +21983,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_aggregate_function_set_special_handling", aggregate_function);
             }
             mh$.invokeExact(aggregate_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21413,7 +21997,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_aggregate_function_set_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_aggregate_function_set_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21460,6 +22044,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_aggregate_function_set_extra_info", aggregate_function, extra_info, destroy);
             }
             mh$.invokeExact(aggregate_function, extra_info, destroy);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21471,7 +22057,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_aggregate_function_get_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_aggregate_function_get_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21518,6 +22104,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_aggregate_function_get_extra_info", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21529,7 +22117,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_aggregate_function_set_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_aggregate_function_set_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21576,6 +22164,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_aggregate_function_set_error", info, error);
             }
             mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21587,7 +22177,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_aggregate_function_set");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_aggregate_function_set");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21634,6 +22224,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_aggregate_function_set", name);
             }
             return (MemorySegment)mh$.invokeExact(name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21644,7 +22236,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_aggregate_function_set");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_aggregate_function_set");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21691,6 +22283,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_aggregate_function_set", aggregate_function_set);
             }
             mh$.invokeExact(aggregate_function_set);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21703,7 +22297,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_add_aggregate_function_to_set");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_add_aggregate_function_to_set");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21750,6 +22344,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_add_aggregate_function_to_set", set, function);
             }
             return (int)mh$.invokeExact(set, function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21762,7 +22358,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_register_aggregate_function_set");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_register_aggregate_function_set");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21809,6 +22405,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_register_aggregate_function_set", con, set);
             }
             return (int)mh$.invokeExact(con, set);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21823,7 +22421,7 @@ public class duckdb_h {
     public static class duckdb_create_table_function {
         private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
                 duckdb_h.C_POINTER        );
-        private static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_table_function");
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_table_function");
 
         private final MethodHandle handle;
         private final FunctionDescriptor descriptor;
@@ -21889,7 +22487,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_table_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_table_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21936,6 +22534,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_table_function", table_function);
             }
             mh$.invokeExact(table_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -21947,7 +22547,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_function_set_name");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_set_name");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -21994,6 +22594,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_function_set_name", table_function, name);
             }
             mh$.invokeExact(table_function, name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22005,7 +22607,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_function_add_parameter");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_add_parameter");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22052,6 +22654,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_function_add_parameter", table_function, type);
             }
             mh$.invokeExact(table_function, type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22064,7 +22668,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_function_add_named_parameter");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_add_named_parameter");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22111,6 +22715,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_function_add_named_parameter", table_function, name, type);
             }
             mh$.invokeExact(table_function, name, type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22123,7 +22729,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_function_set_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_set_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22170,6 +22776,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_function_set_extra_info", table_function, extra_info, destroy);
             }
             mh$.invokeExact(table_function, extra_info, destroy);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22181,7 +22789,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_function_set_bind");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_set_bind");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22228,6 +22836,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_function_set_bind", table_function, bind);
             }
             mh$.invokeExact(table_function, bind);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22239,7 +22849,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_function_set_init");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_set_init");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22286,6 +22896,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_function_set_init", table_function, init);
             }
             mh$.invokeExact(table_function, init);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22297,7 +22909,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_function_set_local_init");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_set_local_init");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22344,6 +22956,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_function_set_local_init", table_function, init);
             }
             mh$.invokeExact(table_function, init);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22355,7 +22969,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_function_set_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_set_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22402,6 +23016,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_function_set_function", table_function, function);
             }
             mh$.invokeExact(table_function, function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22413,7 +23029,7 @@ public class duckdb_h {
             duckdb_h.C_BOOL
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_function_supports_projection_pushdown");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_supports_projection_pushdown");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22460,6 +23076,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_function_supports_projection_pushdown", table_function, pushdown);
             }
             mh$.invokeExact(table_function, pushdown);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22472,7 +23090,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_register_table_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_register_table_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22519,6 +23137,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_register_table_function", con, function);
             }
             return (int)mh$.invokeExact(con, function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22530,7 +23150,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_get_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_get_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22577,6 +23197,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_get_extra_info", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22588,7 +23210,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_function_get_client_context");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_get_client_context");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22635,6 +23257,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_function_get_client_context", info, out_context);
             }
             mh$.invokeExact(info, out_context);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22647,7 +23271,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_add_result_column");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_add_result_column");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22694,6 +23318,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_add_result_column", info, name, type);
             }
             mh$.invokeExact(info, name, type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22705,7 +23331,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_get_parameter_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_get_parameter_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22752,6 +23378,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_get_parameter_count", info);
             }
             return (long)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22764,7 +23392,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_get_parameter");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_get_parameter");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22811,6 +23439,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_get_parameter", info, index);
             }
             return (MemorySegment)mh$.invokeExact(info, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22823,7 +23453,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_get_named_parameter");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_get_named_parameter");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22870,6 +23500,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_get_named_parameter", info, name);
             }
             return (MemorySegment)mh$.invokeExact(info, name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22882,7 +23514,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_set_bind_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_set_bind_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22929,6 +23561,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_set_bind_data", info, bind_data, destroy);
             }
             mh$.invokeExact(info, bind_data, destroy);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22941,7 +23575,7 @@ public class duckdb_h {
             duckdb_h.C_BOOL
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_set_cardinality");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_set_cardinality");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -22988,6 +23622,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_set_cardinality", info, cardinality, is_exact);
             }
             mh$.invokeExact(info, cardinality, is_exact);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -22999,7 +23635,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_bind_set_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_bind_set_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23046,6 +23682,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_bind_set_error", info, error);
             }
             mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23057,7 +23695,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_init_get_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_init_get_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23104,6 +23742,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_init_get_extra_info", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23115,7 +23755,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_init_get_bind_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_init_get_bind_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23162,6 +23802,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_init_get_bind_data", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23174,7 +23816,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_init_set_init_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_init_set_init_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23221,6 +23863,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_init_set_init_data", info, init_data, destroy);
             }
             mh$.invokeExact(info, init_data, destroy);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23232,7 +23876,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_init_get_column_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_init_get_column_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23279,6 +23923,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_init_get_column_count", info);
             }
             return (long)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23291,7 +23937,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_init_get_column_index");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_init_get_column_index");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23338,6 +23984,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_init_get_column_index", info, column_index);
             }
             return (long)mh$.invokeExact(info, column_index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23349,7 +23997,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_init_set_max_threads");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_init_set_max_threads");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23396,6 +24044,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_init_set_max_threads", info, max_threads);
             }
             mh$.invokeExact(info, max_threads);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23407,7 +24057,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_init_set_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_init_set_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23454,6 +24104,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_init_set_error", info, error);
             }
             mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23465,7 +24117,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_function_get_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_function_get_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23512,6 +24164,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_function_get_extra_info", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23523,7 +24177,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_function_get_bind_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_function_get_bind_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23570,6 +24224,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_function_get_bind_data", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23581,7 +24237,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_function_get_init_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_function_get_init_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23628,6 +24284,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_function_get_init_data", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23639,7 +24297,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_function_get_local_init_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_function_get_local_init_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23686,6 +24344,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_function_get_local_init_data", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23697,7 +24357,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_function_set_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_function_set_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23744,6 +24404,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_function_set_error", info, error);
             }
             mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23757,7 +24419,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_add_replacement_scan");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_add_replacement_scan");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23804,6 +24466,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_add_replacement_scan", db, replacement, extra_data, delete_callback);
             }
             mh$.invokeExact(db, replacement, extra_data, delete_callback);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23815,7 +24479,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_replacement_scan_set_function_name");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_replacement_scan_set_function_name");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23862,6 +24526,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_replacement_scan_set_function_name", info, function_name);
             }
             mh$.invokeExact(info, function_name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23873,7 +24539,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_replacement_scan_add_parameter");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_replacement_scan_add_parameter");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23920,6 +24586,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_replacement_scan_add_parameter", info, parameter);
             }
             mh$.invokeExact(info, parameter);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23931,7 +24599,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_replacement_scan_set_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_replacement_scan_set_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -23978,6 +24646,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_replacement_scan_set_error", info, error);
             }
             mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -23989,7 +24659,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_get_profiling_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_get_profiling_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24036,6 +24706,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_get_profiling_info", connection);
             }
             return (MemorySegment)mh$.invokeExact(connection);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24048,7 +24720,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_profiling_info_get_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_profiling_info_get_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24095,6 +24767,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_profiling_info_get_value", info, key);
             }
             return (MemorySegment)mh$.invokeExact(info, key);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24106,7 +24780,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_profiling_info_get_metrics");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_profiling_info_get_metrics");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24153,6 +24827,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_profiling_info_get_metrics", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24164,7 +24840,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_profiling_info_get_child_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_profiling_info_get_child_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24211,6 +24887,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_profiling_info_get_child_count", info);
             }
             return (long)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24223,7 +24901,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_profiling_info_get_child");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_profiling_info_get_child");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24270,6 +24948,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_profiling_info_get_child", info, index);
             }
             return (MemorySegment)mh$.invokeExact(info, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24284,7 +24964,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_create");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_create");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24331,6 +25011,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_create", connection, schema, table, out_appender);
             }
             return (int)mh$.invokeExact(connection, schema, table, out_appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24346,7 +25028,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_create_ext");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_create_ext");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24393,6 +25075,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_create_ext", connection, catalog, schema, table, out_appender);
             }
             return (int)mh$.invokeExact(connection, catalog, schema, table, out_appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24410,7 +25094,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_create_query");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_create_query");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24457,6 +25141,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_create_query", connection, query, column_count, types, table_name, column_names, out_appender);
             }
             return (int)mh$.invokeExact(connection, query, column_count, types, table_name, column_names, out_appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24468,7 +25154,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_column_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_column_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24515,6 +25201,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_column_count", appender);
             }
             return (long)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24527,7 +25215,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_column_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_column_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24574,6 +25262,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_column_type", appender, col_idx);
             }
             return (MemorySegment)mh$.invokeExact(appender, col_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24585,7 +25275,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24632,6 +25322,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_error", appender);
             }
             return (MemorySegment)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24643,7 +25335,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_error_data");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_error_data");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24690,6 +25382,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_error_data", appender);
             }
             return (MemorySegment)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24701,7 +25395,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_flush");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_flush");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24748,6 +25442,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_flush", appender);
             }
             return (int)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24759,7 +25455,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_close");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_close");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24806,6 +25502,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_close", appender);
             }
             return (int)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24817,7 +25515,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_destroy");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_destroy");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24864,6 +25562,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_destroy", appender);
             }
             return (int)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24876,7 +25576,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_add_column");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_add_column");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24923,6 +25623,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_add_column", appender, name);
             }
             return (int)mh$.invokeExact(appender, name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24934,7 +25636,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_clear_columns");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_clear_columns");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -24981,6 +25683,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_clear_columns", appender);
             }
             return (int)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -24992,7 +25696,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_begin_row");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_begin_row");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25039,6 +25743,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_begin_row", appender);
             }
             return (int)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25050,7 +25756,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_appender_end_row");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_end_row");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25097,6 +25803,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_appender_end_row", appender);
             }
             return (int)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25108,7 +25816,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_default");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_default");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25155,6 +25863,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_default", appender);
             }
             return (int)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25169,7 +25879,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_default_to_chunk");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_default_to_chunk");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25216,6 +25926,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_default_to_chunk", appender, chunk, col, row);
             }
             return (int)mh$.invokeExact(appender, chunk, col, row);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25228,7 +25940,7 @@ public class duckdb_h {
             duckdb_h.C_BOOL
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_bool");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_bool");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25275,6 +25987,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_bool", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25287,7 +26001,7 @@ public class duckdb_h {
             duckdb_h.C_CHAR
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_int8");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_int8");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25334,6 +26048,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_int8", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25346,7 +26062,7 @@ public class duckdb_h {
             duckdb_h.C_SHORT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_int16");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_int16");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25393,6 +26109,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_int16", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25405,7 +26123,7 @@ public class duckdb_h {
             duckdb_h.C_INT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_int32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_int32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25452,6 +26170,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_int32", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25464,7 +26184,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_int64");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_int64");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25511,6 +26231,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_int64", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25523,7 +26245,7 @@ public class duckdb_h {
             duckdb_hugeint.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_hugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_hugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25570,6 +26292,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_hugeint", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25582,7 +26306,7 @@ public class duckdb_h {
             duckdb_h.C_CHAR
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_uint8");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_uint8");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25629,6 +26353,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_uint8", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25641,7 +26367,7 @@ public class duckdb_h {
             duckdb_h.C_SHORT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_uint16");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_uint16");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25688,6 +26414,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_uint16", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25700,7 +26428,7 @@ public class duckdb_h {
             duckdb_h.C_INT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_uint32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_uint32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25747,6 +26475,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_uint32", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25759,7 +26489,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_uint64");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_uint64");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25806,6 +26536,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_uint64", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25818,7 +26550,7 @@ public class duckdb_h {
             duckdb_uhugeint.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_uhugeint");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_uhugeint");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25865,6 +26597,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_uhugeint", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25877,7 +26611,7 @@ public class duckdb_h {
             duckdb_h.C_FLOAT
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_float");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_float");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25924,6 +26658,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_float", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25936,7 +26672,7 @@ public class duckdb_h {
             duckdb_h.C_DOUBLE
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_double");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_double");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -25983,6 +26719,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_double", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -25995,7 +26733,7 @@ public class duckdb_h {
             duckdb_date.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_date");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_date");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26042,6 +26780,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_date", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26054,7 +26794,7 @@ public class duckdb_h {
             duckdb_time.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_time");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_time");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26101,6 +26841,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_time", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26113,7 +26855,7 @@ public class duckdb_h {
             duckdb_timestamp.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_timestamp");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_timestamp");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26160,6 +26902,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_timestamp", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26172,7 +26916,7 @@ public class duckdb_h {
             duckdb_interval.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_interval");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_interval");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26219,6 +26963,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_interval", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26231,7 +26977,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_varchar");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_varchar");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26278,6 +27024,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_varchar", appender, val);
             }
             return (int)mh$.invokeExact(appender, val);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26291,7 +27039,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_varchar_length");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_varchar_length");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26338,6 +27086,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_varchar_length", appender, val, length);
             }
             return (int)mh$.invokeExact(appender, val, length);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26351,7 +27101,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_blob");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_blob");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26398,6 +27148,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_blob", appender, data, length);
             }
             return (int)mh$.invokeExact(appender, data, length);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26409,7 +27161,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_null");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_null");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26456,6 +27208,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_null", appender);
             }
             return (int)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26468,7 +27222,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_value");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_value");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26515,6 +27269,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_value", appender, value);
             }
             return (int)mh$.invokeExact(appender, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26527,7 +27283,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_append_data_chunk");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_append_data_chunk");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26574,6 +27330,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_append_data_chunk", appender, chunk);
             }
             return (int)mh$.invokeExact(appender, chunk);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26588,7 +27346,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_description_create");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_description_create");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26635,6 +27393,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_description_create", connection, schema, table, out);
             }
             return (int)mh$.invokeExact(connection, schema, table, out);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26650,7 +27410,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_description_create_ext");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_description_create_ext");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26697,6 +27457,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_description_create_ext", connection, catalog, schema, table, out);
             }
             return (int)mh$.invokeExact(connection, catalog, schema, table, out);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26707,7 +27469,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_description_destroy");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_description_destroy");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26754,6 +27516,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_description_destroy", table_description);
             }
             mh$.invokeExact(table_description);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26765,7 +27529,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_description_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_description_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26812,6 +27576,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_description_error", table_description);
             }
             return (MemorySegment)mh$.invokeExact(table_description);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26825,7 +27591,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_column_has_default");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_column_has_default");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26872,6 +27638,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_column_has_default", table_description, index, out);
             }
             return (int)mh$.invokeExact(table_description, index, out);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26884,7 +27652,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_table_description_get_column_name");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_description_get_column_name");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26931,6 +27699,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_table_description_get_column_name", table_description, index);
             }
             return (MemorySegment)mh$.invokeExact(table_description, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -26946,7 +27716,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_to_arrow_schema");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_to_arrow_schema");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -26993,6 +27763,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_to_arrow_schema", arrow_options, types, names, column_count, out_schema);
             }
             return (MemorySegment)mh$.invokeExact(arrow_options, types, names, column_count, out_schema);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27006,7 +27778,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_data_chunk_to_arrow");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_data_chunk_to_arrow");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27053,6 +27825,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_data_chunk_to_arrow", arrow_options, chunk, out_arrow_array);
             }
             return (MemorySegment)mh$.invokeExact(arrow_options, chunk, out_arrow_array);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27066,7 +27840,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_schema_from_arrow");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_schema_from_arrow");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27113,6 +27887,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_schema_from_arrow", connection, schema, out_types);
             }
             return (MemorySegment)mh$.invokeExact(connection, schema, out_types);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27127,7 +27903,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_data_chunk_from_arrow");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_data_chunk_from_arrow");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27174,6 +27950,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_data_chunk_from_arrow", connection, arrow_array, converted_schema, out_chunk);
             }
             return (MemorySegment)mh$.invokeExact(connection, arrow_array, converted_schema, out_chunk);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27184,7 +27962,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_arrow_converted_schema");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_arrow_converted_schema");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27231,6 +28009,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_arrow_converted_schema", arrow_converted_schema);
             }
             mh$.invokeExact(arrow_converted_schema);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27244,7 +28024,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_query_arrow");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_query_arrow");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27291,6 +28071,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_query_arrow", connection, query, out_result);
             }
             return (int)mh$.invokeExact(connection, query, out_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27303,7 +28085,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_query_arrow_schema");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_query_arrow_schema");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27350,6 +28132,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_query_arrow_schema", result, out_schema);
             }
             return (int)mh$.invokeExact(result, out_schema);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27362,7 +28146,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_prepared_arrow_schema");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_prepared_arrow_schema");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27409,6 +28193,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_prepared_arrow_schema", prepared, out_schema);
             }
             return (int)mh$.invokeExact(prepared, out_schema);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27421,7 +28207,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_result_arrow_array");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_result_arrow_array");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27468,6 +28254,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_result_arrow_array", result, chunk, out_array);
             }
             mh$.invokeExact(result, chunk, out_array);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27480,7 +28268,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_query_arrow_array");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_query_arrow_array");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27527,6 +28315,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_query_arrow_array", result, out_array);
             }
             return (int)mh$.invokeExact(result, out_array);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27538,7 +28328,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_arrow_column_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_arrow_column_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27585,6 +28375,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_arrow_column_count", result);
             }
             return (long)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27596,7 +28388,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_arrow_row_count");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_arrow_row_count");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27643,6 +28435,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_arrow_row_count", result);
             }
             return (long)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27654,7 +28448,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_arrow_rows_changed");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_arrow_rows_changed");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27701,6 +28495,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_arrow_rows_changed", result);
             }
             return (long)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27712,7 +28508,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_query_arrow_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_query_arrow_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27759,6 +28555,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_query_arrow_error", result);
             }
             return (MemorySegment)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27769,7 +28567,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_arrow");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_arrow");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27816,6 +28614,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_arrow", result);
             }
             mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27826,7 +28626,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_arrow_stream");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_arrow_stream");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27873,6 +28673,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_arrow_stream", stream_p);
             }
             mh$.invokeExact(stream_p);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27885,7 +28687,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_execute_prepared_arrow");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_execute_prepared_arrow");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27932,6 +28734,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_execute_prepared_arrow", prepared_statement, out_result);
             }
             return (int)mh$.invokeExact(prepared_statement, out_result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -27945,7 +28749,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_arrow_scan");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_arrow_scan");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -27992,6 +28796,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_arrow_scan", connection, table_name, arrow);
             }
             return (int)mh$.invokeExact(connection, table_name, arrow);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28007,7 +28813,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_arrow_array_scan");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_arrow_array_scan");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28054,6 +28860,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_arrow_array_scan", connection, table_name, arrow_schema, arrow_array, out_stream);
             }
             return (int)mh$.invokeExact(connection, table_name, arrow_schema, arrow_array, out_stream);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28065,7 +28873,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_execute_tasks");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_execute_tasks");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28112,6 +28920,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_execute_tasks", database, max_tasks);
             }
             mh$.invokeExact(database, max_tasks);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28123,7 +28933,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_task_state");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_task_state");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28170,6 +28980,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_create_task_state", database);
             }
             return (MemorySegment)mh$.invokeExact(database);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28180,7 +28992,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_execute_tasks_state");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_execute_tasks_state");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28227,6 +29039,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_execute_tasks_state", state);
             }
             mh$.invokeExact(state);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28239,7 +29053,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_execute_n_tasks_state");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_execute_n_tasks_state");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28286,6 +29100,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_execute_n_tasks_state", state, max_tasks);
             }
             return (long)mh$.invokeExact(state, max_tasks);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28296,7 +29112,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_finish_execution");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_finish_execution");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28343,6 +29159,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_finish_execution", state);
             }
             mh$.invokeExact(state);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28354,7 +29172,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_task_state_is_finished");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_task_state_is_finished");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28401,6 +29219,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_task_state_is_finished", state);
             }
             return (boolean)mh$.invokeExact(state);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28411,7 +29231,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_task_state");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_task_state");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28458,6 +29278,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_task_state", state);
             }
             mh$.invokeExact(state);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28469,7 +29291,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_execution_is_finished");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_execution_is_finished");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28516,6 +29338,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_execution_is_finished", con);
             }
             return (boolean)mh$.invokeExact(con);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28527,7 +29351,7 @@ public class duckdb_h {
             duckdb_result.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_stream_fetch_chunk");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_stream_fetch_chunk");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28574,6 +29398,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_stream_fetch_chunk", result);
             }
             return (MemorySegment)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28585,7 +29411,7 @@ public class duckdb_h {
             duckdb_result.layout()
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_fetch_chunk");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_fetch_chunk");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28632,6 +29458,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_fetch_chunk", result);
             }
             return (MemorySegment)mh$.invokeExact(result);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28646,7 +29474,7 @@ public class duckdb_h {
     public static class duckdb_create_cast_function {
         private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
                 duckdb_h.C_POINTER        );
-        private static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_create_cast_function");
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_cast_function");
 
         private final MethodHandle handle;
         private final FunctionDescriptor descriptor;
@@ -28713,7 +29541,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_cast_function_set_source_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_cast_function_set_source_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28760,6 +29588,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_cast_function_set_source_type", cast_function, source_type);
             }
             mh$.invokeExact(cast_function, source_type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28771,7 +29601,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_cast_function_set_target_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_cast_function_set_target_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28818,6 +29648,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_cast_function_set_target_type", cast_function, target_type);
             }
             mh$.invokeExact(cast_function, target_type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28829,7 +29661,7 @@ public class duckdb_h {
             duckdb_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_cast_function_set_implicit_cast_cost");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_cast_function_set_implicit_cast_cost");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28876,6 +29708,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_cast_function_set_implicit_cast_cost", cast_function, cost);
             }
             mh$.invokeExact(cast_function, cost);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28887,7 +29721,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_cast_function_set_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_cast_function_set_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28934,6 +29768,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_cast_function_set_function", cast_function, function);
             }
             mh$.invokeExact(cast_function, function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -28946,7 +29782,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_cast_function_set_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_cast_function_set_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -28993,6 +29829,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_cast_function_set_extra_info", cast_function, extra_info, destroy);
             }
             mh$.invokeExact(cast_function, extra_info, destroy);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -29004,7 +29842,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_cast_function_get_extra_info");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_cast_function_get_extra_info");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -29051,6 +29889,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_cast_function_get_extra_info", info);
             }
             return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -29062,7 +29902,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_cast_function_get_cast_mode");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_cast_function_get_cast_mode");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -29109,6 +29949,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_cast_function_get_cast_mode", info);
             }
             return (int)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -29120,7 +29962,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_cast_function_set_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_cast_function_set_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -29167,6 +30009,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_cast_function_set_error", info, error);
             }
             mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -29180,7 +30024,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_cast_function_set_row_error");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_cast_function_set_row_error");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -29227,6 +30071,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_cast_function_set_row_error", info, error, row, output);
             }
             mh$.invokeExact(info, error, row, output);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -29239,7 +30085,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_register_cast_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_register_cast_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -29286,6 +30132,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_register_cast_function", con, cast_function);
             }
             return (int)mh$.invokeExact(con, cast_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -29296,7 +30144,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_cast_function");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_cast_function");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -29343,6 +30191,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_cast_function", cast_function);
             }
             mh$.invokeExact(cast_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -29353,7 +30203,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_destroy_expression");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_expression");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -29400,6 +30250,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_destroy_expression", expr);
             }
             mh$.invokeExact(expr);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -29411,7 +30263,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_expression_return_type");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_expression_return_type");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -29458,6 +30310,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_expression_return_type", expr);
             }
             return (MemorySegment)mh$.invokeExact(expr);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -29469,7 +30323,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_expression_is_foldable");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_expression_is_foldable");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -29516,6 +30370,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_expression_is_foldable", expr);
             }
             return (boolean)mh$.invokeExact(expr);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -29529,7 +30385,7 @@ public class duckdb_h {
             duckdb_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = duckdb_h.findOrThrow("duckdb_expression_fold");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_expression_fold");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -29576,6 +30432,8 @@ public class duckdb_h {
                 traceDowncall("duckdb_expression_fold", context, expr, out_value);
             }
             return (MemorySegment)mh$.invokeExact(context, expr, out_value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }

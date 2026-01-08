@@ -4,7 +4,10 @@ package mau.duckdbffi.jextractffi;
 
 import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
@@ -116,7 +119,7 @@ public class duckdb_string_t {
                 return length$LAYOUT;
             }
 
-            private static final long length$OFFSET = 0;
+            private static final long length$OFFSET = $LAYOUT.byteOffset(groupElement("length"));
 
             /**
              * Offset for field:
@@ -160,7 +163,7 @@ public class duckdb_string_t {
                 return prefix$LAYOUT;
             }
 
-            private static final long prefix$OFFSET = 4;
+            private static final long prefix$OFFSET = $LAYOUT.byteOffset(groupElement("prefix"));
 
             /**
              * Offset for field:
@@ -192,7 +195,7 @@ public class duckdb_string_t {
                 MemorySegment.copy(fieldValue, 0L, struct, prefix$OFFSET, prefix$LAYOUT.byteSize());
             }
 
-            private static final long[] prefix$DIMS = { 4 };
+            private static long[] prefix$DIMS = { 4 };
 
             /**
              * Dimensions for array field:
@@ -212,7 +215,7 @@ public class duckdb_string_t {
              * }
              */
             public static byte prefix(MemorySegment struct, long index0) {
-                return (byte)prefix$ELEM_HANDLE.get(struct, 0L, index0);
+                return (byte)prefix$ELEM_HANDLE.get(struct, prefix$OFFSET, index0);
             }
 
             /**
@@ -222,7 +225,7 @@ public class duckdb_string_t {
              * }
              */
             public static void prefix(MemorySegment struct, long index0, byte fieldValue) {
-                prefix$ELEM_HANDLE.set(struct, 0L, index0, fieldValue);
+                prefix$ELEM_HANDLE.set(struct, prefix$OFFSET, index0, fieldValue);
             }
 
             private static final AddressLayout ptr$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("ptr"));
@@ -237,7 +240,7 @@ public class duckdb_string_t {
                 return ptr$LAYOUT;
             }
 
-            private static final long ptr$OFFSET = 8;
+            private static final long ptr$OFFSET = $LAYOUT.byteOffset(groupElement("ptr"));
 
             /**
              * Offset for field:
@@ -330,7 +333,7 @@ public class duckdb_string_t {
             return pointer$LAYOUT;
         }
 
-        private static final long pointer$OFFSET = 0;
+        private static final long pointer$OFFSET = $LAYOUT.byteOffset(groupElement("pointer"));
 
         /**
          * Offset for field:
@@ -412,7 +415,7 @@ public class duckdb_string_t {
                 return length$LAYOUT;
             }
 
-            private static final long length$OFFSET = 0;
+            private static final long length$OFFSET = $LAYOUT.byteOffset(groupElement("length"));
 
             /**
              * Offset for field:
@@ -456,7 +459,7 @@ public class duckdb_string_t {
                 return inlined$LAYOUT;
             }
 
-            private static final long inlined$OFFSET = 4;
+            private static final long inlined$OFFSET = $LAYOUT.byteOffset(groupElement("inlined"));
 
             /**
              * Offset for field:
@@ -488,7 +491,7 @@ public class duckdb_string_t {
                 MemorySegment.copy(fieldValue, 0L, struct, inlined$OFFSET, inlined$LAYOUT.byteSize());
             }
 
-            private static final long[] inlined$DIMS = { 12 };
+            private static long[] inlined$DIMS = { 12 };
 
             /**
              * Dimensions for array field:
@@ -508,7 +511,7 @@ public class duckdb_string_t {
              * }
              */
             public static byte inlined(MemorySegment struct, long index0) {
-                return (byte)inlined$ELEM_HANDLE.get(struct, 0L, index0);
+                return (byte)inlined$ELEM_HANDLE.get(struct, inlined$OFFSET, index0);
             }
 
             /**
@@ -518,7 +521,7 @@ public class duckdb_string_t {
              * }
              */
             public static void inlined(MemorySegment struct, long index0, byte fieldValue) {
-                inlined$ELEM_HANDLE.set(struct, 0L, index0, fieldValue);
+                inlined$ELEM_HANDLE.set(struct, inlined$OFFSET, index0, fieldValue);
             }
 
             /**
@@ -581,7 +584,7 @@ public class duckdb_string_t {
             return inlined$LAYOUT;
         }
 
-        private static final long inlined$OFFSET = 0;
+        private static final long inlined$OFFSET = $LAYOUT.byteOffset(groupElement("inlined"));
 
         /**
          * Offset for field:
@@ -689,7 +692,7 @@ public class duckdb_string_t {
         return value$LAYOUT;
     }
 
-    private static final long value$OFFSET = 0;
+    private static final long value$OFFSET = $LAYOUT.byteOffset(groupElement("value"));
 
     /**
      * Offset for field:

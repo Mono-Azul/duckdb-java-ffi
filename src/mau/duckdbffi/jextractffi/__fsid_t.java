@@ -4,8 +4,12 @@ package mau.duckdbffi.jextractffi;
 
 import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
+import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 /**
@@ -44,7 +48,7 @@ public class __fsid_t {
         return __val$LAYOUT;
     }
 
-    private static final long __val$OFFSET = 0;
+    private static final long __val$OFFSET = $LAYOUT.byteOffset(groupElement("__val"));
 
     /**
      * Offset for field:
@@ -76,7 +80,7 @@ public class __fsid_t {
         MemorySegment.copy(fieldValue, 0L, struct, __val$OFFSET, __val$LAYOUT.byteSize());
     }
 
-    private static final long[] __val$DIMS = { 2 };
+    private static long[] __val$DIMS = { 2 };
 
     /**
      * Dimensions for array field:
@@ -96,7 +100,7 @@ public class __fsid_t {
      * }
      */
     public static int __val(MemorySegment struct, long index0) {
-        return (int)__val$ELEM_HANDLE.get(struct, 0L, index0);
+        return (int)__val$ELEM_HANDLE.get(struct, __val$OFFSET, index0);
     }
 
     /**
@@ -106,7 +110,7 @@ public class __fsid_t {
      * }
      */
     public static void __val(MemorySegment struct, long index0, int fieldValue) {
-        __val$ELEM_HANDLE.set(struct, 0L, index0, fieldValue);
+        __val$ELEM_HANDLE.set(struct, __val$OFFSET, index0, fieldValue);
     }
 
     /**

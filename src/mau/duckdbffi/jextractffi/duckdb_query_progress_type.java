@@ -2,8 +2,12 @@
 
 package mau.duckdbffi.jextractffi;
 
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
@@ -48,7 +52,7 @@ public class duckdb_query_progress_type {
         return percentage$LAYOUT;
     }
 
-    private static final long percentage$OFFSET = 0;
+    private static final long percentage$OFFSET = $LAYOUT.byteOffset(groupElement("percentage"));
 
     /**
      * Offset for field:
@@ -92,7 +96,7 @@ public class duckdb_query_progress_type {
         return rows_processed$LAYOUT;
     }
 
-    private static final long rows_processed$OFFSET = 8;
+    private static final long rows_processed$OFFSET = $LAYOUT.byteOffset(groupElement("rows_processed"));
 
     /**
      * Offset for field:
@@ -136,7 +140,7 @@ public class duckdb_query_progress_type {
         return total_rows_to_process$LAYOUT;
     }
 
-    private static final long total_rows_to_process$OFFSET = 16;
+    private static final long total_rows_to_process$OFFSET = $LAYOUT.byteOffset(groupElement("total_rows_to_process"));
 
     /**
      * Offset for field:

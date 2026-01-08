@@ -2,8 +2,12 @@
 
 package mau.duckdbffi.jextractffi;
 
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
@@ -51,7 +55,7 @@ public class duckdb_time_struct {
         return hour$LAYOUT;
     }
 
-    private static final long hour$OFFSET = 0;
+    private static final long hour$OFFSET = $LAYOUT.byteOffset(groupElement("hour"));
 
     /**
      * Offset for field:
@@ -95,7 +99,7 @@ public class duckdb_time_struct {
         return min$LAYOUT;
     }
 
-    private static final long min$OFFSET = 1;
+    private static final long min$OFFSET = $LAYOUT.byteOffset(groupElement("min"));
 
     /**
      * Offset for field:
@@ -139,7 +143,7 @@ public class duckdb_time_struct {
         return sec$LAYOUT;
     }
 
-    private static final long sec$OFFSET = 2;
+    private static final long sec$OFFSET = $LAYOUT.byteOffset(groupElement("sec"));
 
     /**
      * Offset for field:
@@ -183,7 +187,7 @@ public class duckdb_time_struct {
         return micros$LAYOUT;
     }
 
-    private static final long micros$OFFSET = 4;
+    private static final long micros$OFFSET = $LAYOUT.byteOffset(groupElement("micros"));
 
     /**
      * Offset for field:
