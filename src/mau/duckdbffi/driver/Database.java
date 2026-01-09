@@ -18,7 +18,7 @@
 
 package mau.duckdbffi.driver;
 
-import mau.duckdbffi.jextractffi.duckdb_h;
+import mau.duckdbffi.jextractffi._duckdb_database;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,15 +102,13 @@ public class Database implements AutoCloseable
     private final String DatabaseFileName;
     private final Arena DatabaseArena;
     private final MemorySegment DuckDbDatabase;
-    private final MemorySegment DuckDbDatabasePtr; // _duckdb_database
+    private final MemorySegment DuckDbDatabasePtr;
 
     public Database(String DatabaseFileName) throws DuckDbException
     {
         DatabaseArena = Arena.ofShared();
-        //DuckDbDatabasePtr = DatabaseArena.allocate(duckdb_database);
 
-        // There could be problems with double freeing otherwise
-        DuckDbDatabasePtr = DatabaseArena.allocate(8).reinterpret(DatabaseArena, duckdb_h::duckdb_close);
+        DuckDbDatabasePtr = _duckdb_database.allocate(DatabaseArena);
 
         // Move DB file name into MemorySegment
         MemorySegment DbFileNameNative = DatabaseArena.allocateFrom(DatabaseFileName);
@@ -122,11 +120,11 @@ public class Database implements AutoCloseable
         if (duckDbState == DuckDBError())
         {
             String DuckDbErrorMsg = ErrorMessagePtr.get(C_POINTER, 0).getString(0);
-            MemorySegment ErrorMessagePtrFree = ErrorMessagePtr.reinterpret(DatabaseArena, duckdb_h::duckdb_free);
+            duckdb_free(ErrorMessagePtr);
             throw new DuckDbException(DuckDbErrorMsg);
         }
 
-        DuckDbDatabase = DuckDbDatabasePtr.get(C_POINTER, 0);
+        DuckDbDatabase = DuckDbDatabasePtr.get(duckdb_database, 0);
     }
 
     public Connection getConnection() throws DuckDbException
@@ -139,6 +137,7 @@ public class Database implements AutoCloseable
     {
         try
         {
+            duckdb_close(DuckDbDatabasePtr);
             DatabaseArena.close();
         } catch (Exception e)
         {

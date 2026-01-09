@@ -37,24 +37,25 @@ public class PreparedStatement implements AutoCloseable
 {
     private final Arena PreparedStatementArena;
     private final MemorySegment PreparedStmtSegment;
+    private final MemorySegment PreparedStmtSegmentPtr;
     private final String ErrorMessage;
 
     public PreparedStatement(MemorySegment DuckDbConnection, String sql)
     {
         PreparedStatementArena = Arena.ofConfined();
 
-        MemorySegment PreparedStmtSegmentPtr = PreparedStatementArena.allocate(8)
-                .reinterpret(PreparedStatementArena, duckdb_h::duckdb_destroy_prepare);
+        PreparedStmtSegmentPtr = PreparedStatementArena.allocate(C_POINTER);
+
         int duckDbState = duckdb_prepare(DuckDbConnection, PreparedStatementArena.allocateFrom(sql)
                 , PreparedStmtSegmentPtr);
 
-        this.PreparedStmtSegment = PreparedStmtSegmentPtr.get(C_POINTER, 0);
+        this.PreparedStmtSegment = PreparedStmtSegmentPtr.get(duckdb_prepared_statement, 0);
         String ErrorMessage = null;
 
         if (duckDbState == DuckDBError())
         {
             System.out.println("Error preparing query: " + sql);
-            ErrorMessage = duckdb_prepare_error(PreparedStmtSegment).getString(0);
+            ErrorMessage = duckdb_prepare_error(PreparedStmtSegmentPtr).getString(0);
         }
         this.ErrorMessage = ErrorMessage;
     }
@@ -89,19 +90,27 @@ public class PreparedStatement implements AutoCloseable
         try (Arena ResultArena = Arena.ofConfined())
         {
             // Create duckdb_result struct
-            MemorySegment DuckDbResult = ResultArena.allocate(duckdb_result.sizeof())
-                    .reinterpret(ResultArena, duckdb_h::duckdb_destroy_result);
-            MemorySegment DuckDbResultPtr = MemorySegment.ofAddress(DuckDbResult.address());
+            MemorySegment DuckDbResult = duckdb_result.allocate(ResultArena);
 
-            int duckDbState = duckdb_execute_prepared(PreparedStmtSegment, DuckDbResultPtr);
+            int duckDbState = duckdb_execute_prepared(PreparedStmtSegment, DuckDbResult);
 
             if (duckDbState == DuckDBError())
             {
-                String ErrorMessage = duckdb_result_error(DuckDbResultPtr).getString(0);
-                Integer ErrorNumber = duckdb_result_error_type(DuckDbResultPtr);
+                String ErrorMessage = duckdb_result_error(DuckDbResult).getString(0);
+                Integer ErrorNumber = duckdb_result_error_type(DuckDbResult);
+
+                // Destroy result before closing the Arena
+                duckdb_destroy_result(DuckDbResult);
+
                 return new Result(ErrorMessage, ErrorNumber);
             }
-            return new Result(DuckDbResultPtr, DuckDbResult, primitivesAsObjects);
+
+            var tmpResult = new Result(DuckDbResult, primitivesAsObjects);
+
+            // Destroy result before closing the Arena
+            duckdb_destroy_result(DuckDbResult);
+
+            return tmpResult;
         }
     }
 
@@ -124,6 +133,7 @@ public class PreparedStatement implements AutoCloseable
     {
         try
         {
+            duckdb_destroy_prepare(PreparedStmtSegmentPtr);
             PreparedStatementArena.close();
         } catch (Exception e)
         {

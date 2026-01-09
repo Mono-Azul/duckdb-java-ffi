@@ -18,9 +18,7 @@
 
 package mau.duckdbffi.driver;
 
-import java.lang.foreign.Arena;
-import java.lang.foreign.MemorySegment;
-import java.lang.foreign.ValueLayout;
+import java.lang.foreign.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,18 +43,18 @@ public class Result
         primitivesAsObject = false;
     }
 
-    public Result(MemorySegment DuckDbResultPtr, MemorySegment DuckDbResult)
+    public Result(MemorySegment DuckDbResult)
     {
-        this(DuckDbResultPtr, DuckDbResult, false);
+        this(DuckDbResult, false);
     }
 
-    public Result(MemorySegment DuckDbResultPtr, MemorySegment DuckDbResult, boolean primitivesAsObject)
+    public Result(MemorySegment DuckDbResult, boolean primitivesAsObject)
     {
         this.primitivesAsObject = primitivesAsObject;
         this.ErrorMessage = null;
         this.ErrorNumber = null;
 
-        final int columnsCount = (int)duckdb_column_count(DuckDbResultPtr);
+        final int columnsCount = (int)duckdb_column_count(DuckDbResult);
         this.Columns = new ArrayList<>();
 
         // Maximum Vector size
@@ -82,6 +80,10 @@ public class Result
             // Get first DuckDbChunk and check if there are rows
             MemorySegment DuckDbChunk = duckdb_fetch_chunk(DuckDbResult);
 
+            // Create Pointer to Chunk
+            MemorySegment DuckDbChunkPtr = ResultArena.allocate(ValueLayout.ADDRESS);
+            DuckDbChunkPtr.set(ValueLayout.ADDRESS, 0, DuckDbChunk);
+
             if (DuckDbChunk.address() == 0)
             {
                 // Empty result
@@ -89,24 +91,20 @@ public class Result
                 return;
             }
 
-            // Reinterpret for destruction method
-            MemorySegment ExistingDbChunk = DuckDbChunk.reinterpret(ResultArena, Result::destroyDuckDbChunk);
-
-            // There is one chunk and now we can ask for the numer of rows in it
+            // There is one chunk, and now we can ask for the number of rows in it
             chunkCount = 1;
             dbChunkSize = (int)duckdb_data_chunk_get_size(DuckDbChunk);
             rowCount = dbChunkSize;
 
-
             // Create subclasses of Column for all columns
             for (int col = 0; col < columnsCount; col++)
             {
-                MemorySegment ResultVector = duckdb_data_chunk_get_vector(ExistingDbChunk, col);
+                MemorySegment ResultVector = duckdb_data_chunk_get_vector(DuckDbChunk, col);
                 MemorySegment ResultVectorLogicalType = duckdb_vector_get_column_type(ResultVector);
                 DuckDbDatatype DbDatatype = new DuckDbDatatype((short)duckdb_get_type_id(ResultVectorLogicalType));
-                String ColumnName = duckdb_column_name(DuckDbResultPtr, col).reinterpret(Integer.MAX_VALUE).getString(0);
+                String ColumnName = duckdb_column_name(DuckDbResult, col).reinterpret(Integer.MAX_VALUE).getString(0);
 
-                // Destroy column_type, but we need a pointer first
+                // Destroy column_type
                 destroyDuckDbLogicalType(ResultVectorLogicalType);
 
                 // Create and add new column
@@ -115,6 +113,8 @@ public class Result
                 // Add first vector as we have the result vector Segment at hand anyway
                 Columns.get(col).addVectorChunk(ResultVector, dbChunkSize);
             }
+
+            duckdb_destroy_data_chunk(DuckDbChunkPtr);
         }
 
         while (true)
@@ -124,14 +124,15 @@ public class Result
                 // Fill Columns chunk-wise
                 MemorySegment DuckDbChunkLoop = duckdb_fetch_chunk(DuckDbResult);
 
+                // Create Pointer to Chunk
+                MemorySegment DuckDbChunkLoopPtr = ChunkArena.allocate(ValueLayout.ADDRESS);
+                DuckDbChunkLoopPtr.set(ValueLayout.ADDRESS, 0, DuckDbChunkLoop);
+
                 // Leave while loop if there are no more chunks
                 if (DuckDbChunkLoop.address() == 0)
                 {
                     break;
                 }
-
-                // Reinterpret for destruction method
-                MemorySegment ExistingDbChunkLoop = DuckDbChunkLoop.reinterpret(ChunkArena, Result::destroyDuckDbChunk);
 
                 dbChunkSize = (int)duckdb_data_chunk_get_size(DuckDbChunkLoop);
                 rowCount += dbChunkSize;
@@ -142,6 +143,8 @@ public class Result
                     MemorySegment ResultVector = duckdb_data_chunk_get_vector(DuckDbChunkLoop, col);
                     Columns.get(col).addVectorChunk(ResultVector, dbChunkSize);
                 }
+
+                duckdb_destroy_data_chunk(DuckDbChunkLoopPtr);
             }
         }
 
@@ -204,27 +207,19 @@ public class Result
         };
     }
 
-    // Separate Consumer method to destroy the DuckDbChunk, because a pointer is needed
-    private static void destroyDuckDbChunk(MemorySegment DuckDbChunk)
-    {
-        try (Arena ClosingArena = Arena.ofConfined())
-        {
-            MemorySegment DbChunkPtr = ClosingArena.allocate(8);
-            DbChunkPtr.set(ValueLayout.JAVA_LONG, 0, DuckDbChunk.address());
-            duckdb_destroy_data_chunk(DbChunkPtr);
-        } catch (Throwable e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
     // Separate Consumer method to destroy the DuckDbLogicalType, because a pointer is needed
     private static void destroyDuckDbLogicalType(MemorySegment DuckDbLogicalType)
     {
+        // If DuckDbLogicalType points to address 0 there is nothing to destroy
+        if (DuckDbLogicalType.address() == 0)
+        {
+            return;
+        }
+
         try (Arena ClosingArena = Arena.ofConfined())
         {
-            MemorySegment DuckDbLogicalTypePtr = ClosingArena.allocate(8);
-            DuckDbLogicalTypePtr.set(ValueLayout.JAVA_LONG, 0, DuckDbLogicalType.address());
+            MemorySegment DuckDbLogicalTypePtr = ClosingArena.allocate(ValueLayout.ADDRESS);
+            DuckDbLogicalTypePtr.set(ValueLayout.ADDRESS, 0, DuckDbLogicalType);
             duckdb_destroy_logical_type(DuckDbLogicalTypePtr);
         } catch (Throwable e)
         {

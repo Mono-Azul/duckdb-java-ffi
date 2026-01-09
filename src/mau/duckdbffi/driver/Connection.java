@@ -18,11 +18,9 @@
 
 package mau.duckdbffi.driver;
 
-import mau.duckdbffi.jextractffi.duckdb_h;
 import mau.duckdbffi.jextractffi.duckdb_result;
 
-import java.lang.foreign.Arena;
-import java.lang.foreign.MemorySegment;
+import java.lang.foreign.*;
 import java.util.List;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.*;
@@ -38,9 +36,7 @@ public class Connection implements AutoCloseable
     {
         ConnectionArena = Arena.ofConfined();
 
-        // There could be problems with double freeing otherwise
-        DuckDbConnectionPtr = ConnectionArena.allocate(8)
-                .reinterpret(ConnectionArena, duckdb_h::duckdb_disconnect);
+        DuckDbConnectionPtr = ConnectionArena.allocate(C_POINTER);
 
         int duckDbState = duckdb_connect(DuckDbDatabase, DuckDbConnectionPtr);
 
@@ -49,7 +45,8 @@ public class Connection implements AutoCloseable
             throw new DuckDbException("Error creating connection!");
         }
 
-        DuckDbConnection = DuckDbConnectionPtr.get(C_POINTER, 0);
+        // Get Connection from the pointer
+        DuckDbConnection = DuckDbConnectionPtr.get(duckdb_connection, 0);
     }
 
     public Result query(String sql)
@@ -61,25 +58,31 @@ public class Connection implements AutoCloseable
     {
         try (Arena ResultArena = Arena.ofConfined())
         {
-            // Create duckdb_result struct
-            MemorySegment DuckDbResult = ResultArena.allocate(duckdb_result.sizeof())
-                    .reinterpret(ResultArena, duckdb_h::duckdb_destroy_result);
-            MemorySegment DuckDbResultPtr = MemorySegment.ofAddress(DuckDbResult.address());
+            MemorySegment DuckDbResult = duckdb_result.allocate(ResultArena);
 
             // Run query
-            int duckDbState = duckdb_query(DuckDbConnection, ResultArena.allocateFrom(sql), DuckDbResultPtr);
+            int duckDbState = duckdb_query(DuckDbConnection, ResultArena.allocateFrom(sql), DuckDbResult);
 
             if (duckDbState == DuckDBError())
             {
-                System.out.println("Error running query: " + sql);
+                String ErrorMessage = duckdb_result_error(DuckDbResult).getString(0);
+                Integer ErrorNumber = duckdb_result_error_type(DuckDbResult);
 
-                String ErrorMessage = duckdb_result_error(DuckDbResultPtr).getString(0);
-                Integer ErrorNumber = duckdb_result_error_type(DuckDbResultPtr);
+                // Destroy result before closing the Arena
+                duckdb_destroy_result(DuckDbResult);
 
                 return new Result(ErrorMessage, ErrorNumber);
             }
 
-            return new Result(DuckDbResultPtr, DuckDbResult, primitivesAsObjects);
+            var tmpResult = new Result(DuckDbResult, primitivesAsObjects);
+
+            // Destroy result before closing the Arena
+            duckdb_destroy_result(DuckDbResult);
+
+            return tmpResult;
+        } catch (Throwable e)
+        {
+            throw new RuntimeException(e);
         }
     }
 
@@ -137,6 +140,7 @@ public class Connection implements AutoCloseable
     {
         try
         {
+            duckdb_disconnect(DuckDbConnectionPtr);
             ConnectionArena.close();
         } catch (Exception e)
         {

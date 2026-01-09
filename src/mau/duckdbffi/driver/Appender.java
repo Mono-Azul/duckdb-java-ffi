@@ -18,8 +18,6 @@
 
 package mau.duckdbffi.driver;
 
-import mau.duckdbffi.jextractffi.duckdb_h;
-
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
@@ -38,11 +36,12 @@ public class Appender implements AutoCloseable
     {
         // Should be used by only one thread
         AppenderArena = Arena.ofConfined();
-        AppenderPtr = AppenderArena.allocate(8)
-                .reinterpret(AppenderArena, duckdb_h::duckdb_appender_destroy);
+        AppenderPtr = AppenderArena.allocate(C_POINTER);
+
         int res = duckdb_appender_create(DuckDbConnection, AppenderArena.allocateFrom(schema),
                 AppenderArena.allocateFrom(table),AppenderPtr);
-        Appender = AppenderPtr.get(C_POINTER, 0);
+
+        Appender = AppenderPtr.get(duckdb_appender, 0);
         if (res == DuckDBError())
         {
             throw new DuckDbException("Error Appender creation: " + getErrorMessage(Appender));
@@ -84,6 +83,7 @@ public class Appender implements AutoCloseable
         }
 
         // Cleanup Arena before possibly throwing an error
+        duckdb_appender_destroy(AppenderPtr);
         AppenderArena.close();
 
         if (res == DuckDBError())
