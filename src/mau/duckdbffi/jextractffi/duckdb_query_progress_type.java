@@ -31,7 +31,7 @@ public class duckdb_query_progress_type {
         duckdb_h.C_DOUBLE.withName("percentage"),
         duckdb_h.C_LONG.withName("rows_processed"),
         duckdb_h.C_LONG.withName("total_rows_to_process")
-    ).withName("$anon$368:9");
+    ).withName("$anon$411:9");
 
     /**
      * The layout of this struct

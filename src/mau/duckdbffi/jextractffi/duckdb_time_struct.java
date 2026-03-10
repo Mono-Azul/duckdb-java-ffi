@@ -34,7 +34,7 @@ public class duckdb_time_struct {
         duckdb_h.C_CHAR.withName("sec"),
         MemoryLayout.paddingLayout(1),
         duckdb_h.C_INT.withName("micros")
-    ).withName("$anon$287:9");
+    ).withName("$anon$330:9");
 
     /**
      * The layout of this struct

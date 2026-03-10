@@ -29,7 +29,7 @@ public class duckdb_time_tz_struct {
     private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
         duckdb_time_struct.layout().withName("time"),
         duckdb_h.C_INT.withName("offset")
-    ).withName("$anon$305:9");
+    ).withName("$anon$348:9");
 
     /**
      * The layout of this struct

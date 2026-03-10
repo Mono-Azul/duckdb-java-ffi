@@ -2228,6 +2228,186 @@ public class duckdb_h extends duckdb_h$shared {
     public static int DUCKDB_CAST_TRY() {
         return DUCKDB_CAST_TRY;
     }
+    private static final int DUCKDB_FILE_FLAG_INVALID = (int)0L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_file_flag.DUCKDB_FILE_FLAG_INVALID = 0
+     * }
+     */
+    public static int DUCKDB_FILE_FLAG_INVALID() {
+        return DUCKDB_FILE_FLAG_INVALID;
+    }
+    private static final int DUCKDB_FILE_FLAG_READ = (int)1L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_file_flag.DUCKDB_FILE_FLAG_READ = 1
+     * }
+     */
+    public static int DUCKDB_FILE_FLAG_READ() {
+        return DUCKDB_FILE_FLAG_READ;
+    }
+    private static final int DUCKDB_FILE_FLAG_WRITE = (int)2L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_file_flag.DUCKDB_FILE_FLAG_WRITE = 2
+     * }
+     */
+    public static int DUCKDB_FILE_FLAG_WRITE() {
+        return DUCKDB_FILE_FLAG_WRITE;
+    }
+    private static final int DUCKDB_FILE_FLAG_CREATE = (int)3L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_file_flag.DUCKDB_FILE_FLAG_CREATE = 3
+     * }
+     */
+    public static int DUCKDB_FILE_FLAG_CREATE() {
+        return DUCKDB_FILE_FLAG_CREATE;
+    }
+    private static final int DUCKDB_FILE_FLAG_CREATE_NEW = (int)4L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_file_flag.DUCKDB_FILE_FLAG_CREATE_NEW = 4
+     * }
+     */
+    public static int DUCKDB_FILE_FLAG_CREATE_NEW() {
+        return DUCKDB_FILE_FLAG_CREATE_NEW;
+    }
+    private static final int DUCKDB_FILE_FLAG_APPEND = (int)5L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_file_flag.DUCKDB_FILE_FLAG_APPEND = 5
+     * }
+     */
+    public static int DUCKDB_FILE_FLAG_APPEND() {
+        return DUCKDB_FILE_FLAG_APPEND;
+    }
+    private static final int DUCKDB_CONFIG_OPTION_SCOPE_INVALID = (int)0L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_config_option_scope.DUCKDB_CONFIG_OPTION_SCOPE_INVALID = 0
+     * }
+     */
+    public static int DUCKDB_CONFIG_OPTION_SCOPE_INVALID() {
+        return DUCKDB_CONFIG_OPTION_SCOPE_INVALID;
+    }
+    private static final int DUCKDB_CONFIG_OPTION_SCOPE_LOCAL = (int)1L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_config_option_scope.DUCKDB_CONFIG_OPTION_SCOPE_LOCAL = 1
+     * }
+     */
+    public static int DUCKDB_CONFIG_OPTION_SCOPE_LOCAL() {
+        return DUCKDB_CONFIG_OPTION_SCOPE_LOCAL;
+    }
+    private static final int DUCKDB_CONFIG_OPTION_SCOPE_SESSION = (int)2L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_config_option_scope.DUCKDB_CONFIG_OPTION_SCOPE_SESSION = 2
+     * }
+     */
+    public static int DUCKDB_CONFIG_OPTION_SCOPE_SESSION() {
+        return DUCKDB_CONFIG_OPTION_SCOPE_SESSION;
+    }
+    private static final int DUCKDB_CONFIG_OPTION_SCOPE_GLOBAL = (int)3L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_config_option_scope.DUCKDB_CONFIG_OPTION_SCOPE_GLOBAL = 3
+     * }
+     */
+    public static int DUCKDB_CONFIG_OPTION_SCOPE_GLOBAL() {
+        return DUCKDB_CONFIG_OPTION_SCOPE_GLOBAL;
+    }
+    private static final int DUCKDB_CATALOG_ENTRY_TYPE_INVALID = (int)0L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_catalog_entry_type.DUCKDB_CATALOG_ENTRY_TYPE_INVALID = 0
+     * }
+     */
+    public static int DUCKDB_CATALOG_ENTRY_TYPE_INVALID() {
+        return DUCKDB_CATALOG_ENTRY_TYPE_INVALID;
+    }
+    private static final int DUCKDB_CATALOG_ENTRY_TYPE_TABLE = (int)1L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_catalog_entry_type.DUCKDB_CATALOG_ENTRY_TYPE_TABLE = 1
+     * }
+     */
+    public static int DUCKDB_CATALOG_ENTRY_TYPE_TABLE() {
+        return DUCKDB_CATALOG_ENTRY_TYPE_TABLE;
+    }
+    private static final int DUCKDB_CATALOG_ENTRY_TYPE_SCHEMA = (int)2L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_catalog_entry_type.DUCKDB_CATALOG_ENTRY_TYPE_SCHEMA = 2
+     * }
+     */
+    public static int DUCKDB_CATALOG_ENTRY_TYPE_SCHEMA() {
+        return DUCKDB_CATALOG_ENTRY_TYPE_SCHEMA;
+    }
+    private static final int DUCKDB_CATALOG_ENTRY_TYPE_VIEW = (int)3L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_catalog_entry_type.DUCKDB_CATALOG_ENTRY_TYPE_VIEW = 3
+     * }
+     */
+    public static int DUCKDB_CATALOG_ENTRY_TYPE_VIEW() {
+        return DUCKDB_CATALOG_ENTRY_TYPE_VIEW;
+    }
+    private static final int DUCKDB_CATALOG_ENTRY_TYPE_INDEX = (int)4L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_catalog_entry_type.DUCKDB_CATALOG_ENTRY_TYPE_INDEX = 4
+     * }
+     */
+    public static int DUCKDB_CATALOG_ENTRY_TYPE_INDEX() {
+        return DUCKDB_CATALOG_ENTRY_TYPE_INDEX;
+    }
+    private static final int DUCKDB_CATALOG_ENTRY_TYPE_PREPARED_STATEMENT = (int)5L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_catalog_entry_type.DUCKDB_CATALOG_ENTRY_TYPE_PREPARED_STATEMENT = 5
+     * }
+     */
+    public static int DUCKDB_CATALOG_ENTRY_TYPE_PREPARED_STATEMENT() {
+        return DUCKDB_CATALOG_ENTRY_TYPE_PREPARED_STATEMENT;
+    }
+    private static final int DUCKDB_CATALOG_ENTRY_TYPE_SEQUENCE = (int)6L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_catalog_entry_type.DUCKDB_CATALOG_ENTRY_TYPE_SEQUENCE = 6
+     * }
+     */
+    public static int DUCKDB_CATALOG_ENTRY_TYPE_SEQUENCE() {
+        return DUCKDB_CATALOG_ENTRY_TYPE_SEQUENCE;
+    }
+    private static final int DUCKDB_CATALOG_ENTRY_TYPE_COLLATION = (int)7L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_catalog_entry_type.DUCKDB_CATALOG_ENTRY_TYPE_COLLATION = 7
+     * }
+     */
+    public static int DUCKDB_CATALOG_ENTRY_TYPE_COLLATION() {
+        return DUCKDB_CATALOG_ENTRY_TYPE_COLLATION;
+    }
+    private static final int DUCKDB_CATALOG_ENTRY_TYPE_TYPE = (int)8L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_catalog_entry_type.DUCKDB_CATALOG_ENTRY_TYPE_TYPE = 8
+     * }
+     */
+    public static int DUCKDB_CATALOG_ENTRY_TYPE_TYPE() {
+        return DUCKDB_CATALOG_ENTRY_TYPE_TYPE;
+    }
+    private static final int DUCKDB_CATALOG_ENTRY_TYPE_DATABASE = (int)9L;
+    /**
+     * {@snippet lang=c :
+     * enum duckdb_catalog_entry_type.DUCKDB_CATALOG_ENTRY_TYPE_DATABASE = 9
+     * }
+     */
+    public static int DUCKDB_CATALOG_ENTRY_TYPE_DATABASE() {
+        return DUCKDB_CATALOG_ENTRY_TYPE_DATABASE;
+    }
     /**
      * {@snippet lang=c :
      * typedef uint64_t idx_t
@@ -2344,6 +2524,14 @@ public class duckdb_h extends duckdb_h$shared {
     public static final AddressLayout duckdb_config = duckdb_h.C_POINTER;
     /**
      * {@snippet lang=c :
+     * typedef struct _duckdb_config_option {
+     *     void *internal_ptr;
+     * } *duckdb_config_option
+     * }
+     */
+    public static final AddressLayout duckdb_config_option = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
      * typedef struct _duckdb_logical_type {
      *     void *internal_ptr;
      * } *duckdb_logical_type
@@ -2424,6 +2612,14 @@ public class duckdb_h extends duckdb_h$shared {
     public static final AddressLayout duckdb_bind_info = duckdb_h.C_POINTER;
     /**
      * {@snippet lang=c :
+     * typedef struct _duckdb_init_info {
+     *     void *internal_ptr;
+     * } *duckdb_init_info
+     * }
+     */
+    public static final AddressLayout duckdb_init_info = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
      * typedef struct _duckdb_scalar_function {
      *     void *internal_ptr;
      * } *duckdb_scalar_function
@@ -2472,12 +2668,44 @@ public class duckdb_h extends duckdb_h$shared {
     public static final AddressLayout duckdb_table_function = duckdb_h.C_POINTER;
     /**
      * {@snippet lang=c :
-     * typedef struct _duckdb_init_info {
+     * typedef struct _duckdb_copy_function {
      *     void *internal_ptr;
-     * } *duckdb_init_info
+     * } *duckdb_copy_function
      * }
      */
-    public static final AddressLayout duckdb_init_info = duckdb_h.C_POINTER;
+    public static final AddressLayout duckdb_copy_function = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
+     * typedef struct _duckdb_copy_function_bind_info {
+     *     void *internal_ptr;
+     * } *duckdb_copy_function_bind_info
+     * }
+     */
+    public static final AddressLayout duckdb_copy_function_bind_info = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
+     * typedef struct _duckdb_copy_function_global_init_info {
+     *     void *internal_ptr;
+     * } *duckdb_copy_function_global_init_info
+     * }
+     */
+    public static final AddressLayout duckdb_copy_function_global_init_info = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
+     * typedef struct _duckdb_copy_function_sink_info {
+     *     void *internal_ptr;
+     * } *duckdb_copy_function_sink_info
+     * }
+     */
+    public static final AddressLayout duckdb_copy_function_sink_info = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
+     * typedef struct _duckdb_copy_function_finalize_info {
+     *     void *internal_ptr;
+     * } *duckdb_copy_function_finalize_info
+     * }
+     */
+    public static final AddressLayout duckdb_copy_function_finalize_info = duckdb_h.C_POINTER;
     /**
      * {@snippet lang=c :
      * typedef struct _duckdb_cast_function {
@@ -2542,6 +2770,54 @@ public class duckdb_h extends duckdb_h$shared {
      * }
      */
     public static final AddressLayout duckdb_arrow_options = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
+     * typedef struct _duckdb_file_open_options {
+     *     void *internal_ptr;
+     * } *duckdb_file_open_options
+     * }
+     */
+    public static final AddressLayout duckdb_file_open_options = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
+     * typedef struct _duckdb_file_system {
+     *     void *internal_ptr;
+     * } *duckdb_file_system
+     * }
+     */
+    public static final AddressLayout duckdb_file_system = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
+     * typedef struct _duckdb_file_handle {
+     *     void *internal_ptr;
+     * } *duckdb_file_handle
+     * }
+     */
+    public static final AddressLayout duckdb_file_handle = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
+     * typedef struct _duckdb_catalog {
+     *     void *internal_ptr;
+     * } *duckdb_catalog
+     * }
+     */
+    public static final AddressLayout duckdb_catalog = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
+     * typedef struct _duckdb_catalog_entry {
+     *     void *internal_ptr;
+     * } *duckdb_catalog_entry
+     * }
+     */
+    public static final AddressLayout duckdb_catalog_entry = duckdb_h.C_POINTER;
+    /**
+     * {@snippet lang=c :
+     * typedef struct _duckdb_log_storage {
+     *     void *internal_ptr;
+     * } *duckdb_log_storage
+     * }
+     */
+    public static final AddressLayout duckdb_log_storage = duckdb_h.C_POINTER;
 
     /**
      * Variadic invoker class for:
@@ -7138,6 +7414,67 @@ public class duckdb_h extends duckdb_h$shared {
                 traceDowncall("duckdb_string_t_data", string);
             }
             return (MemorySegment)mh$.invokeExact(string);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_valid_utf8_check {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_valid_utf8_check");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_valid_utf8_check(const char *str, idx_t len)
+     * }
+     */
+    public static FunctionDescriptor duckdb_valid_utf8_check$descriptor() {
+        return duckdb_valid_utf8_check.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_valid_utf8_check(const char *str, idx_t len)
+     * }
+     */
+    public static MethodHandle duckdb_valid_utf8_check$handle() {
+        return duckdb_valid_utf8_check.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_valid_utf8_check(const char *str, idx_t len)
+     * }
+     */
+    public static MemorySegment duckdb_valid_utf8_check$address() {
+        return duckdb_valid_utf8_check.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_valid_utf8_check(const char *str, idx_t len)
+     * }
+     */
+    public static MemorySegment duckdb_valid_utf8_check(MemorySegment str, long len) {
+        var mh$ = duckdb_valid_utf8_check.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_valid_utf8_check", str, len);
+            }
+            return (MemorySegment)mh$.invokeExact(str, len);
         } catch (Error | RuntimeException ex) {
            throw ex;
         } catch (Throwable ex$) {
@@ -18836,6 +19173,68 @@ public class duckdb_h extends duckdb_h$shared {
         }
     }
 
+    private static class duckdb_unsafe_vector_assign_string_element_len {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_LONG,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_unsafe_vector_assign_string_element_len");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_unsafe_vector_assign_string_element_len(duckdb_vector vector, idx_t index, const char *str, idx_t str_len)
+     * }
+     */
+    public static FunctionDescriptor duckdb_unsafe_vector_assign_string_element_len$descriptor() {
+        return duckdb_unsafe_vector_assign_string_element_len.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_unsafe_vector_assign_string_element_len(duckdb_vector vector, idx_t index, const char *str, idx_t str_len)
+     * }
+     */
+    public static MethodHandle duckdb_unsafe_vector_assign_string_element_len$handle() {
+        return duckdb_unsafe_vector_assign_string_element_len.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_unsafe_vector_assign_string_element_len(duckdb_vector vector, idx_t index, const char *str, idx_t str_len)
+     * }
+     */
+    public static MemorySegment duckdb_unsafe_vector_assign_string_element_len$address() {
+        return duckdb_unsafe_vector_assign_string_element_len.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_unsafe_vector_assign_string_element_len(duckdb_vector vector, idx_t index, const char *str, idx_t str_len)
+     * }
+     */
+    public static void duckdb_unsafe_vector_assign_string_element_len(MemorySegment vector, long index, MemorySegment str, long str_len) {
+        var mh$ = duckdb_unsafe_vector_assign_string_element_len.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_unsafe_vector_assign_string_element_len", vector, index, str, str_len);
+            }
+            mh$.invokeExact(vector, index, str, str_len);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
     private static class duckdb_list_vector_get_child {
         public static final FunctionDescriptor DESC = FunctionDescriptor.of(
             duckdb_h.C_POINTER,
@@ -21251,6 +21650,427 @@ public class duckdb_h extends duckdb_h$shared {
                 traceDowncall("duckdb_scalar_function_bind_get_argument", info, index);
             }
             return (MemorySegment)mh$.invokeExact(info, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_scalar_function_get_state {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_get_state");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_get_state(duckdb_function_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_scalar_function_get_state$descriptor() {
+        return duckdb_scalar_function_get_state.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_get_state(duckdb_function_info info)
+     * }
+     */
+    public static MethodHandle duckdb_scalar_function_get_state$handle() {
+        return duckdb_scalar_function_get_state.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_get_state(duckdb_function_info info)
+     * }
+     */
+    public static MemorySegment duckdb_scalar_function_get_state$address() {
+        return duckdb_scalar_function_get_state.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_get_state(duckdb_function_info info)
+     * }
+     */
+    public static MemorySegment duckdb_scalar_function_get_state(MemorySegment info) {
+        var mh$ = duckdb_scalar_function_get_state.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_scalar_function_get_state", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_scalar_function_set_init {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_set_init");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_set_init(duckdb_scalar_function scalar_function, duckdb_scalar_function_init_t init)
+     * }
+     */
+    public static FunctionDescriptor duckdb_scalar_function_set_init$descriptor() {
+        return duckdb_scalar_function_set_init.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_set_init(duckdb_scalar_function scalar_function, duckdb_scalar_function_init_t init)
+     * }
+     */
+    public static MethodHandle duckdb_scalar_function_set_init$handle() {
+        return duckdb_scalar_function_set_init.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_set_init(duckdb_scalar_function scalar_function, duckdb_scalar_function_init_t init)
+     * }
+     */
+    public static MemorySegment duckdb_scalar_function_set_init$address() {
+        return duckdb_scalar_function_set_init.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_set_init(duckdb_scalar_function scalar_function, duckdb_scalar_function_init_t init)
+     * }
+     */
+    public static void duckdb_scalar_function_set_init(MemorySegment scalar_function, MemorySegment init) {
+        var mh$ = duckdb_scalar_function_set_init.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_scalar_function_set_init", scalar_function, init);
+            }
+            mh$.invokeExact(scalar_function, init);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_scalar_function_init_set_error {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_init_set_error");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_set_error(duckdb_init_info info, const char *error)
+     * }
+     */
+    public static FunctionDescriptor duckdb_scalar_function_init_set_error$descriptor() {
+        return duckdb_scalar_function_init_set_error.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_set_error(duckdb_init_info info, const char *error)
+     * }
+     */
+    public static MethodHandle duckdb_scalar_function_init_set_error$handle() {
+        return duckdb_scalar_function_init_set_error.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_set_error(duckdb_init_info info, const char *error)
+     * }
+     */
+    public static MemorySegment duckdb_scalar_function_init_set_error$address() {
+        return duckdb_scalar_function_init_set_error.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_set_error(duckdb_init_info info, const char *error)
+     * }
+     */
+    public static void duckdb_scalar_function_init_set_error(MemorySegment info, MemorySegment error) {
+        var mh$ = duckdb_scalar_function_init_set_error.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_scalar_function_init_set_error", info, error);
+            }
+            mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_scalar_function_init_set_state {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_init_set_state");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_set_state(duckdb_init_info info, void *state, duckdb_delete_callback_t destroy)
+     * }
+     */
+    public static FunctionDescriptor duckdb_scalar_function_init_set_state$descriptor() {
+        return duckdb_scalar_function_init_set_state.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_set_state(duckdb_init_info info, void *state, duckdb_delete_callback_t destroy)
+     * }
+     */
+    public static MethodHandle duckdb_scalar_function_init_set_state$handle() {
+        return duckdb_scalar_function_init_set_state.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_set_state(duckdb_init_info info, void *state, duckdb_delete_callback_t destroy)
+     * }
+     */
+    public static MemorySegment duckdb_scalar_function_init_set_state$address() {
+        return duckdb_scalar_function_init_set_state.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_set_state(duckdb_init_info info, void *state, duckdb_delete_callback_t destroy)
+     * }
+     */
+    public static void duckdb_scalar_function_init_set_state(MemorySegment info, MemorySegment state, MemorySegment destroy) {
+        var mh$ = duckdb_scalar_function_init_set_state.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_scalar_function_init_set_state", info, state, destroy);
+            }
+            mh$.invokeExact(info, state, destroy);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_scalar_function_init_get_client_context {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_init_get_client_context");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_get_client_context(duckdb_init_info info, duckdb_client_context *out_context)
+     * }
+     */
+    public static FunctionDescriptor duckdb_scalar_function_init_get_client_context$descriptor() {
+        return duckdb_scalar_function_init_get_client_context.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_get_client_context(duckdb_init_info info, duckdb_client_context *out_context)
+     * }
+     */
+    public static MethodHandle duckdb_scalar_function_init_get_client_context$handle() {
+        return duckdb_scalar_function_init_get_client_context.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_get_client_context(duckdb_init_info info, duckdb_client_context *out_context)
+     * }
+     */
+    public static MemorySegment duckdb_scalar_function_init_get_client_context$address() {
+        return duckdb_scalar_function_init_get_client_context.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_scalar_function_init_get_client_context(duckdb_init_info info, duckdb_client_context *out_context)
+     * }
+     */
+    public static void duckdb_scalar_function_init_get_client_context(MemorySegment info, MemorySegment out_context) {
+        var mh$ = duckdb_scalar_function_init_get_client_context.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_scalar_function_init_get_client_context", info, out_context);
+            }
+            mh$.invokeExact(info, out_context);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_scalar_function_init_get_bind_data {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_init_get_bind_data");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_init_get_bind_data(duckdb_init_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_scalar_function_init_get_bind_data$descriptor() {
+        return duckdb_scalar_function_init_get_bind_data.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_init_get_bind_data(duckdb_init_info info)
+     * }
+     */
+    public static MethodHandle duckdb_scalar_function_init_get_bind_data$handle() {
+        return duckdb_scalar_function_init_get_bind_data.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_init_get_bind_data(duckdb_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_scalar_function_init_get_bind_data$address() {
+        return duckdb_scalar_function_init_get_bind_data.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_init_get_bind_data(duckdb_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_scalar_function_init_get_bind_data(MemorySegment info) {
+        var mh$ = duckdb_scalar_function_init_get_bind_data.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_scalar_function_init_get_bind_data", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_scalar_function_init_get_extra_info {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_scalar_function_init_get_extra_info");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_init_get_extra_info(duckdb_init_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_scalar_function_init_get_extra_info$descriptor() {
+        return duckdb_scalar_function_init_get_extra_info.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_init_get_extra_info(duckdb_init_info info)
+     * }
+     */
+    public static MethodHandle duckdb_scalar_function_init_get_extra_info$handle() {
+        return duckdb_scalar_function_init_get_extra_info.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_init_get_extra_info(duckdb_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_scalar_function_init_get_extra_info$address() {
+        return duckdb_scalar_function_init_get_extra_info.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_scalar_function_init_get_extra_info(duckdb_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_scalar_function_init_get_extra_info(MemorySegment info) {
+        var mh$ = duckdb_scalar_function_init_get_extra_info.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_scalar_function_init_get_extra_info", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
         } catch (Error | RuntimeException ex) {
            throw ex;
         } catch (Throwable ex$) {
@@ -25449,6 +26269,66 @@ public class duckdb_h extends duckdb_h$shared {
         }
     }
 
+    private static class duckdb_appender_clear {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_appender_clear");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_appender_clear(duckdb_appender appender)
+     * }
+     */
+    public static FunctionDescriptor duckdb_appender_clear$descriptor() {
+        return duckdb_appender_clear.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_appender_clear(duckdb_appender appender)
+     * }
+     */
+    public static MethodHandle duckdb_appender_clear$handle() {
+        return duckdb_appender_clear.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_appender_clear(duckdb_appender appender)
+     * }
+     */
+    public static MemorySegment duckdb_appender_clear$address() {
+        return duckdb_appender_clear.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_state duckdb_appender_clear(duckdb_appender appender)
+     * }
+     */
+    public static int duckdb_appender_clear(MemorySegment appender) {
+        var mh$ = duckdb_appender_clear.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_appender_clear", appender);
+            }
+            return (int)mh$.invokeExact(appender);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
     private static class duckdb_appender_close {
         public static final FunctionDescriptor DESC = FunctionDescriptor.of(
             duckdb_h.C_INT,
@@ -27645,6 +28525,66 @@ public class duckdb_h extends duckdb_h$shared {
         }
     }
 
+    private static class duckdb_table_description_get_column_count {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_LONG,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_description_get_column_count");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * idx_t duckdb_table_description_get_column_count(duckdb_table_description table_description)
+     * }
+     */
+    public static FunctionDescriptor duckdb_table_description_get_column_count$descriptor() {
+        return duckdb_table_description_get_column_count.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * idx_t duckdb_table_description_get_column_count(duckdb_table_description table_description)
+     * }
+     */
+    public static MethodHandle duckdb_table_description_get_column_count$handle() {
+        return duckdb_table_description_get_column_count.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * idx_t duckdb_table_description_get_column_count(duckdb_table_description table_description)
+     * }
+     */
+    public static MemorySegment duckdb_table_description_get_column_count$address() {
+        return duckdb_table_description_get_column_count.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * idx_t duckdb_table_description_get_column_count(duckdb_table_description table_description)
+     * }
+     */
+    public static long duckdb_table_description_get_column_count(MemorySegment table_description) {
+        var mh$ = duckdb_table_description_get_column_count.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_table_description_get_column_count", table_description);
+            }
+            return (long)mh$.invokeExact(table_description);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
     private static class duckdb_table_description_get_column_name {
         public static final FunctionDescriptor DESC = FunctionDescriptor.of(
             duckdb_h.C_POINTER,
@@ -27697,6 +28637,67 @@ public class duckdb_h extends duckdb_h$shared {
         try {
             if (TRACE_DOWNCALLS) {
                 traceDowncall("duckdb_table_description_get_column_name", table_description, index);
+            }
+            return (MemorySegment)mh$.invokeExact(table_description, index);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_table_description_get_column_type {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_description_get_column_type");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_table_description_get_column_type(duckdb_table_description table_description, idx_t index)
+     * }
+     */
+    public static FunctionDescriptor duckdb_table_description_get_column_type$descriptor() {
+        return duckdb_table_description_get_column_type.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_table_description_get_column_type(duckdb_table_description table_description, idx_t index)
+     * }
+     */
+    public static MethodHandle duckdb_table_description_get_column_type$handle() {
+        return duckdb_table_description_get_column_type.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_table_description_get_column_type(duckdb_table_description table_description, idx_t index)
+     * }
+     */
+    public static MemorySegment duckdb_table_description_get_column_type$address() {
+        return duckdb_table_description_get_column_type.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_table_description_get_column_type(duckdb_table_description table_description, idx_t index)
+     * }
+     */
+    public static MemorySegment duckdb_table_description_get_column_type(MemorySegment table_description, long index) {
+        var mh$ = duckdb_table_description_get_column_type.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_table_description_get_column_type", table_description, index);
             }
             return (MemorySegment)mh$.invokeExact(table_description, index);
         } catch (Error | RuntimeException ex) {
@@ -30432,6 +31433,4505 @@ public class duckdb_h extends duckdb_h$shared {
                 traceDowncall("duckdb_expression_fold", context, expr, out_value);
             }
             return (MemorySegment)mh$.invokeExact(context, expr, out_value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_client_context_get_file_system {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_client_context_get_file_system");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_file_system duckdb_client_context_get_file_system(duckdb_client_context context)
+     * }
+     */
+    public static FunctionDescriptor duckdb_client_context_get_file_system$descriptor() {
+        return duckdb_client_context_get_file_system.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_file_system duckdb_client_context_get_file_system(duckdb_client_context context)
+     * }
+     */
+    public static MethodHandle duckdb_client_context_get_file_system$handle() {
+        return duckdb_client_context_get_file_system.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_file_system duckdb_client_context_get_file_system(duckdb_client_context context)
+     * }
+     */
+    public static MemorySegment duckdb_client_context_get_file_system$address() {
+        return duckdb_client_context_get_file_system.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_file_system duckdb_client_context_get_file_system(duckdb_client_context context)
+     * }
+     */
+    public static MemorySegment duckdb_client_context_get_file_system(MemorySegment context) {
+        var mh$ = duckdb_client_context_get_file_system.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_client_context_get_file_system", context);
+            }
+            return (MemorySegment)mh$.invokeExact(context);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_destroy_file_system {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_file_system");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_system(duckdb_file_system *file_system)
+     * }
+     */
+    public static FunctionDescriptor duckdb_destroy_file_system$descriptor() {
+        return duckdb_destroy_file_system.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_system(duckdb_file_system *file_system)
+     * }
+     */
+    public static MethodHandle duckdb_destroy_file_system$handle() {
+        return duckdb_destroy_file_system.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_system(duckdb_file_system *file_system)
+     * }
+     */
+    public static MemorySegment duckdb_destroy_file_system$address() {
+        return duckdb_destroy_file_system.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_system(duckdb_file_system *file_system)
+     * }
+     */
+    public static void duckdb_destroy_file_system(MemorySegment file_system) {
+        var mh$ = duckdb_destroy_file_system.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_destroy_file_system", file_system);
+            }
+            mh$.invokeExact(file_system);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_file_system_error_data {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_system_error_data");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_file_system_error_data(duckdb_file_system file_system)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_system_error_data$descriptor() {
+        return duckdb_file_system_error_data.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_file_system_error_data(duckdb_file_system file_system)
+     * }
+     */
+    public static MethodHandle duckdb_file_system_error_data$handle() {
+        return duckdb_file_system_error_data.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_file_system_error_data(duckdb_file_system file_system)
+     * }
+     */
+    public static MemorySegment duckdb_file_system_error_data$address() {
+        return duckdb_file_system_error_data.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_file_system_error_data(duckdb_file_system file_system)
+     * }
+     */
+    public static MemorySegment duckdb_file_system_error_data(MemorySegment file_system) {
+        var mh$ = duckdb_file_system_error_data.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_system_error_data", file_system);
+            }
+            return (MemorySegment)mh$.invokeExact(file_system);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_file_system_open {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_system_open");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_system_open(duckdb_file_system file_system, const char *path, duckdb_file_open_options options, duckdb_file_handle *out_file)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_system_open$descriptor() {
+        return duckdb_file_system_open.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_system_open(duckdb_file_system file_system, const char *path, duckdb_file_open_options options, duckdb_file_handle *out_file)
+     * }
+     */
+    public static MethodHandle duckdb_file_system_open$handle() {
+        return duckdb_file_system_open.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_system_open(duckdb_file_system file_system, const char *path, duckdb_file_open_options options, duckdb_file_handle *out_file)
+     * }
+     */
+    public static MemorySegment duckdb_file_system_open$address() {
+        return duckdb_file_system_open.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_system_open(duckdb_file_system file_system, const char *path, duckdb_file_open_options options, duckdb_file_handle *out_file)
+     * }
+     */
+    public static int duckdb_file_system_open(MemorySegment file_system, MemorySegment path, MemorySegment options, MemorySegment out_file) {
+        var mh$ = duckdb_file_system_open.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_system_open", file_system, path, options, out_file);
+            }
+            return (int)mh$.invokeExact(file_system, path, options, out_file);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    /**
+     * Variadic invoker class for:
+     * {@snippet lang=c :
+     * duckdb_file_open_options duckdb_create_file_open_options()
+     * }
+     */
+    public static class duckdb_create_file_open_options {
+        private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
+                duckdb_h.C_POINTER        );
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_file_open_options");
+
+        private final MethodHandle handle;
+        private final FunctionDescriptor descriptor;
+        private final MethodHandle spreader;
+
+        private duckdb_create_file_open_options(MethodHandle handle, FunctionDescriptor descriptor, MethodHandle spreader) {
+            this.handle = handle;
+            this.descriptor = descriptor;
+            this.spreader = spreader;
+        }
+
+        /**
+         * Variadic invoker factory for:
+         * {@snippet lang=c :
+         * duckdb_file_open_options duckdb_create_file_open_options()
+         * }
+         */
+        public static duckdb_create_file_open_options makeInvoker(MemoryLayout... layouts) {
+            FunctionDescriptor desc$ = BASE_DESC.appendArgumentLayouts(layouts);
+            Linker.Option fva$ = Linker.Option.firstVariadicArg(BASE_DESC.argumentLayouts().size());
+            var mh$ = Linker.nativeLinker().downcallHandle(ADDR, desc$, fva$);
+            var spreader$ = mh$.asSpreader(Object[].class, layouts.length);
+            return new duckdb_create_file_open_options(mh$, desc$, spreader$);
+        }
+
+        /**
+         * {@return the address}
+         */
+        public static MemorySegment address() {
+            return ADDR;
+        }
+
+        /**
+         * {@return the specialized method handle}
+         */
+        public MethodHandle handle() {
+            return handle;
+        }
+
+        /**
+         * {@return the specialized descriptor}
+         */
+        public FunctionDescriptor descriptor() {
+            return descriptor;
+        }
+
+        public MemorySegment apply(Object... x0) {
+            try {
+                if (TRACE_DOWNCALLS) {
+                    traceDowncall("duckdb_create_file_open_options", x0);
+                }
+                return (MemorySegment) spreader.invokeExact(x0);
+            } catch(IllegalArgumentException | ClassCastException ex$)  {
+                throw ex$; // rethrow IAE from passing wrong number/type of args
+            } catch (Throwable ex$) {
+               throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static class duckdb_file_open_options_set_flag {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_INT,
+            duckdb_h.C_BOOL
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_open_options_set_flag");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_open_options_set_flag(duckdb_file_open_options options, duckdb_file_flag flag, bool value)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_open_options_set_flag$descriptor() {
+        return duckdb_file_open_options_set_flag.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_open_options_set_flag(duckdb_file_open_options options, duckdb_file_flag flag, bool value)
+     * }
+     */
+    public static MethodHandle duckdb_file_open_options_set_flag$handle() {
+        return duckdb_file_open_options_set_flag.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_open_options_set_flag(duckdb_file_open_options options, duckdb_file_flag flag, bool value)
+     * }
+     */
+    public static MemorySegment duckdb_file_open_options_set_flag$address() {
+        return duckdb_file_open_options_set_flag.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_open_options_set_flag(duckdb_file_open_options options, duckdb_file_flag flag, bool value)
+     * }
+     */
+    public static int duckdb_file_open_options_set_flag(MemorySegment options, int flag, boolean value) {
+        var mh$ = duckdb_file_open_options_set_flag.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_open_options_set_flag", options, flag, value);
+            }
+            return (int)mh$.invokeExact(options, flag, value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_destroy_file_open_options {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_file_open_options");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_open_options(duckdb_file_open_options *options)
+     * }
+     */
+    public static FunctionDescriptor duckdb_destroy_file_open_options$descriptor() {
+        return duckdb_destroy_file_open_options.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_open_options(duckdb_file_open_options *options)
+     * }
+     */
+    public static MethodHandle duckdb_destroy_file_open_options$handle() {
+        return duckdb_destroy_file_open_options.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_open_options(duckdb_file_open_options *options)
+     * }
+     */
+    public static MemorySegment duckdb_destroy_file_open_options$address() {
+        return duckdb_destroy_file_open_options.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_open_options(duckdb_file_open_options *options)
+     * }
+     */
+    public static void duckdb_destroy_file_open_options(MemorySegment options) {
+        var mh$ = duckdb_destroy_file_open_options.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_destroy_file_open_options", options);
+            }
+            mh$.invokeExact(options);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_destroy_file_handle {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_file_handle");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_handle(duckdb_file_handle *file_handle)
+     * }
+     */
+    public static FunctionDescriptor duckdb_destroy_file_handle$descriptor() {
+        return duckdb_destroy_file_handle.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_handle(duckdb_file_handle *file_handle)
+     * }
+     */
+    public static MethodHandle duckdb_destroy_file_handle$handle() {
+        return duckdb_destroy_file_handle.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_handle(duckdb_file_handle *file_handle)
+     * }
+     */
+    public static MemorySegment duckdb_destroy_file_handle$address() {
+        return duckdb_destroy_file_handle.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_destroy_file_handle(duckdb_file_handle *file_handle)
+     * }
+     */
+    public static void duckdb_destroy_file_handle(MemorySegment file_handle) {
+        var mh$ = duckdb_destroy_file_handle.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_destroy_file_handle", file_handle);
+            }
+            mh$.invokeExact(file_handle);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_file_handle_error_data {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_handle_error_data");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_file_handle_error_data(duckdb_file_handle file_handle)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_handle_error_data$descriptor() {
+        return duckdb_file_handle_error_data.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_file_handle_error_data(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MethodHandle duckdb_file_handle_error_data$handle() {
+        return duckdb_file_handle_error_data.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_file_handle_error_data(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MemorySegment duckdb_file_handle_error_data$address() {
+        return duckdb_file_handle_error_data.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_error_data duckdb_file_handle_error_data(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MemorySegment duckdb_file_handle_error_data(MemorySegment file_handle) {
+        var mh$ = duckdb_file_handle_error_data.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_handle_error_data", file_handle);
+            }
+            return (MemorySegment)mh$.invokeExact(file_handle);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_file_handle_read {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_LONG,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_handle_read");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_read(duckdb_file_handle file_handle, void *buffer, int64_t size)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_handle_read$descriptor() {
+        return duckdb_file_handle_read.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_read(duckdb_file_handle file_handle, void *buffer, int64_t size)
+     * }
+     */
+    public static MethodHandle duckdb_file_handle_read$handle() {
+        return duckdb_file_handle_read.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_read(duckdb_file_handle file_handle, void *buffer, int64_t size)
+     * }
+     */
+    public static MemorySegment duckdb_file_handle_read$address() {
+        return duckdb_file_handle_read.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_read(duckdb_file_handle file_handle, void *buffer, int64_t size)
+     * }
+     */
+    public static long duckdb_file_handle_read(MemorySegment file_handle, MemorySegment buffer, long size) {
+        var mh$ = duckdb_file_handle_read.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_handle_read", file_handle, buffer, size);
+            }
+            return (long)mh$.invokeExact(file_handle, buffer, size);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_file_handle_write {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_LONG,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_handle_write");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_write(duckdb_file_handle file_handle, const void *buffer, int64_t size)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_handle_write$descriptor() {
+        return duckdb_file_handle_write.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_write(duckdb_file_handle file_handle, const void *buffer, int64_t size)
+     * }
+     */
+    public static MethodHandle duckdb_file_handle_write$handle() {
+        return duckdb_file_handle_write.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_write(duckdb_file_handle file_handle, const void *buffer, int64_t size)
+     * }
+     */
+    public static MemorySegment duckdb_file_handle_write$address() {
+        return duckdb_file_handle_write.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_write(duckdb_file_handle file_handle, const void *buffer, int64_t size)
+     * }
+     */
+    public static long duckdb_file_handle_write(MemorySegment file_handle, MemorySegment buffer, long size) {
+        var mh$ = duckdb_file_handle_write.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_handle_write", file_handle, buffer, size);
+            }
+            return (long)mh$.invokeExact(file_handle, buffer, size);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_file_handle_tell {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_LONG,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_handle_tell");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_tell(duckdb_file_handle file_handle)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_handle_tell$descriptor() {
+        return duckdb_file_handle_tell.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_tell(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MethodHandle duckdb_file_handle_tell$handle() {
+        return duckdb_file_handle_tell.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_tell(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MemorySegment duckdb_file_handle_tell$address() {
+        return duckdb_file_handle_tell.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_tell(duckdb_file_handle file_handle)
+     * }
+     */
+    public static long duckdb_file_handle_tell(MemorySegment file_handle) {
+        var mh$ = duckdb_file_handle_tell.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_handle_tell", file_handle);
+            }
+            return (long)mh$.invokeExact(file_handle);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_file_handle_size {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_LONG,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_handle_size");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_size(duckdb_file_handle file_handle)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_handle_size$descriptor() {
+        return duckdb_file_handle_size.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_size(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MethodHandle duckdb_file_handle_size$handle() {
+        return duckdb_file_handle_size.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_size(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MemorySegment duckdb_file_handle_size$address() {
+        return duckdb_file_handle_size.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * int64_t duckdb_file_handle_size(duckdb_file_handle file_handle)
+     * }
+     */
+    public static long duckdb_file_handle_size(MemorySegment file_handle) {
+        var mh$ = duckdb_file_handle_size.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_handle_size", file_handle);
+            }
+            return (long)mh$.invokeExact(file_handle);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_file_handle_seek {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_handle_seek");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_seek(duckdb_file_handle file_handle, int64_t position)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_handle_seek$descriptor() {
+        return duckdb_file_handle_seek.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_seek(duckdb_file_handle file_handle, int64_t position)
+     * }
+     */
+    public static MethodHandle duckdb_file_handle_seek$handle() {
+        return duckdb_file_handle_seek.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_seek(duckdb_file_handle file_handle, int64_t position)
+     * }
+     */
+    public static MemorySegment duckdb_file_handle_seek$address() {
+        return duckdb_file_handle_seek.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_seek(duckdb_file_handle file_handle, int64_t position)
+     * }
+     */
+    public static int duckdb_file_handle_seek(MemorySegment file_handle, long position) {
+        var mh$ = duckdb_file_handle_seek.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_handle_seek", file_handle, position);
+            }
+            return (int)mh$.invokeExact(file_handle, position);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_file_handle_sync {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_handle_sync");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_sync(duckdb_file_handle file_handle)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_handle_sync$descriptor() {
+        return duckdb_file_handle_sync.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_sync(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MethodHandle duckdb_file_handle_sync$handle() {
+        return duckdb_file_handle_sync.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_sync(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MemorySegment duckdb_file_handle_sync$address() {
+        return duckdb_file_handle_sync.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_sync(duckdb_file_handle file_handle)
+     * }
+     */
+    public static int duckdb_file_handle_sync(MemorySegment file_handle) {
+        var mh$ = duckdb_file_handle_sync.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_handle_sync", file_handle);
+            }
+            return (int)mh$.invokeExact(file_handle);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_file_handle_close {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_file_handle_close");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_close(duckdb_file_handle file_handle)
+     * }
+     */
+    public static FunctionDescriptor duckdb_file_handle_close$descriptor() {
+        return duckdb_file_handle_close.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_close(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MethodHandle duckdb_file_handle_close$handle() {
+        return duckdb_file_handle_close.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_close(duckdb_file_handle file_handle)
+     * }
+     */
+    public static MemorySegment duckdb_file_handle_close$address() {
+        return duckdb_file_handle_close.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_state duckdb_file_handle_close(duckdb_file_handle file_handle)
+     * }
+     */
+    public static int duckdb_file_handle_close(MemorySegment file_handle) {
+        var mh$ = duckdb_file_handle_close.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_file_handle_close", file_handle);
+            }
+            return (int)mh$.invokeExact(file_handle);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    /**
+     * Variadic invoker class for:
+     * {@snippet lang=c :
+     * duckdb_config_option duckdb_create_config_option()
+     * }
+     */
+    public static class duckdb_create_config_option {
+        private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
+                duckdb_h.C_POINTER        );
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_config_option");
+
+        private final MethodHandle handle;
+        private final FunctionDescriptor descriptor;
+        private final MethodHandle spreader;
+
+        private duckdb_create_config_option(MethodHandle handle, FunctionDescriptor descriptor, MethodHandle spreader) {
+            this.handle = handle;
+            this.descriptor = descriptor;
+            this.spreader = spreader;
+        }
+
+        /**
+         * Variadic invoker factory for:
+         * {@snippet lang=c :
+         * duckdb_config_option duckdb_create_config_option()
+         * }
+         */
+        public static duckdb_create_config_option makeInvoker(MemoryLayout... layouts) {
+            FunctionDescriptor desc$ = BASE_DESC.appendArgumentLayouts(layouts);
+            Linker.Option fva$ = Linker.Option.firstVariadicArg(BASE_DESC.argumentLayouts().size());
+            var mh$ = Linker.nativeLinker().downcallHandle(ADDR, desc$, fva$);
+            var spreader$ = mh$.asSpreader(Object[].class, layouts.length);
+            return new duckdb_create_config_option(mh$, desc$, spreader$);
+        }
+
+        /**
+         * {@return the address}
+         */
+        public static MemorySegment address() {
+            return ADDR;
+        }
+
+        /**
+         * {@return the specialized method handle}
+         */
+        public MethodHandle handle() {
+            return handle;
+        }
+
+        /**
+         * {@return the specialized descriptor}
+         */
+        public FunctionDescriptor descriptor() {
+            return descriptor;
+        }
+
+        public MemorySegment apply(Object... x0) {
+            try {
+                if (TRACE_DOWNCALLS) {
+                    traceDowncall("duckdb_create_config_option", x0);
+                }
+                return (MemorySegment) spreader.invokeExact(x0);
+            } catch(IllegalArgumentException | ClassCastException ex$)  {
+                throw ex$; // rethrow IAE from passing wrong number/type of args
+            } catch (Throwable ex$) {
+               throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static class duckdb_destroy_config_option {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_config_option");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_config_option(duckdb_config_option *option)
+     * }
+     */
+    public static FunctionDescriptor duckdb_destroy_config_option$descriptor() {
+        return duckdb_destroy_config_option.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_config_option(duckdb_config_option *option)
+     * }
+     */
+    public static MethodHandle duckdb_destroy_config_option$handle() {
+        return duckdb_destroy_config_option.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_config_option(duckdb_config_option *option)
+     * }
+     */
+    public static MemorySegment duckdb_destroy_config_option$address() {
+        return duckdb_destroy_config_option.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_destroy_config_option(duckdb_config_option *option)
+     * }
+     */
+    public static void duckdb_destroy_config_option(MemorySegment option) {
+        var mh$ = duckdb_destroy_config_option.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_destroy_config_option", option);
+            }
+            mh$.invokeExact(option);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_config_option_set_name {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_config_option_set_name");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_name(duckdb_config_option option, const char *name)
+     * }
+     */
+    public static FunctionDescriptor duckdb_config_option_set_name$descriptor() {
+        return duckdb_config_option_set_name.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_name(duckdb_config_option option, const char *name)
+     * }
+     */
+    public static MethodHandle duckdb_config_option_set_name$handle() {
+        return duckdb_config_option_set_name.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_name(duckdb_config_option option, const char *name)
+     * }
+     */
+    public static MemorySegment duckdb_config_option_set_name$address() {
+        return duckdb_config_option_set_name.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_name(duckdb_config_option option, const char *name)
+     * }
+     */
+    public static void duckdb_config_option_set_name(MemorySegment option, MemorySegment name) {
+        var mh$ = duckdb_config_option_set_name.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_config_option_set_name", option, name);
+            }
+            mh$.invokeExact(option, name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_config_option_set_type {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_config_option_set_type");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_type(duckdb_config_option option, duckdb_logical_type type)
+     * }
+     */
+    public static FunctionDescriptor duckdb_config_option_set_type$descriptor() {
+        return duckdb_config_option_set_type.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_type(duckdb_config_option option, duckdb_logical_type type)
+     * }
+     */
+    public static MethodHandle duckdb_config_option_set_type$handle() {
+        return duckdb_config_option_set_type.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_type(duckdb_config_option option, duckdb_logical_type type)
+     * }
+     */
+    public static MemorySegment duckdb_config_option_set_type$address() {
+        return duckdb_config_option_set_type.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_type(duckdb_config_option option, duckdb_logical_type type)
+     * }
+     */
+    public static void duckdb_config_option_set_type(MemorySegment option, MemorySegment type) {
+        var mh$ = duckdb_config_option_set_type.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_config_option_set_type", option, type);
+            }
+            mh$.invokeExact(option, type);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_config_option_set_default_value {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_config_option_set_default_value");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_default_value(duckdb_config_option option, duckdb_value default_value)
+     * }
+     */
+    public static FunctionDescriptor duckdb_config_option_set_default_value$descriptor() {
+        return duckdb_config_option_set_default_value.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_default_value(duckdb_config_option option, duckdb_value default_value)
+     * }
+     */
+    public static MethodHandle duckdb_config_option_set_default_value$handle() {
+        return duckdb_config_option_set_default_value.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_default_value(duckdb_config_option option, duckdb_value default_value)
+     * }
+     */
+    public static MemorySegment duckdb_config_option_set_default_value$address() {
+        return duckdb_config_option_set_default_value.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_default_value(duckdb_config_option option, duckdb_value default_value)
+     * }
+     */
+    public static void duckdb_config_option_set_default_value(MemorySegment option, MemorySegment default_value) {
+        var mh$ = duckdb_config_option_set_default_value.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_config_option_set_default_value", option, default_value);
+            }
+            mh$.invokeExact(option, default_value);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_config_option_set_default_scope {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_INT
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_config_option_set_default_scope");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_default_scope(duckdb_config_option option, duckdb_config_option_scope default_scope)
+     * }
+     */
+    public static FunctionDescriptor duckdb_config_option_set_default_scope$descriptor() {
+        return duckdb_config_option_set_default_scope.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_default_scope(duckdb_config_option option, duckdb_config_option_scope default_scope)
+     * }
+     */
+    public static MethodHandle duckdb_config_option_set_default_scope$handle() {
+        return duckdb_config_option_set_default_scope.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_default_scope(duckdb_config_option option, duckdb_config_option_scope default_scope)
+     * }
+     */
+    public static MemorySegment duckdb_config_option_set_default_scope$address() {
+        return duckdb_config_option_set_default_scope.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_default_scope(duckdb_config_option option, duckdb_config_option_scope default_scope)
+     * }
+     */
+    public static void duckdb_config_option_set_default_scope(MemorySegment option, int default_scope) {
+        var mh$ = duckdb_config_option_set_default_scope.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_config_option_set_default_scope", option, default_scope);
+            }
+            mh$.invokeExact(option, default_scope);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_config_option_set_description {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_config_option_set_description");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_description(duckdb_config_option option, const char *description)
+     * }
+     */
+    public static FunctionDescriptor duckdb_config_option_set_description$descriptor() {
+        return duckdb_config_option_set_description.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_description(duckdb_config_option option, const char *description)
+     * }
+     */
+    public static MethodHandle duckdb_config_option_set_description$handle() {
+        return duckdb_config_option_set_description.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_description(duckdb_config_option option, const char *description)
+     * }
+     */
+    public static MemorySegment duckdb_config_option_set_description$address() {
+        return duckdb_config_option_set_description.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_config_option_set_description(duckdb_config_option option, const char *description)
+     * }
+     */
+    public static void duckdb_config_option_set_description(MemorySegment option, MemorySegment description) {
+        var mh$ = duckdb_config_option_set_description.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_config_option_set_description", option, description);
+            }
+            mh$.invokeExact(option, description);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_register_config_option {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_register_config_option");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_config_option(duckdb_connection connection, duckdb_config_option option)
+     * }
+     */
+    public static FunctionDescriptor duckdb_register_config_option$descriptor() {
+        return duckdb_register_config_option.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_config_option(duckdb_connection connection, duckdb_config_option option)
+     * }
+     */
+    public static MethodHandle duckdb_register_config_option$handle() {
+        return duckdb_register_config_option.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_config_option(duckdb_connection connection, duckdb_config_option option)
+     * }
+     */
+    public static MemorySegment duckdb_register_config_option$address() {
+        return duckdb_register_config_option.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_config_option(duckdb_connection connection, duckdb_config_option option)
+     * }
+     */
+    public static int duckdb_register_config_option(MemorySegment connection, MemorySegment option) {
+        var mh$ = duckdb_register_config_option.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_register_config_option", connection, option);
+            }
+            return (int)mh$.invokeExact(connection, option);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_client_context_get_config_option {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_client_context_get_config_option");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_value duckdb_client_context_get_config_option(duckdb_client_context context, const char *name, duckdb_config_option_scope *out_scope)
+     * }
+     */
+    public static FunctionDescriptor duckdb_client_context_get_config_option$descriptor() {
+        return duckdb_client_context_get_config_option.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_value duckdb_client_context_get_config_option(duckdb_client_context context, const char *name, duckdb_config_option_scope *out_scope)
+     * }
+     */
+    public static MethodHandle duckdb_client_context_get_config_option$handle() {
+        return duckdb_client_context_get_config_option.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_value duckdb_client_context_get_config_option(duckdb_client_context context, const char *name, duckdb_config_option_scope *out_scope)
+     * }
+     */
+    public static MemorySegment duckdb_client_context_get_config_option$address() {
+        return duckdb_client_context_get_config_option.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_value duckdb_client_context_get_config_option(duckdb_client_context context, const char *name, duckdb_config_option_scope *out_scope)
+     * }
+     */
+    public static MemorySegment duckdb_client_context_get_config_option(MemorySegment context, MemorySegment name, MemorySegment out_scope) {
+        var mh$ = duckdb_client_context_get_config_option.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_client_context_get_config_option", context, name, out_scope);
+            }
+            return (MemorySegment)mh$.invokeExact(context, name, out_scope);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    /**
+     * Variadic invoker class for:
+     * {@snippet lang=c :
+     * duckdb_copy_function duckdb_create_copy_function()
+     * }
+     */
+    public static class duckdb_create_copy_function {
+        private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
+                duckdb_h.C_POINTER        );
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_copy_function");
+
+        private final MethodHandle handle;
+        private final FunctionDescriptor descriptor;
+        private final MethodHandle spreader;
+
+        private duckdb_create_copy_function(MethodHandle handle, FunctionDescriptor descriptor, MethodHandle spreader) {
+            this.handle = handle;
+            this.descriptor = descriptor;
+            this.spreader = spreader;
+        }
+
+        /**
+         * Variadic invoker factory for:
+         * {@snippet lang=c :
+         * duckdb_copy_function duckdb_create_copy_function()
+         * }
+         */
+        public static duckdb_create_copy_function makeInvoker(MemoryLayout... layouts) {
+            FunctionDescriptor desc$ = BASE_DESC.appendArgumentLayouts(layouts);
+            Linker.Option fva$ = Linker.Option.firstVariadicArg(BASE_DESC.argumentLayouts().size());
+            var mh$ = Linker.nativeLinker().downcallHandle(ADDR, desc$, fva$);
+            var spreader$ = mh$.asSpreader(Object[].class, layouts.length);
+            return new duckdb_create_copy_function(mh$, desc$, spreader$);
+        }
+
+        /**
+         * {@return the address}
+         */
+        public static MemorySegment address() {
+            return ADDR;
+        }
+
+        /**
+         * {@return the specialized method handle}
+         */
+        public MethodHandle handle() {
+            return handle;
+        }
+
+        /**
+         * {@return the specialized descriptor}
+         */
+        public FunctionDescriptor descriptor() {
+            return descriptor;
+        }
+
+        public MemorySegment apply(Object... x0) {
+            try {
+                if (TRACE_DOWNCALLS) {
+                    traceDowncall("duckdb_create_copy_function", x0);
+                }
+                return (MemorySegment) spreader.invokeExact(x0);
+            } catch(IllegalArgumentException | ClassCastException ex$)  {
+                throw ex$; // rethrow IAE from passing wrong number/type of args
+            } catch (Throwable ex$) {
+               throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static class duckdb_copy_function_set_name {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_set_name");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_name(duckdb_copy_function copy_function, const char *name)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_set_name$descriptor() {
+        return duckdb_copy_function_set_name.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_name(duckdb_copy_function copy_function, const char *name)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_set_name$handle() {
+        return duckdb_copy_function_set_name.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_name(duckdb_copy_function copy_function, const char *name)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_set_name$address() {
+        return duckdb_copy_function_set_name.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_name(duckdb_copy_function copy_function, const char *name)
+     * }
+     */
+    public static void duckdb_copy_function_set_name(MemorySegment copy_function, MemorySegment name) {
+        var mh$ = duckdb_copy_function_set_name.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_set_name", copy_function, name);
+            }
+            mh$.invokeExact(copy_function, name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_set_extra_info {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_set_extra_info");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_extra_info(duckdb_copy_function copy_function, void *extra_info, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_set_extra_info$descriptor() {
+        return duckdb_copy_function_set_extra_info.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_extra_info(duckdb_copy_function copy_function, void *extra_info, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_set_extra_info$handle() {
+        return duckdb_copy_function_set_extra_info.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_extra_info(duckdb_copy_function copy_function, void *extra_info, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_set_extra_info$address() {
+        return duckdb_copy_function_set_extra_info.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_extra_info(duckdb_copy_function copy_function, void *extra_info, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static void duckdb_copy_function_set_extra_info(MemorySegment copy_function, MemorySegment extra_info, MemorySegment destructor) {
+        var mh$ = duckdb_copy_function_set_extra_info.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_set_extra_info", copy_function, extra_info, destructor);
+            }
+            mh$.invokeExact(copy_function, extra_info, destructor);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_register_copy_function {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_register_copy_function");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_copy_function(duckdb_connection connection, duckdb_copy_function copy_function)
+     * }
+     */
+    public static FunctionDescriptor duckdb_register_copy_function$descriptor() {
+        return duckdb_register_copy_function.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_copy_function(duckdb_connection connection, duckdb_copy_function copy_function)
+     * }
+     */
+    public static MethodHandle duckdb_register_copy_function$handle() {
+        return duckdb_register_copy_function.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_copy_function(duckdb_connection connection, duckdb_copy_function copy_function)
+     * }
+     */
+    public static MemorySegment duckdb_register_copy_function$address() {
+        return duckdb_register_copy_function.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_copy_function(duckdb_connection connection, duckdb_copy_function copy_function)
+     * }
+     */
+    public static int duckdb_register_copy_function(MemorySegment connection, MemorySegment copy_function) {
+        var mh$ = duckdb_register_copy_function.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_register_copy_function", connection, copy_function);
+            }
+            return (int)mh$.invokeExact(connection, copy_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_destroy_copy_function {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_copy_function");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_copy_function(duckdb_copy_function *copy_function)
+     * }
+     */
+    public static FunctionDescriptor duckdb_destroy_copy_function$descriptor() {
+        return duckdb_destroy_copy_function.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_copy_function(duckdb_copy_function *copy_function)
+     * }
+     */
+    public static MethodHandle duckdb_destroy_copy_function$handle() {
+        return duckdb_destroy_copy_function.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_copy_function(duckdb_copy_function *copy_function)
+     * }
+     */
+    public static MemorySegment duckdb_destroy_copy_function$address() {
+        return duckdb_destroy_copy_function.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_destroy_copy_function(duckdb_copy_function *copy_function)
+     * }
+     */
+    public static void duckdb_destroy_copy_function(MemorySegment copy_function) {
+        var mh$ = duckdb_destroy_copy_function.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_destroy_copy_function", copy_function);
+            }
+            mh$.invokeExact(copy_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_set_bind {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_set_bind");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_bind(duckdb_copy_function copy_function, duckdb_copy_function_bind_t bind)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_set_bind$descriptor() {
+        return duckdb_copy_function_set_bind.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_bind(duckdb_copy_function copy_function, duckdb_copy_function_bind_t bind)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_set_bind$handle() {
+        return duckdb_copy_function_set_bind.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_bind(duckdb_copy_function copy_function, duckdb_copy_function_bind_t bind)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_set_bind$address() {
+        return duckdb_copy_function_set_bind.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_bind(duckdb_copy_function copy_function, duckdb_copy_function_bind_t bind)
+     * }
+     */
+    public static void duckdb_copy_function_set_bind(MemorySegment copy_function, MemorySegment bind) {
+        var mh$ = duckdb_copy_function_set_bind.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_set_bind", copy_function, bind);
+            }
+            mh$.invokeExact(copy_function, bind);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_bind_set_error {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_bind_set_error");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_bind_set_error(duckdb_copy_function_bind_info info, const char *error)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_bind_set_error$descriptor() {
+        return duckdb_copy_function_bind_set_error.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_bind_set_error(duckdb_copy_function_bind_info info, const char *error)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_bind_set_error$handle() {
+        return duckdb_copy_function_bind_set_error.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_bind_set_error(duckdb_copy_function_bind_info info, const char *error)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_set_error$address() {
+        return duckdb_copy_function_bind_set_error.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_bind_set_error(duckdb_copy_function_bind_info info, const char *error)
+     * }
+     */
+    public static void duckdb_copy_function_bind_set_error(MemorySegment info, MemorySegment error) {
+        var mh$ = duckdb_copy_function_bind_set_error.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_bind_set_error", info, error);
+            }
+            mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_bind_get_extra_info {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_bind_get_extra_info");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_bind_get_extra_info(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_bind_get_extra_info$descriptor() {
+        return duckdb_copy_function_bind_get_extra_info.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_bind_get_extra_info(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_bind_get_extra_info$handle() {
+        return duckdb_copy_function_bind_get_extra_info.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_bind_get_extra_info(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_get_extra_info$address() {
+        return duckdb_copy_function_bind_get_extra_info.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_bind_get_extra_info(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_get_extra_info(MemorySegment info) {
+        var mh$ = duckdb_copy_function_bind_get_extra_info.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_bind_get_extra_info", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_bind_get_client_context {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_bind_get_client_context");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_bind_get_client_context(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_bind_get_client_context$descriptor() {
+        return duckdb_copy_function_bind_get_client_context.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_bind_get_client_context(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_bind_get_client_context$handle() {
+        return duckdb_copy_function_bind_get_client_context.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_bind_get_client_context(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_get_client_context$address() {
+        return duckdb_copy_function_bind_get_client_context.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_bind_get_client_context(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_get_client_context(MemorySegment info) {
+        var mh$ = duckdb_copy_function_bind_get_client_context.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_bind_get_client_context", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_bind_get_column_count {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_LONG,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_bind_get_column_count");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * idx_t duckdb_copy_function_bind_get_column_count(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_bind_get_column_count$descriptor() {
+        return duckdb_copy_function_bind_get_column_count.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * idx_t duckdb_copy_function_bind_get_column_count(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_bind_get_column_count$handle() {
+        return duckdb_copy_function_bind_get_column_count.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * idx_t duckdb_copy_function_bind_get_column_count(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_get_column_count$address() {
+        return duckdb_copy_function_bind_get_column_count.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * idx_t duckdb_copy_function_bind_get_column_count(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static long duckdb_copy_function_bind_get_column_count(MemorySegment info) {
+        var mh$ = duckdb_copy_function_bind_get_column_count.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_bind_get_column_count", info);
+            }
+            return (long)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_bind_get_column_type {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_bind_get_column_type");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_copy_function_bind_get_column_type(duckdb_copy_function_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_bind_get_column_type$descriptor() {
+        return duckdb_copy_function_bind_get_column_type.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_copy_function_bind_get_column_type(duckdb_copy_function_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_bind_get_column_type$handle() {
+        return duckdb_copy_function_bind_get_column_type.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_copy_function_bind_get_column_type(duckdb_copy_function_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_get_column_type$address() {
+        return duckdb_copy_function_bind_get_column_type.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_copy_function_bind_get_column_type(duckdb_copy_function_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_get_column_type(MemorySegment info, long col_idx) {
+        var mh$ = duckdb_copy_function_bind_get_column_type.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_bind_get_column_type", info, col_idx);
+            }
+            return (MemorySegment)mh$.invokeExact(info, col_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_bind_get_options {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_bind_get_options");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_value duckdb_copy_function_bind_get_options(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_bind_get_options$descriptor() {
+        return duckdb_copy_function_bind_get_options.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_value duckdb_copy_function_bind_get_options(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_bind_get_options$handle() {
+        return duckdb_copy_function_bind_get_options.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_value duckdb_copy_function_bind_get_options(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_get_options$address() {
+        return duckdb_copy_function_bind_get_options.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_value duckdb_copy_function_bind_get_options(duckdb_copy_function_bind_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_get_options(MemorySegment info) {
+        var mh$ = duckdb_copy_function_bind_get_options.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_bind_get_options", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_bind_set_bind_data {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_bind_set_bind_data");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_bind_set_bind_data(duckdb_copy_function_bind_info info, void *bind_data, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_bind_set_bind_data$descriptor() {
+        return duckdb_copy_function_bind_set_bind_data.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_bind_set_bind_data(duckdb_copy_function_bind_info info, void *bind_data, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_bind_set_bind_data$handle() {
+        return duckdb_copy_function_bind_set_bind_data.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_bind_set_bind_data(duckdb_copy_function_bind_info info, void *bind_data, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_bind_set_bind_data$address() {
+        return duckdb_copy_function_bind_set_bind_data.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_bind_set_bind_data(duckdb_copy_function_bind_info info, void *bind_data, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static void duckdb_copy_function_bind_set_bind_data(MemorySegment info, MemorySegment bind_data, MemorySegment destructor) {
+        var mh$ = duckdb_copy_function_bind_set_bind_data.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_bind_set_bind_data", info, bind_data, destructor);
+            }
+            mh$.invokeExact(info, bind_data, destructor);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_set_global_init {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_set_global_init");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_global_init(duckdb_copy_function copy_function, duckdb_copy_function_global_init_t init)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_set_global_init$descriptor() {
+        return duckdb_copy_function_set_global_init.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_global_init(duckdb_copy_function copy_function, duckdb_copy_function_global_init_t init)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_set_global_init$handle() {
+        return duckdb_copy_function_set_global_init.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_global_init(duckdb_copy_function copy_function, duckdb_copy_function_global_init_t init)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_set_global_init$address() {
+        return duckdb_copy_function_set_global_init.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_global_init(duckdb_copy_function copy_function, duckdb_copy_function_global_init_t init)
+     * }
+     */
+    public static void duckdb_copy_function_set_global_init(MemorySegment copy_function, MemorySegment init) {
+        var mh$ = duckdb_copy_function_set_global_init.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_set_global_init", copy_function, init);
+            }
+            mh$.invokeExact(copy_function, init);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_global_init_set_error {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_global_init_set_error");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_global_init_set_error(duckdb_copy_function_global_init_info info, const char *error)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_global_init_set_error$descriptor() {
+        return duckdb_copy_function_global_init_set_error.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_global_init_set_error(duckdb_copy_function_global_init_info info, const char *error)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_global_init_set_error$handle() {
+        return duckdb_copy_function_global_init_set_error.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_global_init_set_error(duckdb_copy_function_global_init_info info, const char *error)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_global_init_set_error$address() {
+        return duckdb_copy_function_global_init_set_error.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_global_init_set_error(duckdb_copy_function_global_init_info info, const char *error)
+     * }
+     */
+    public static void duckdb_copy_function_global_init_set_error(MemorySegment info, MemorySegment error) {
+        var mh$ = duckdb_copy_function_global_init_set_error.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_global_init_set_error", info, error);
+            }
+            mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_global_init_get_extra_info {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_global_init_get_extra_info");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_global_init_get_extra_info(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_global_init_get_extra_info$descriptor() {
+        return duckdb_copy_function_global_init_get_extra_info.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_global_init_get_extra_info(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_global_init_get_extra_info$handle() {
+        return duckdb_copy_function_global_init_get_extra_info.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_global_init_get_extra_info(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_global_init_get_extra_info$address() {
+        return duckdb_copy_function_global_init_get_extra_info.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_global_init_get_extra_info(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_global_init_get_extra_info(MemorySegment info) {
+        var mh$ = duckdb_copy_function_global_init_get_extra_info.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_global_init_get_extra_info", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_global_init_get_client_context {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_global_init_get_client_context");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_global_init_get_client_context(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_global_init_get_client_context$descriptor() {
+        return duckdb_copy_function_global_init_get_client_context.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_global_init_get_client_context(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_global_init_get_client_context$handle() {
+        return duckdb_copy_function_global_init_get_client_context.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_global_init_get_client_context(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_global_init_get_client_context$address() {
+        return duckdb_copy_function_global_init_get_client_context.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_global_init_get_client_context(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_global_init_get_client_context(MemorySegment info) {
+        var mh$ = duckdb_copy_function_global_init_get_client_context.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_global_init_get_client_context", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_global_init_get_bind_data {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_global_init_get_bind_data");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_global_init_get_bind_data(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_global_init_get_bind_data$descriptor() {
+        return duckdb_copy_function_global_init_get_bind_data.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_global_init_get_bind_data(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_global_init_get_bind_data$handle() {
+        return duckdb_copy_function_global_init_get_bind_data.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_global_init_get_bind_data(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_global_init_get_bind_data$address() {
+        return duckdb_copy_function_global_init_get_bind_data.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_global_init_get_bind_data(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_global_init_get_bind_data(MemorySegment info) {
+        var mh$ = duckdb_copy_function_global_init_get_bind_data.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_global_init_get_bind_data", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_global_init_get_file_path {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_global_init_get_file_path");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * const char *duckdb_copy_function_global_init_get_file_path(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_global_init_get_file_path$descriptor() {
+        return duckdb_copy_function_global_init_get_file_path.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * const char *duckdb_copy_function_global_init_get_file_path(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_global_init_get_file_path$handle() {
+        return duckdb_copy_function_global_init_get_file_path.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * const char *duckdb_copy_function_global_init_get_file_path(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_global_init_get_file_path$address() {
+        return duckdb_copy_function_global_init_get_file_path.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * const char *duckdb_copy_function_global_init_get_file_path(duckdb_copy_function_global_init_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_global_init_get_file_path(MemorySegment info) {
+        var mh$ = duckdb_copy_function_global_init_get_file_path.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_global_init_get_file_path", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_global_init_set_global_state {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_global_init_set_global_state");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_global_init_set_global_state(duckdb_copy_function_global_init_info info, void *global_state, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_global_init_set_global_state$descriptor() {
+        return duckdb_copy_function_global_init_set_global_state.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_global_init_set_global_state(duckdb_copy_function_global_init_info info, void *global_state, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_global_init_set_global_state$handle() {
+        return duckdb_copy_function_global_init_set_global_state.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_global_init_set_global_state(duckdb_copy_function_global_init_info info, void *global_state, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_global_init_set_global_state$address() {
+        return duckdb_copy_function_global_init_set_global_state.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_global_init_set_global_state(duckdb_copy_function_global_init_info info, void *global_state, duckdb_delete_callback_t destructor)
+     * }
+     */
+    public static void duckdb_copy_function_global_init_set_global_state(MemorySegment info, MemorySegment global_state, MemorySegment destructor) {
+        var mh$ = duckdb_copy_function_global_init_set_global_state.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_global_init_set_global_state", info, global_state, destructor);
+            }
+            mh$.invokeExact(info, global_state, destructor);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_set_sink {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_set_sink");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_sink(duckdb_copy_function copy_function, duckdb_copy_function_sink_t function)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_set_sink$descriptor() {
+        return duckdb_copy_function_set_sink.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_sink(duckdb_copy_function copy_function, duckdb_copy_function_sink_t function)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_set_sink$handle() {
+        return duckdb_copy_function_set_sink.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_sink(duckdb_copy_function copy_function, duckdb_copy_function_sink_t function)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_set_sink$address() {
+        return duckdb_copy_function_set_sink.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_sink(duckdb_copy_function copy_function, duckdb_copy_function_sink_t function)
+     * }
+     */
+    public static void duckdb_copy_function_set_sink(MemorySegment copy_function, MemorySegment function) {
+        var mh$ = duckdb_copy_function_set_sink.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_set_sink", copy_function, function);
+            }
+            mh$.invokeExact(copy_function, function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_sink_set_error {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_sink_set_error");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_sink_set_error(duckdb_copy_function_sink_info info, const char *error)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_sink_set_error$descriptor() {
+        return duckdb_copy_function_sink_set_error.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_sink_set_error(duckdb_copy_function_sink_info info, const char *error)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_sink_set_error$handle() {
+        return duckdb_copy_function_sink_set_error.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_sink_set_error(duckdb_copy_function_sink_info info, const char *error)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_sink_set_error$address() {
+        return duckdb_copy_function_sink_set_error.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_sink_set_error(duckdb_copy_function_sink_info info, const char *error)
+     * }
+     */
+    public static void duckdb_copy_function_sink_set_error(MemorySegment info, MemorySegment error) {
+        var mh$ = duckdb_copy_function_sink_set_error.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_sink_set_error", info, error);
+            }
+            mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_sink_get_extra_info {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_sink_get_extra_info");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_extra_info(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_sink_get_extra_info$descriptor() {
+        return duckdb_copy_function_sink_get_extra_info.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_extra_info(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_sink_get_extra_info$handle() {
+        return duckdb_copy_function_sink_get_extra_info.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_extra_info(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_sink_get_extra_info$address() {
+        return duckdb_copy_function_sink_get_extra_info.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_extra_info(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_sink_get_extra_info(MemorySegment info) {
+        var mh$ = duckdb_copy_function_sink_get_extra_info.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_sink_get_extra_info", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_sink_get_client_context {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_sink_get_client_context");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_sink_get_client_context(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_sink_get_client_context$descriptor() {
+        return duckdb_copy_function_sink_get_client_context.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_sink_get_client_context(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_sink_get_client_context$handle() {
+        return duckdb_copy_function_sink_get_client_context.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_sink_get_client_context(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_sink_get_client_context$address() {
+        return duckdb_copy_function_sink_get_client_context.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_sink_get_client_context(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_sink_get_client_context(MemorySegment info) {
+        var mh$ = duckdb_copy_function_sink_get_client_context.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_sink_get_client_context", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_sink_get_bind_data {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_sink_get_bind_data");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_bind_data(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_sink_get_bind_data$descriptor() {
+        return duckdb_copy_function_sink_get_bind_data.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_bind_data(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_sink_get_bind_data$handle() {
+        return duckdb_copy_function_sink_get_bind_data.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_bind_data(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_sink_get_bind_data$address() {
+        return duckdb_copy_function_sink_get_bind_data.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_bind_data(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_sink_get_bind_data(MemorySegment info) {
+        var mh$ = duckdb_copy_function_sink_get_bind_data.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_sink_get_bind_data", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_sink_get_global_state {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_sink_get_global_state");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_global_state(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_sink_get_global_state$descriptor() {
+        return duckdb_copy_function_sink_get_global_state.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_global_state(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_sink_get_global_state$handle() {
+        return duckdb_copy_function_sink_get_global_state.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_global_state(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_sink_get_global_state$address() {
+        return duckdb_copy_function_sink_get_global_state.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_sink_get_global_state(duckdb_copy_function_sink_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_sink_get_global_state(MemorySegment info) {
+        var mh$ = duckdb_copy_function_sink_get_global_state.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_sink_get_global_state", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_set_finalize {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_set_finalize");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_finalize(duckdb_copy_function copy_function, duckdb_copy_function_finalize_t finalize)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_set_finalize$descriptor() {
+        return duckdb_copy_function_set_finalize.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_finalize(duckdb_copy_function copy_function, duckdb_copy_function_finalize_t finalize)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_set_finalize$handle() {
+        return duckdb_copy_function_set_finalize.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_finalize(duckdb_copy_function copy_function, duckdb_copy_function_finalize_t finalize)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_set_finalize$address() {
+        return duckdb_copy_function_set_finalize.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_finalize(duckdb_copy_function copy_function, duckdb_copy_function_finalize_t finalize)
+     * }
+     */
+    public static void duckdb_copy_function_set_finalize(MemorySegment copy_function, MemorySegment finalize) {
+        var mh$ = duckdb_copy_function_set_finalize.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_set_finalize", copy_function, finalize);
+            }
+            mh$.invokeExact(copy_function, finalize);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_finalize_set_error {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_finalize_set_error");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_finalize_set_error(duckdb_copy_function_finalize_info info, const char *error)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_finalize_set_error$descriptor() {
+        return duckdb_copy_function_finalize_set_error.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_finalize_set_error(duckdb_copy_function_finalize_info info, const char *error)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_finalize_set_error$handle() {
+        return duckdb_copy_function_finalize_set_error.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_finalize_set_error(duckdb_copy_function_finalize_info info, const char *error)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_finalize_set_error$address() {
+        return duckdb_copy_function_finalize_set_error.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_finalize_set_error(duckdb_copy_function_finalize_info info, const char *error)
+     * }
+     */
+    public static void duckdb_copy_function_finalize_set_error(MemorySegment info, MemorySegment error) {
+        var mh$ = duckdb_copy_function_finalize_set_error.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_finalize_set_error", info, error);
+            }
+            mh$.invokeExact(info, error);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_finalize_get_extra_info {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_finalize_get_extra_info");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_extra_info(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_finalize_get_extra_info$descriptor() {
+        return duckdb_copy_function_finalize_get_extra_info.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_extra_info(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_finalize_get_extra_info$handle() {
+        return duckdb_copy_function_finalize_get_extra_info.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_extra_info(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_finalize_get_extra_info$address() {
+        return duckdb_copy_function_finalize_get_extra_info.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_extra_info(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_finalize_get_extra_info(MemorySegment info) {
+        var mh$ = duckdb_copy_function_finalize_get_extra_info.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_finalize_get_extra_info", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_finalize_get_client_context {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_finalize_get_client_context");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_finalize_get_client_context(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_finalize_get_client_context$descriptor() {
+        return duckdb_copy_function_finalize_get_client_context.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_finalize_get_client_context(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_finalize_get_client_context$handle() {
+        return duckdb_copy_function_finalize_get_client_context.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_finalize_get_client_context(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_finalize_get_client_context$address() {
+        return duckdb_copy_function_finalize_get_client_context.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_client_context duckdb_copy_function_finalize_get_client_context(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_finalize_get_client_context(MemorySegment info) {
+        var mh$ = duckdb_copy_function_finalize_get_client_context.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_finalize_get_client_context", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_finalize_get_bind_data {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_finalize_get_bind_data");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_bind_data(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_finalize_get_bind_data$descriptor() {
+        return duckdb_copy_function_finalize_get_bind_data.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_bind_data(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_finalize_get_bind_data$handle() {
+        return duckdb_copy_function_finalize_get_bind_data.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_bind_data(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_finalize_get_bind_data$address() {
+        return duckdb_copy_function_finalize_get_bind_data.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_bind_data(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_finalize_get_bind_data(MemorySegment info) {
+        var mh$ = duckdb_copy_function_finalize_get_bind_data.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_finalize_get_bind_data", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_finalize_get_global_state {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_finalize_get_global_state");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_global_state(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_finalize_get_global_state$descriptor() {
+        return duckdb_copy_function_finalize_get_global_state.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_global_state(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_finalize_get_global_state$handle() {
+        return duckdb_copy_function_finalize_get_global_state.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_global_state(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_finalize_get_global_state$address() {
+        return duckdb_copy_function_finalize_get_global_state.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void *duckdb_copy_function_finalize_get_global_state(duckdb_copy_function_finalize_info info)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_finalize_get_global_state(MemorySegment info) {
+        var mh$ = duckdb_copy_function_finalize_get_global_state.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_finalize_get_global_state", info);
+            }
+            return (MemorySegment)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_copy_function_set_copy_from_function {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_copy_function_set_copy_from_function");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_copy_from_function(duckdb_copy_function copy_function, duckdb_table_function table_function)
+     * }
+     */
+    public static FunctionDescriptor duckdb_copy_function_set_copy_from_function$descriptor() {
+        return duckdb_copy_function_set_copy_from_function.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_copy_from_function(duckdb_copy_function copy_function, duckdb_table_function table_function)
+     * }
+     */
+    public static MethodHandle duckdb_copy_function_set_copy_from_function$handle() {
+        return duckdb_copy_function_set_copy_from_function.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_copy_from_function(duckdb_copy_function copy_function, duckdb_table_function table_function)
+     * }
+     */
+    public static MemorySegment duckdb_copy_function_set_copy_from_function$address() {
+        return duckdb_copy_function_set_copy_from_function.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_copy_function_set_copy_from_function(duckdb_copy_function copy_function, duckdb_table_function table_function)
+     * }
+     */
+    public static void duckdb_copy_function_set_copy_from_function(MemorySegment copy_function, MemorySegment table_function) {
+        var mh$ = duckdb_copy_function_set_copy_from_function.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_copy_function_set_copy_from_function", copy_function, table_function);
+            }
+            mh$.invokeExact(copy_function, table_function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_table_function_bind_get_result_column_count {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_LONG,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_bind_get_result_column_count");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * idx_t duckdb_table_function_bind_get_result_column_count(duckdb_bind_info info)
+     * }
+     */
+    public static FunctionDescriptor duckdb_table_function_bind_get_result_column_count$descriptor() {
+        return duckdb_table_function_bind_get_result_column_count.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * idx_t duckdb_table_function_bind_get_result_column_count(duckdb_bind_info info)
+     * }
+     */
+    public static MethodHandle duckdb_table_function_bind_get_result_column_count$handle() {
+        return duckdb_table_function_bind_get_result_column_count.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * idx_t duckdb_table_function_bind_get_result_column_count(duckdb_bind_info info)
+     * }
+     */
+    public static MemorySegment duckdb_table_function_bind_get_result_column_count$address() {
+        return duckdb_table_function_bind_get_result_column_count.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * idx_t duckdb_table_function_bind_get_result_column_count(duckdb_bind_info info)
+     * }
+     */
+    public static long duckdb_table_function_bind_get_result_column_count(MemorySegment info) {
+        var mh$ = duckdb_table_function_bind_get_result_column_count.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_table_function_bind_get_result_column_count", info);
+            }
+            return (long)mh$.invokeExact(info);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_table_function_bind_get_result_column_name {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_bind_get_result_column_name");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * const char *duckdb_table_function_bind_get_result_column_name(duckdb_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static FunctionDescriptor duckdb_table_function_bind_get_result_column_name$descriptor() {
+        return duckdb_table_function_bind_get_result_column_name.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * const char *duckdb_table_function_bind_get_result_column_name(duckdb_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static MethodHandle duckdb_table_function_bind_get_result_column_name$handle() {
+        return duckdb_table_function_bind_get_result_column_name.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * const char *duckdb_table_function_bind_get_result_column_name(duckdb_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static MemorySegment duckdb_table_function_bind_get_result_column_name$address() {
+        return duckdb_table_function_bind_get_result_column_name.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * const char *duckdb_table_function_bind_get_result_column_name(duckdb_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static MemorySegment duckdb_table_function_bind_get_result_column_name(MemorySegment info, long col_idx) {
+        var mh$ = duckdb_table_function_bind_get_result_column_name.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_table_function_bind_get_result_column_name", info, col_idx);
+            }
+            return (MemorySegment)mh$.invokeExact(info, col_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_table_function_bind_get_result_column_type {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_table_function_bind_get_result_column_type");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_table_function_bind_get_result_column_type(duckdb_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static FunctionDescriptor duckdb_table_function_bind_get_result_column_type$descriptor() {
+        return duckdb_table_function_bind_get_result_column_type.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_table_function_bind_get_result_column_type(duckdb_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static MethodHandle duckdb_table_function_bind_get_result_column_type$handle() {
+        return duckdb_table_function_bind_get_result_column_type.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_table_function_bind_get_result_column_type(duckdb_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static MemorySegment duckdb_table_function_bind_get_result_column_type$address() {
+        return duckdb_table_function_bind_get_result_column_type.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_logical_type duckdb_table_function_bind_get_result_column_type(duckdb_bind_info info, idx_t col_idx)
+     * }
+     */
+    public static MemorySegment duckdb_table_function_bind_get_result_column_type(MemorySegment info, long col_idx) {
+        var mh$ = duckdb_table_function_bind_get_result_column_type.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_table_function_bind_get_result_column_type", info, col_idx);
+            }
+            return (MemorySegment)mh$.invokeExact(info, col_idx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_client_context_get_catalog {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_client_context_get_catalog");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_catalog duckdb_client_context_get_catalog(duckdb_client_context context, const char *catalog_name)
+     * }
+     */
+    public static FunctionDescriptor duckdb_client_context_get_catalog$descriptor() {
+        return duckdb_client_context_get_catalog.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_catalog duckdb_client_context_get_catalog(duckdb_client_context context, const char *catalog_name)
+     * }
+     */
+    public static MethodHandle duckdb_client_context_get_catalog$handle() {
+        return duckdb_client_context_get_catalog.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_catalog duckdb_client_context_get_catalog(duckdb_client_context context, const char *catalog_name)
+     * }
+     */
+    public static MemorySegment duckdb_client_context_get_catalog$address() {
+        return duckdb_client_context_get_catalog.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_catalog duckdb_client_context_get_catalog(duckdb_client_context context, const char *catalog_name)
+     * }
+     */
+    public static MemorySegment duckdb_client_context_get_catalog(MemorySegment context, MemorySegment catalog_name) {
+        var mh$ = duckdb_client_context_get_catalog.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_client_context_get_catalog", context, catalog_name);
+            }
+            return (MemorySegment)mh$.invokeExact(context, catalog_name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_catalog_get_type_name {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_catalog_get_type_name");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * const char *duckdb_catalog_get_type_name(duckdb_catalog catalog)
+     * }
+     */
+    public static FunctionDescriptor duckdb_catalog_get_type_name$descriptor() {
+        return duckdb_catalog_get_type_name.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * const char *duckdb_catalog_get_type_name(duckdb_catalog catalog)
+     * }
+     */
+    public static MethodHandle duckdb_catalog_get_type_name$handle() {
+        return duckdb_catalog_get_type_name.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * const char *duckdb_catalog_get_type_name(duckdb_catalog catalog)
+     * }
+     */
+    public static MemorySegment duckdb_catalog_get_type_name$address() {
+        return duckdb_catalog_get_type_name.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * const char *duckdb_catalog_get_type_name(duckdb_catalog catalog)
+     * }
+     */
+    public static MemorySegment duckdb_catalog_get_type_name(MemorySegment catalog) {
+        var mh$ = duckdb_catalog_get_type_name.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_catalog_get_type_name", catalog);
+            }
+            return (MemorySegment)mh$.invokeExact(catalog);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_catalog_get_entry {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_catalog_get_entry");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_catalog_entry duckdb_catalog_get_entry(duckdb_catalog catalog, duckdb_client_context context, duckdb_catalog_entry_type entry_type, const char *schema_name, const char *entry_name)
+     * }
+     */
+    public static FunctionDescriptor duckdb_catalog_get_entry$descriptor() {
+        return duckdb_catalog_get_entry.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_catalog_entry duckdb_catalog_get_entry(duckdb_catalog catalog, duckdb_client_context context, duckdb_catalog_entry_type entry_type, const char *schema_name, const char *entry_name)
+     * }
+     */
+    public static MethodHandle duckdb_catalog_get_entry$handle() {
+        return duckdb_catalog_get_entry.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_catalog_entry duckdb_catalog_get_entry(duckdb_catalog catalog, duckdb_client_context context, duckdb_catalog_entry_type entry_type, const char *schema_name, const char *entry_name)
+     * }
+     */
+    public static MemorySegment duckdb_catalog_get_entry$address() {
+        return duckdb_catalog_get_entry.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_catalog_entry duckdb_catalog_get_entry(duckdb_catalog catalog, duckdb_client_context context, duckdb_catalog_entry_type entry_type, const char *schema_name, const char *entry_name)
+     * }
+     */
+    public static MemorySegment duckdb_catalog_get_entry(MemorySegment catalog, MemorySegment context, int entry_type, MemorySegment schema_name, MemorySegment entry_name) {
+        var mh$ = duckdb_catalog_get_entry.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_catalog_get_entry", catalog, context, entry_type, schema_name, entry_name);
+            }
+            return (MemorySegment)mh$.invokeExact(catalog, context, entry_type, schema_name, entry_name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_destroy_catalog {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_catalog");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_catalog(duckdb_catalog *catalog)
+     * }
+     */
+    public static FunctionDescriptor duckdb_destroy_catalog$descriptor() {
+        return duckdb_destroy_catalog.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_catalog(duckdb_catalog *catalog)
+     * }
+     */
+    public static MethodHandle duckdb_destroy_catalog$handle() {
+        return duckdb_destroy_catalog.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_catalog(duckdb_catalog *catalog)
+     * }
+     */
+    public static MemorySegment duckdb_destroy_catalog$address() {
+        return duckdb_destroy_catalog.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_destroy_catalog(duckdb_catalog *catalog)
+     * }
+     */
+    public static void duckdb_destroy_catalog(MemorySegment catalog) {
+        var mh$ = duckdb_destroy_catalog.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_destroy_catalog", catalog);
+            }
+            mh$.invokeExact(catalog);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_catalog_entry_get_type {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_catalog_entry_get_type");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_catalog_entry_type duckdb_catalog_entry_get_type(duckdb_catalog_entry entry)
+     * }
+     */
+    public static FunctionDescriptor duckdb_catalog_entry_get_type$descriptor() {
+        return duckdb_catalog_entry_get_type.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_catalog_entry_type duckdb_catalog_entry_get_type(duckdb_catalog_entry entry)
+     * }
+     */
+    public static MethodHandle duckdb_catalog_entry_get_type$handle() {
+        return duckdb_catalog_entry_get_type.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_catalog_entry_type duckdb_catalog_entry_get_type(duckdb_catalog_entry entry)
+     * }
+     */
+    public static MemorySegment duckdb_catalog_entry_get_type$address() {
+        return duckdb_catalog_entry_get_type.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_catalog_entry_type duckdb_catalog_entry_get_type(duckdb_catalog_entry entry)
+     * }
+     */
+    public static int duckdb_catalog_entry_get_type(MemorySegment entry) {
+        var mh$ = duckdb_catalog_entry_get_type.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_catalog_entry_get_type", entry);
+            }
+            return (int)mh$.invokeExact(entry);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_catalog_entry_get_name {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_catalog_entry_get_name");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * const char *duckdb_catalog_entry_get_name(duckdb_catalog_entry entry)
+     * }
+     */
+    public static FunctionDescriptor duckdb_catalog_entry_get_name$descriptor() {
+        return duckdb_catalog_entry_get_name.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * const char *duckdb_catalog_entry_get_name(duckdb_catalog_entry entry)
+     * }
+     */
+    public static MethodHandle duckdb_catalog_entry_get_name$handle() {
+        return duckdb_catalog_entry_get_name.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * const char *duckdb_catalog_entry_get_name(duckdb_catalog_entry entry)
+     * }
+     */
+    public static MemorySegment duckdb_catalog_entry_get_name$address() {
+        return duckdb_catalog_entry_get_name.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * const char *duckdb_catalog_entry_get_name(duckdb_catalog_entry entry)
+     * }
+     */
+    public static MemorySegment duckdb_catalog_entry_get_name(MemorySegment entry) {
+        var mh$ = duckdb_catalog_entry_get_name.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_catalog_entry_get_name", entry);
+            }
+            return (MemorySegment)mh$.invokeExact(entry);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_destroy_catalog_entry {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_catalog_entry");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_catalog_entry(duckdb_catalog_entry *entry)
+     * }
+     */
+    public static FunctionDescriptor duckdb_destroy_catalog_entry$descriptor() {
+        return duckdb_destroy_catalog_entry.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_catalog_entry(duckdb_catalog_entry *entry)
+     * }
+     */
+    public static MethodHandle duckdb_destroy_catalog_entry$handle() {
+        return duckdb_destroy_catalog_entry.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_catalog_entry(duckdb_catalog_entry *entry)
+     * }
+     */
+    public static MemorySegment duckdb_destroy_catalog_entry$address() {
+        return duckdb_destroy_catalog_entry.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_destroy_catalog_entry(duckdb_catalog_entry *entry)
+     * }
+     */
+    public static void duckdb_destroy_catalog_entry(MemorySegment entry) {
+        var mh$ = duckdb_destroy_catalog_entry.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_destroy_catalog_entry", entry);
+            }
+            mh$.invokeExact(entry);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    /**
+     * Variadic invoker class for:
+     * {@snippet lang=c :
+     * duckdb_log_storage duckdb_create_log_storage()
+     * }
+     */
+    public static class duckdb_create_log_storage {
+        private static final FunctionDescriptor BASE_DESC = FunctionDescriptor.of(
+                duckdb_h.C_POINTER        );
+        private static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_create_log_storage");
+
+        private final MethodHandle handle;
+        private final FunctionDescriptor descriptor;
+        private final MethodHandle spreader;
+
+        private duckdb_create_log_storage(MethodHandle handle, FunctionDescriptor descriptor, MethodHandle spreader) {
+            this.handle = handle;
+            this.descriptor = descriptor;
+            this.spreader = spreader;
+        }
+
+        /**
+         * Variadic invoker factory for:
+         * {@snippet lang=c :
+         * duckdb_log_storage duckdb_create_log_storage()
+         * }
+         */
+        public static duckdb_create_log_storage makeInvoker(MemoryLayout... layouts) {
+            FunctionDescriptor desc$ = BASE_DESC.appendArgumentLayouts(layouts);
+            Linker.Option fva$ = Linker.Option.firstVariadicArg(BASE_DESC.argumentLayouts().size());
+            var mh$ = Linker.nativeLinker().downcallHandle(ADDR, desc$, fva$);
+            var spreader$ = mh$.asSpreader(Object[].class, layouts.length);
+            return new duckdb_create_log_storage(mh$, desc$, spreader$);
+        }
+
+        /**
+         * {@return the address}
+         */
+        public static MemorySegment address() {
+            return ADDR;
+        }
+
+        /**
+         * {@return the specialized method handle}
+         */
+        public MethodHandle handle() {
+            return handle;
+        }
+
+        /**
+         * {@return the specialized descriptor}
+         */
+        public FunctionDescriptor descriptor() {
+            return descriptor;
+        }
+
+        public MemorySegment apply(Object... x0) {
+            try {
+                if (TRACE_DOWNCALLS) {
+                    traceDowncall("duckdb_create_log_storage", x0);
+                }
+                return (MemorySegment) spreader.invokeExact(x0);
+            } catch(IllegalArgumentException | ClassCastException ex$)  {
+                throw ex$; // rethrow IAE from passing wrong number/type of args
+            } catch (Throwable ex$) {
+               throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
+    private static class duckdb_destroy_log_storage {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_destroy_log_storage");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_log_storage(duckdb_log_storage *log_storage)
+     * }
+     */
+    public static FunctionDescriptor duckdb_destroy_log_storage$descriptor() {
+        return duckdb_destroy_log_storage.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_log_storage(duckdb_log_storage *log_storage)
+     * }
+     */
+    public static MethodHandle duckdb_destroy_log_storage$handle() {
+        return duckdb_destroy_log_storage.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_destroy_log_storage(duckdb_log_storage *log_storage)
+     * }
+     */
+    public static MemorySegment duckdb_destroy_log_storage$address() {
+        return duckdb_destroy_log_storage.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_destroy_log_storage(duckdb_log_storage *log_storage)
+     * }
+     */
+    public static void duckdb_destroy_log_storage(MemorySegment log_storage) {
+        var mh$ = duckdb_destroy_log_storage.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_destroy_log_storage", log_storage);
+            }
+            mh$.invokeExact(log_storage);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_log_storage_set_write_log_entry {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_log_storage_set_write_log_entry");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_write_log_entry(duckdb_log_storage log_storage, duckdb_logger_write_log_entry_t function)
+     * }
+     */
+    public static FunctionDescriptor duckdb_log_storage_set_write_log_entry$descriptor() {
+        return duckdb_log_storage_set_write_log_entry.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_write_log_entry(duckdb_log_storage log_storage, duckdb_logger_write_log_entry_t function)
+     * }
+     */
+    public static MethodHandle duckdb_log_storage_set_write_log_entry$handle() {
+        return duckdb_log_storage_set_write_log_entry.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_write_log_entry(duckdb_log_storage log_storage, duckdb_logger_write_log_entry_t function)
+     * }
+     */
+    public static MemorySegment duckdb_log_storage_set_write_log_entry$address() {
+        return duckdb_log_storage_set_write_log_entry.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_write_log_entry(duckdb_log_storage log_storage, duckdb_logger_write_log_entry_t function)
+     * }
+     */
+    public static void duckdb_log_storage_set_write_log_entry(MemorySegment log_storage, MemorySegment function) {
+        var mh$ = duckdb_log_storage_set_write_log_entry.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_log_storage_set_write_log_entry", log_storage, function);
+            }
+            mh$.invokeExact(log_storage, function);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_log_storage_set_extra_data {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_log_storage_set_extra_data");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_extra_data(duckdb_log_storage log_storage, void *extra_data, duckdb_delete_callback_t delete_callback)
+     * }
+     */
+    public static FunctionDescriptor duckdb_log_storage_set_extra_data$descriptor() {
+        return duckdb_log_storage_set_extra_data.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_extra_data(duckdb_log_storage log_storage, void *extra_data, duckdb_delete_callback_t delete_callback)
+     * }
+     */
+    public static MethodHandle duckdb_log_storage_set_extra_data$handle() {
+        return duckdb_log_storage_set_extra_data.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_extra_data(duckdb_log_storage log_storage, void *extra_data, duckdb_delete_callback_t delete_callback)
+     * }
+     */
+    public static MemorySegment duckdb_log_storage_set_extra_data$address() {
+        return duckdb_log_storage_set_extra_data.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_extra_data(duckdb_log_storage log_storage, void *extra_data, duckdb_delete_callback_t delete_callback)
+     * }
+     */
+    public static void duckdb_log_storage_set_extra_data(MemorySegment log_storage, MemorySegment extra_data, MemorySegment delete_callback) {
+        var mh$ = duckdb_log_storage_set_extra_data.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_log_storage_set_extra_data", log_storage, extra_data, delete_callback);
+            }
+            mh$.invokeExact(log_storage, extra_data, delete_callback);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_log_storage_set_name {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_log_storage_set_name");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_name(duckdb_log_storage log_storage, const char *name)
+     * }
+     */
+    public static FunctionDescriptor duckdb_log_storage_set_name$descriptor() {
+        return duckdb_log_storage_set_name.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_name(duckdb_log_storage log_storage, const char *name)
+     * }
+     */
+    public static MethodHandle duckdb_log_storage_set_name$handle() {
+        return duckdb_log_storage_set_name.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_name(duckdb_log_storage log_storage, const char *name)
+     * }
+     */
+    public static MemorySegment duckdb_log_storage_set_name$address() {
+        return duckdb_log_storage_set_name.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * void duckdb_log_storage_set_name(duckdb_log_storage log_storage, const char *name)
+     * }
+     */
+    public static void duckdb_log_storage_set_name(MemorySegment log_storage, MemorySegment name) {
+        var mh$ = duckdb_log_storage_set_name.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_log_storage_set_name", log_storage, name);
+            }
+            mh$.invokeExact(log_storage, name);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class duckdb_register_log_storage {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            duckdb_h.C_INT,
+            duckdb_h.C_POINTER,
+            duckdb_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("duckdb_register_log_storage");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_log_storage(duckdb_database database, duckdb_log_storage log_storage)
+     * }
+     */
+    public static FunctionDescriptor duckdb_register_log_storage$descriptor() {
+        return duckdb_register_log_storage.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_log_storage(duckdb_database database, duckdb_log_storage log_storage)
+     * }
+     */
+    public static MethodHandle duckdb_register_log_storage$handle() {
+        return duckdb_register_log_storage.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_log_storage(duckdb_database database, duckdb_log_storage log_storage)
+     * }
+     */
+    public static MemorySegment duckdb_register_log_storage$address() {
+        return duckdb_register_log_storage.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * duckdb_state duckdb_register_log_storage(duckdb_database database, duckdb_log_storage log_storage)
+     * }
+     */
+    public static int duckdb_register_log_storage(MemorySegment database, MemorySegment log_storage) {
+        var mh$ = duckdb_register_log_storage.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("duckdb_register_log_storage", database, log_storage);
+            }
+            return (int)mh$.invokeExact(database, log_storage);
         } catch (Error | RuntimeException ex) {
            throw ex;
         } catch (Throwable ex$) {

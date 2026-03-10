@@ -14,22 +14,20 @@ import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 /**
  * {@snippet lang=c :
- * struct {
- *     uint8_t *data;
- *     idx_t size;
+ * struct _duckdb_config_option {
+ *     void *internal_ptr;
  * }
  * }
  */
-public class duckdb_bit {
+public class _duckdb_config_option {
 
-    duckdb_bit() {
+    _duckdb_config_option() {
         // Should not be called directly
     }
 
     private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
-        duckdb_h.C_POINTER.withName("data"),
-        duckdb_h.C_LONG.withName("size")
-    ).withName("$anon$495:9");
+        duckdb_h.C_POINTER.withName("internal_ptr")
+    ).withName("_duckdb_config_option");
 
     /**
      * The layout of this struct
@@ -38,92 +36,48 @@ public class duckdb_bit {
         return $LAYOUT;
     }
 
-    private static final AddressLayout data$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("data"));
+    private static final AddressLayout internal_ptr$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("internal_ptr"));
 
     /**
      * Layout for field:
      * {@snippet lang=c :
-     * uint8_t *data
+     * void *internal_ptr
      * }
      */
-    public static final AddressLayout data$layout() {
-        return data$LAYOUT;
+    public static final AddressLayout internal_ptr$layout() {
+        return internal_ptr$LAYOUT;
     }
 
-    private static final long data$OFFSET = $LAYOUT.byteOffset(groupElement("data"));
+    private static final long internal_ptr$OFFSET = $LAYOUT.byteOffset(groupElement("internal_ptr"));
 
     /**
      * Offset for field:
      * {@snippet lang=c :
-     * uint8_t *data
+     * void *internal_ptr
      * }
      */
-    public static final long data$offset() {
-        return data$OFFSET;
+    public static final long internal_ptr$offset() {
+        return internal_ptr$OFFSET;
     }
 
     /**
      * Getter for field:
      * {@snippet lang=c :
-     * uint8_t *data
+     * void *internal_ptr
      * }
      */
-    public static MemorySegment data(MemorySegment struct) {
-        return struct.get(data$LAYOUT, data$OFFSET);
+    public static MemorySegment internal_ptr(MemorySegment struct) {
+        return struct.get(internal_ptr$LAYOUT, internal_ptr$OFFSET);
     }
 
     /**
      * Setter for field:
      * {@snippet lang=c :
-     * uint8_t *data
+     * void *internal_ptr
      * }
      */
-    public static void data(MemorySegment struct, MemorySegment fieldValue) {
-        struct.set(data$LAYOUT, data$OFFSET, fieldValue);
-    }
-
-    private static final OfLong size$LAYOUT = (OfLong)$LAYOUT.select(groupElement("size"));
-
-    /**
-     * Layout for field:
-     * {@snippet lang=c :
-     * idx_t size
-     * }
-     */
-    public static final OfLong size$layout() {
-        return size$LAYOUT;
-    }
-
-    private static final long size$OFFSET = $LAYOUT.byteOffset(groupElement("size"));
-
-    /**
-     * Offset for field:
-     * {@snippet lang=c :
-     * idx_t size
-     * }
-     */
-    public static final long size$offset() {
-        return size$OFFSET;
-    }
-
-    /**
-     * Getter for field:
-     * {@snippet lang=c :
-     * idx_t size
-     * }
-     */
-    public static long size(MemorySegment struct) {
-        return struct.get(size$LAYOUT, size$OFFSET);
-    }
-
-    /**
-     * Setter for field:
-     * {@snippet lang=c :
-     * idx_t size
-     * }
-     */
-    public static void size(MemorySegment struct, long fieldValue) {
-        struct.set(size$LAYOUT, size$OFFSET, fieldValue);
+    public static void internal_ptr(MemorySegment struct, MemorySegment fieldValue) {
+        struct.set(internal_ptr$LAYOUT, internal_ptr$OFFSET, fieldValue);
     }
 
     /**

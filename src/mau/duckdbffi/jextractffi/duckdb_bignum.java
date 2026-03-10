@@ -32,7 +32,7 @@ public class duckdb_bignum {
         duckdb_h.C_LONG.withName("size"),
         duckdb_h.C_BOOL.withName("is_negative"),
         MemoryLayout.paddingLayout(7)
-    ).withName("$anon$460:9");
+    ).withName("$anon$503:9");
 
     /**
      * The layout of this struct

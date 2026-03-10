@@ -36,7 +36,7 @@ public class duckdb_column {
         MemoryLayout.paddingLayout(4),
         duckdb_h.C_POINTER.withName("deprecated_name"),
         duckdb_h.C_POINTER.withName("internal_data")
-    ).withName("$anon$404:9");
+    ).withName("$anon$447:9");
 
     /**
      * The layout of this struct

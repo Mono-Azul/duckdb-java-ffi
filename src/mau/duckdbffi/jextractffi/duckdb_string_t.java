@@ -37,7 +37,7 @@ public class duckdb_string_t {
 
     private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
         duckdb_string_t.value.layout().withName("value")
-    ).withName("$anon$378:9");
+    ).withName("$anon$421:9");
 
     /**
      * The layout of this struct
@@ -70,7 +70,7 @@ public class duckdb_string_t {
         private static final GroupLayout $LAYOUT = MemoryLayout.unionLayout(
             duckdb_string_t.value.pointer.layout().withName("pointer"),
             duckdb_string_t.value.inlined.layout().withName("inlined")
-        ).withName("$anon$379:2");
+        ).withName("$anon$422:2");
 
         /**
          * The layout of this union
@@ -98,7 +98,7 @@ public class duckdb_string_t {
                 duckdb_h.C_INT.withName("length"),
                 MemoryLayout.sequenceLayout(4, duckdb_h.C_CHAR).withName("prefix"),
                 duckdb_h.C_POINTER.withName("ptr")
-            ).withName("$anon$380:3");
+            ).withName("$anon$423:3");
 
             /**
              * The layout of this struct
@@ -394,7 +394,7 @@ public class duckdb_string_t {
             private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
                 duckdb_h.C_INT.withName("length"),
                 MemoryLayout.sequenceLayout(12, duckdb_h.C_CHAR).withName("inlined")
-            ).withName("$anon$385:3");
+            ).withName("$anon$428:3");
 
             /**
              * The layout of this struct
