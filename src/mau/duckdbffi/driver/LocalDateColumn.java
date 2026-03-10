@@ -21,6 +21,7 @@ package mau.duckdbffi.driver;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.time.LocalDate;
+import java.util.BitSet;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
@@ -42,13 +43,24 @@ public class LocalDateColumn extends ObjectColumn<LocalDate>
         ResultVectorData.reinterpret(dbChunkSize);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_INT, 0, TmpResultArray, 0, dbChunkSize);
 
+        BitSet ValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+        // There is no validity mask => there are no null values
+        boolean noNulls = ValidityMask.isEmpty();
+
         // Create LocalDate from int
         for (int pos = 0; pos < dbChunkSize; pos++)
         {
+            // Immediately check if value is null and skip rest
+            if (!noNulls && !ValidityMask.get(pos))
+            {
+                ResultArray[pos] = null;
+                continue;
+            }
+
             ResultArray[pos] = LocalDate.ofEpochDay(TmpResultArray[pos]);
         }
 
-        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         this.ChunkArrays.add(ResultArray);
     }
 }

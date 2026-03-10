@@ -24,6 +24,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.BitSet;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
@@ -96,44 +97,76 @@ public class LocalDateTimeColumn extends ObjectColumn<LocalDateTime>
         {
             MemorySegment Timestamps = duckdb_timestamp.reinterpret(ResultVectorData, dbChunkSize, ColumnArena, null);
 
+            BitSet ValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+            // There is no validity mask => there are no null values
+            boolean noNulls = ValidityMask.isEmpty();
+
             // Duplicating the hot loop to avoid ifs inside
             switch (ColumnDuckDbDataype.type)
             {
                 case DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP ->
                 {
-                    for (int col = 0; col < dbChunkSize; col++)
+                    for (int pos = 0; pos < dbChunkSize; pos++)
                     {
-                        long micros = duckdb_timestamp.micros(duckdb_timestamp.asSlice(Timestamps, col));
+                        // Immediately check if value is null and skip rest
+                        if (!noNulls && !ValidityMask.get(pos))
+                        {
+                            ResultArray[pos] = null;
+                            continue;
+                        }
+
+                        long micros = duckdb_timestamp.micros(duckdb_timestamp.asSlice(Timestamps, pos));
                         LocalDateTime TimestampDt = LocalDateTime.ofEpochSecond(micros2seconds(micros), nanosPartMicros(micros), ZoneOffset.UTC);
-                        ResultArray[col] = TimestampDt;
+                        ResultArray[pos] = TimestampDt;
                     }
                 }
                 case DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_S ->
                 {
-                    for (int col = 0; col < dbChunkSize; col++)
+                    for (int pos = 0; pos < dbChunkSize; pos++)
                     {
-                        long micros = duckdb_timestamp.micros(duckdb_timestamp.asSlice(Timestamps, col));
-                        ResultArray[col] = LocalDateTime.ofEpochSecond(micros, 0, ZoneOffset.UTC);
+                        // Immediately check if value is null and skip rest
+                        if (!noNulls && !ValidityMask.get(pos))
+                        {
+                            ResultArray[pos] = null;
+                            continue;
+                        }
+
+                        long micros = duckdb_timestamp.micros(duckdb_timestamp.asSlice(Timestamps, pos));
+                        ResultArray[pos] = LocalDateTime.ofEpochSecond(micros, 0, ZoneOffset.UTC);
                     }
                 }
                 case DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_MS ->
                 {
-                    for (int col = 0; col < dbChunkSize; col++)
+                    for (int pos = 0; pos < dbChunkSize; pos++)
                     {
-                        long micros = duckdb_timestamp.micros(duckdb_timestamp.asSlice(Timestamps, col));
-                        ResultArray[col] = LocalDateTime.ofEpochSecond(micros2seconds(micros * 1000), nanosPartMicros(micros * 1000), ZoneOffset.UTC);
+                        // Immediately check if value is null and skip rest
+                        if (!noNulls && !ValidityMask.get(pos))
+                        {
+                            ResultArray[pos] = null;
+                            continue;
+                        }
+
+                        long micros = duckdb_timestamp.micros(duckdb_timestamp.asSlice(Timestamps, pos));
+                        ResultArray[pos] = LocalDateTime.ofEpochSecond(micros2seconds(micros * 1000), nanosPartMicros(micros * 1000), ZoneOffset.UTC);
                     }
                 }
                 case DuckDbDatatype.DUCKDB_TYPE_TIMESTAMP_NS ->
                 {
-                    for (int col = 0; col < dbChunkSize; col++)
+                    for (int pos = 0; pos < dbChunkSize; pos++)
                     {
-                        long micros = duckdb_timestamp.micros(duckdb_timestamp.asSlice(Timestamps, col));
-                        ResultArray[col] = LocalDateTime.ofEpochSecond(nanos2seconds(micros), nanosPartNanos(micros), ZoneOffset.UTC);
+                        // Immediately check if value is null and skip rest
+                        if (!noNulls && !ValidityMask.get(pos))
+                        {
+                            ResultArray[pos] = null;
+                            continue;
+                        }
+
+                        long micros = duckdb_timestamp.micros(duckdb_timestamp.asSlice(Timestamps, pos));
+                        ResultArray[pos] = LocalDateTime.ofEpochSecond(nanos2seconds(micros), nanosPartNanos(micros), ZoneOffset.UTC);
                     }
                 }
             }
-            setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         }
         this.ChunkArrays.add(ResultArray);
     }

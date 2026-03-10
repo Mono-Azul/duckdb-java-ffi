@@ -22,6 +22,7 @@ import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.BitSet;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
@@ -53,12 +54,23 @@ public class BigIntegerColumn extends ObjectColumn<BigInteger>
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         byte[] ResultByteArray = ResultVectorData.reinterpret((long)dbChunkSize * 16).toArray(ValueLayout.JAVA_BYTE);
 
+        BitSet ValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+        // There is no validity mask => there are no null values
+        boolean noNulls = ValidityMask.isEmpty();
+
         for (int pos = 0; pos < dbChunkSize; pos++)
         {
+            // Immediately check if value is null and skip rest
+            if (!noNulls && !ValidityMask.get(pos))
+            {
+                ResultArray[pos] = null;
+                continue;
+            }
+
             byte[] swappedArray = swapEndianness16(Arrays.copyOfRange(ResultByteArray, pos * 16, pos * 16 + 16));
             ResultArray[pos] = new BigInteger(swappedArray, 0, 16);
         }
-        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         this.ChunkArrays.add(ResultArray);
     }
 
@@ -69,12 +81,23 @@ public class BigIntegerColumn extends ObjectColumn<BigInteger>
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         byte[] ResultByteArray = ResultVectorData.reinterpret((long)dbChunkSize * 8).toArray(ValueLayout.JAVA_BYTE);
 
+        BitSet ValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+        // There is no validity mask => there are no null values
+        boolean noNulls = ValidityMask.isEmpty();
+
         for (int pos = 0; pos < dbChunkSize; pos++)
         {
+            // Immediately check if value is null and skip rest
+            if (!noNulls && !ValidityMask.get(pos))
+            {
+                ResultArray[pos] = null;
+                continue;
+            }
+
             byte[] swappedArray = swapEndianness8(Arrays.copyOfRange(ResultByteArray, pos * 8, pos * 8 + 8));
             ResultArray[pos] = new BigInteger(1, swappedArray, 0, 8);
         }
-        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         this.ChunkArrays.add(ResultArray);
     }
 
@@ -85,12 +108,23 @@ public class BigIntegerColumn extends ObjectColumn<BigInteger>
         MemorySegment ResultVectorData = duckdb_vector_get_data(ResultVector);
         byte[] ResultByteArray = ResultVectorData.reinterpret((long)dbChunkSize * 16).toArray(ValueLayout.JAVA_BYTE);
 
+        BitSet ValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+        // There is no validity mask => there are no null values
+        boolean noNulls = ValidityMask.isEmpty();
+
         for (int pos = 0; pos < dbChunkSize; pos++)
         {
+            // Immediately check if value is null and skip rest
+            if (!noNulls && !ValidityMask.get(pos))
+            {
+                ResultArray[pos] = null;
+                continue;
+            }
+
             byte[] swappedArray = swapEndianness16(Arrays.copyOfRange(ResultByteArray, pos * 16, pos * 16 + 16));
             ResultArray[pos] = new BigInteger(1, swappedArray, 0, 16);
         }
-        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         this.ChunkArrays.add(ResultArray);
     }
 

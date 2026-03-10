@@ -24,6 +24,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.time.Duration;
 import java.time.Period;
+import java.util.BitSet;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
@@ -45,15 +46,25 @@ public class IntervalColumn extends ObjectColumn<Interval>
         {
             MemorySegment IntervalStructArray = duckdb_interval.reinterpret(ResultVectorData, dbChunkSize, ColumnArena, null);
 
+            BitSet ValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+            // There is no validity mask => there are no null values
+            boolean noNulls = ValidityMask.isEmpty();
+
             for (int pos = 0; pos < dbChunkSize; pos++)
             {
+                // Immediately check if value is null and skip rest
+                if (!noNulls && !ValidityMask.get(pos))
+                {
+                    ResultArray[pos] = null;
+                    continue;
+                }
+
                 MemorySegment IntervalStruct = duckdb_interval.asSlice(IntervalStructArray, pos);
                 Period tmpPeriod = Period.of(0, duckdb_interval.months(IntervalStruct), duckdb_interval.days(IntervalStruct));
                 Duration tmpDuration = Duration.ofNanos(duckdb_interval.micros(IntervalStruct) * 1000L);
                 ResultArray[pos] = new Interval(tmpPeriod, tmpDuration);
             }
-
-            setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         }
         this.ChunkArrays.add(ResultArray);
     }

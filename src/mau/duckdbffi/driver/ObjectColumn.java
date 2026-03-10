@@ -62,7 +62,8 @@ abstract public class ObjectColumn<T> extends Column<T>
         ChunkArrays.clear();
     }
 
-    protected void setValidityForChunk(MemorySegment ResultVector, int dbChunkSize, T[] ResultArray)
+    // Get the validity mask as a BitSet
+    protected BitSet getValiditySetForChunk(MemorySegment ResultVector, int dbChunkSize)
     {
         // Create Validity Mask if necessary
         // Size is ChunkSize / 8 (8 results per byte) and rounded up
@@ -72,10 +73,21 @@ abstract public class ObjectColumn<T> extends Column<T>
         // Null pointer indicates no need for mask => no nulls
         if (ValidityPtr.address() == 0)
         {
-            return;
+            return new BitSet();
         }
 
-        BitSet VectorValidityMask = BitSet.valueOf(ValidityPtr.reinterpret(validityMaskSize).toArray(ValueLayout.JAVA_BYTE));
+        return BitSet.valueOf(ValidityPtr.reinterpret(validityMaskSize).toArray(ValueLayout.JAVA_BYTE));
+    }
+
+    // Use validity mask to set all values of a ResultArray to null
+    protected void setValidityForChunk(MemorySegment ResultVector, int dbChunkSize, T[] ResultArray)
+    {
+        BitSet VectorValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+        if (VectorValidityMask.isEmpty())
+        {
+            return;
+        }
 
         for (int pos = 0; pos < dbChunkSize; pos++)
         {

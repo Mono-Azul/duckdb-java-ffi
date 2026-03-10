@@ -23,6 +23,7 @@ import mau.duckdbffi.jextractffi.duckdb_timestamp;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.time.Instant;
+import java.util.BitSet;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
@@ -45,15 +46,26 @@ public class InstantColumn extends ObjectColumn<Instant>
 
         try (Arena ColumnArena = Arena.ofConfined())
         {
+            BitSet ValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+            // There is no validity mask => there are no null values
+            boolean noNulls = ValidityMask.isEmpty();
+
             MemorySegment Timestamps = duckdb_timestamp.reinterpret(ResultVectorData, dbChunkSize, ColumnArena, null);
 
-            for (int col = 0; col < dbChunkSize; col++)
+            for (int pos = 0; pos < dbChunkSize; pos++)
             {
-                long micros = duckdb_timestamp.micros(duckdb_timestamp.asSlice(Timestamps, col));
+                // Immediately check if value is null and skip rest
+                if (!noNulls && !ValidityMask.get(pos))
+                {
+                    ResultArray[pos] = null;
+                    continue;
+                }
+
+                long micros = duckdb_timestamp.micros(duckdb_timestamp.asSlice(Timestamps, pos));
                 Instant TimestampDt = Instant.ofEpochSecond(micros / 1_000_000L, (micros % 1_000_000L) * 1_000L);
-                ResultArray[col] = TimestampDt;
+                ResultArray[pos] = TimestampDt;
             }
-            setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         }
         this.ChunkArrays.add(ResultArray);
     }

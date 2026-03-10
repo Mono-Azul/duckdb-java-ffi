@@ -21,6 +21,7 @@ package mau.duckdbffi.driver;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.time.LocalTime;
+import java.util.BitSet;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
 
@@ -42,13 +43,29 @@ public class LocalTimeColumn extends ObjectColumn<LocalTime>
         ResultVectorData.reinterpret(dbChunkSize);
         MemorySegment.copy(ResultVectorData, ValueLayout.JAVA_LONG, 0, TmpResultArray, 0, dbChunkSize);
 
+        BitSet ValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+        // There is no validity mask => there are no null values
+        boolean noNulls = ValidityMask.isEmpty();
+
         if (ColumnDuckDbDataype.type == DuckDbDatatype.DUCKDB_TYPE_TIME)
         {
             // Create LocalDate from micros
             for (int pos = 0; pos < dbChunkSize; pos++)
             {
+                // Immediately check if value is null and skip rest
+                if (!noNulls && !ValidityMask.get(pos))
+                {
+                    ResultArray[pos] = null;
+                    continue;
+                }
+
                 // Time stored in micros => * 1000
-                ResultArray[pos] = LocalTime.ofNanoOfDay(1000 * TmpResultArray[pos]);
+                // Larger longs could appear with null values
+                if (TmpResultArray[pos] < (24*60*60*1000000000L))
+                {
+                    ResultArray[pos] = LocalTime.ofNanoOfDay(1000 * TmpResultArray[pos]);
+                }
             }
         }
         else // DuckDbDatatype.DUCKDB_TYPE_TIME_NS
@@ -56,10 +73,17 @@ public class LocalTimeColumn extends ObjectColumn<LocalTime>
             // Create LocalDate from nanos
             for (int pos = 0; pos < dbChunkSize; pos++)
             {
+                // Immediately check if value is null and skip rest
+                if (!noNulls && !ValidityMask.get(pos))
+                {
+                    ResultArray[pos] = null;
+                    continue;
+                }
+
                 ResultArray[pos] = LocalTime.ofNanoOfDay(TmpResultArray[pos]);
             }
         }
-        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
+
         this.ChunkArrays.add(ResultArray);
     }
 }

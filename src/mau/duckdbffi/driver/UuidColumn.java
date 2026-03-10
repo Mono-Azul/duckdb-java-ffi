@@ -20,6 +20,7 @@ package mau.duckdbffi.driver;
 
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
+import java.util.BitSet;
 import java.util.UUID;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
@@ -44,13 +45,24 @@ public class UuidColumn extends ObjectColumn<UUID>
         UUID[] ResultArray = new UUID[dbChunkSize];
         long mask = (1L << 63);
 
+        BitSet ValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+        // There is no validity mask => there are no null values
+        boolean noNulls = ValidityMask.isEmpty();
+
         for (int pos = 0; pos < dbChunkSize; pos++)
         {
+            // Immediately check if value is null and skip rest
+            if (!noNulls && !ValidityMask.get(pos))
+            {
+                ResultArray[pos] = null;
+                continue;
+            }
+
             // We have to flip the msb because of some ordering rules in DuckDB => XOR with mask
             ResultArray[pos] = new UUID(PrimitiveResultArray[pos * 2 + 1] ^ mask, PrimitiveResultArray[pos * 2]);
         }
 
-        setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         this.ChunkArrays.add(ResultArray);
     }
 }

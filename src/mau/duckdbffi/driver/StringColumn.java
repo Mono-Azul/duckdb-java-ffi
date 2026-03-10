@@ -24,6 +24,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.nio.charset.StandardCharsets;
+import java.util.BitSet;
 
 import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_string_is_inlined;
 import static mau.duckdbffi.jextractffi.duckdb_h.duckdb_vector_get_data;
@@ -46,8 +47,20 @@ public class StringColumn extends ObjectColumn<String>
         {
             MemorySegment String_t = duckdb_string_t.reinterpret(ResultVectorData, dbChunkSize, ColumnArena, null);
 
+            BitSet ValidityMask = getValiditySetForChunk(ResultVector, dbChunkSize);
+
+            // There is no validity mask => there are no null values
+            boolean noNulls = ValidityMask.isEmpty();
+
             for (int pos = 0; pos < dbChunkSize; pos++)
             {
+                // Immediately check if value is null and skip rest
+                if (!noNulls && !ValidityMask.get(pos))
+                {
+                    ResultArray[pos] = null;
+                    continue;
+                }
+
                 MemorySegment String_struct = duckdb_string_t.asSlice(String_t, pos);
 
                 // Short strings can be inlined, longer ones have a pointer => this is a union struct!
@@ -65,11 +78,17 @@ public class StringColumn extends ObjectColumn<String>
                     //var StrValue = duckdb_string_t.value(String_struct);
                     var StrPtr = duckdb_string_t.value.pointer(String_struct);
                     var StrArrayPtr = duckdb_string_t.value.pointer.ptr(StrPtr);
-                    byte[] byteString = StrArrayPtr.reinterpret(duckdb_string_t.value.pointer.length(StrPtr)).toArray(ValueLayout.JAVA_BYTE);
+                    int stringLength = duckdb_string_t.value.pointer.length(StrPtr);
+                    if (stringLength > Integer.MAX_VALUE)
+                    {
+                        // For now we can _only_ handle 2 GB strings in Java
+                        stringLength = Integer.MAX_VALUE;
+                    }
+
+                    byte[] byteString = StrArrayPtr.reinterpret(stringLength).toArray(ValueLayout.JAVA_BYTE);
                     ResultArray[pos] = new String(byteString, StandardCharsets.UTF_8);
                 }
             }
-            setValidityForChunk(ResultVector, dbChunkSize, ResultArray);
         }
         this.ChunkArrays.add(ResultArray);
     }
