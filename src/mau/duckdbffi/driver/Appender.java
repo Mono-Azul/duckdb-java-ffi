@@ -114,6 +114,7 @@ public class Appender implements AutoCloseable
         if (AppendObject == null)
         {
             appendNull();
+            return;
         }
 
         MemorySegment DuckDbValueSegment = DuckDbValue.createDuckDbValueFromObject(AppendObject, AppenderArena);
