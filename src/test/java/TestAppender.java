@@ -61,30 +61,51 @@ public class TestAppender
     @Test
     void testAppendObjects()
     {
+        // Store values for later verification
+        var storedTiny = (byte)0;
+        var storedSmall = (short)2;
+        var storedMedium = 3;
+        var storedLarge = 5564888779L;
+        var storedHuge = BigInteger.valueOf(16548887789L);
+        var storedBitBool = true;
+        var storedTinyDec = BigDecimal.valueOf(3214, 2);
+        var storedSmallDec = BigDecimal.valueOf(321456, 3);
+        var storedMediumDec = BigDecimal.valueOf(99999999, 4);
+        var storedBigDec = BigDecimal.valueOf(123456789012345L, 10);
+        var storedFloatPt = (float)1234.5678;
+        var storedDoublePt = (double)234567.89101;
+        var storedLocTime = LocalTime.now().truncatedTo(ChronoUnit.MICROS);
+        var storedLocDate = LocalDate.now();
+        var storedLocTs = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+        var storedInstant = Instant.now().truncatedTo(ChronoUnit.MICROS);
+        var storedIntv = new Interval(Period.of(2, 12, 4), Duration.ofMillis(60000*18123));
+        var storedStr = "a text value xväö;!:{";
+        var storedUuid = UUID.randomUUID();
+
         try (Connection con = DbForTestRun.getConnection();
              Appender appender = con.createAppender("AppenderTest"))
         {
             appender.beginRow();
             appender.appendValue((long)-10);
-            appender.appendValue((byte)0);
-            appender.appendValue((short)2);
-            appender.appendValue(3);
-            appender.appendValue(5564888779L);
-            appender.appendValue(BigInteger.valueOf(16548887789L));
-            appender.appendValue(true);
-            appender.appendValue(BigDecimal.valueOf(3214, 2));
-            appender.appendValue(BigDecimal.valueOf(321456, 3));
-            appender.appendValue(BigDecimal.valueOf(99999999, 4));
-            appender.appendValue(BigDecimal.valueOf(123456789012345L, 10));
-            appender.appendValue((float)1234.5678);
-            appender.appendValue((double)234567.89101);
-            appender.appendValue(LocalTime.now());
-            appender.appendValue(LocalDate.now());
-            appender.appendValue(LocalDateTime.now());
-            appender.appendValue(Instant.now());
-            appender.appendValue(new Interval(Period.of(2, 12, 4), Duration.ofMillis(60000*18123)));
-            appender.appendValue("a text value xväö;!:{");
-            appender.appendValue(UUID.randomUUID());
+            appender.appendValue(storedTiny);
+            appender.appendValue(storedSmall);
+            appender.appendValue(storedMedium);
+            appender.appendValue(storedLarge);
+            appender.appendValue(storedHuge);
+            appender.appendValue(storedBitBool);
+            appender.appendValue(storedTinyDec);
+            appender.appendValue(storedSmallDec);
+            appender.appendValue(storedMediumDec);
+            appender.appendValue(storedBigDec);
+            appender.appendValue(storedFloatPt);
+            appender.appendValue(storedDoublePt);
+            appender.appendValue(storedLocTime);
+            appender.appendValue(storedLocDate);
+            appender.appendValue(storedLocTs);
+            appender.appendValue(storedInstant);
+            appender.appendValue(storedIntv);
+            appender.appendValue(storedStr);
+            appender.appendValue(storedUuid);
             appender.appendNull();
             appender.appendDefault();
             appender.endRow();
@@ -141,7 +162,7 @@ public class TestAppender
         }
         catch (DuckDbException e)
         {
-            fail("DuckDbException thrown:" + e.toString());
+            fail("DuckDbException thrown: " + e);
         }
 
         try (Connection con = DbForTestRun.getConnection())
@@ -149,7 +170,42 @@ public class TestAppender
             var Res = con.query("SELECT COUNT(*) FROM AppenderTest WHERE ID = -10;");
 
             assertEquals(1, Res.getRowCount());
-            assertEquals(3L, Res.getRow(0).getFirst());
+            assertEquals(3L, Res.getRow(0).get(0));
+
+            // Verify actual appended values from first row
+            var Res2 = con.query("""
+                    SELECT ID, Tiny, Small, Medium, Large, Huge, BitBool, TinyDec, SmallDec, MediumDec, BigDec, FloatPt
+                            , DoublePt, LocTime, LocDate, LocTs, Instant, Intv, Str, UniqueId, NullValue, DefaultValue
+                        FROM AppenderTest WHERE ID = -10
+                        LIMIT 1;
+                    """);
+
+            assertEquals(1, Res2.getRowCount(), "Expected 1 row with ID = -10");
+            List<Object> ResultRow = Res2.getRow(0);
+
+            assertEquals((long)-10, (Long)ResultRow.get(0), "ID mismatch");
+            assertEquals(storedTiny, (Byte)ResultRow.get(1), "Tiny column mismatch");
+            assertEquals(storedSmall, (Short)ResultRow.get(2), "Small column mismatch");
+            assertEquals(storedMedium, (Integer)ResultRow.get(3), "Medium column mismatch");
+            assertEquals(storedLarge, (Long)ResultRow.get(4), "Large column mismatch");
+            assertEquals(storedHuge, (BigInteger)ResultRow.get(5), "Huge column mismatch");
+            assertEquals(storedBitBool, (Boolean)ResultRow.get(6), "BitBool column mismatch");
+            assertEquals(storedTinyDec, (BigDecimal)ResultRow.get(7), "TinyDec column mismatch");
+            assertEquals(storedSmallDec, (BigDecimal)ResultRow.get(8), "SmallDec column mismatch");
+            assertEquals(storedMediumDec, (BigDecimal)ResultRow.get(9), "MediumDec column mismatch");
+            assertEquals(storedBigDec, (BigDecimal)ResultRow.get(10), "BigDec column mismatch");
+            assertEquals(storedFloatPt, (Float)ResultRow.get(11), 0.0001f, "FloatPt column mismatch");
+            assertEquals(storedDoublePt, (Double)ResultRow.get(12), 0.0001, "DoublePt column mismatch");
+            assertEquals(storedLocTime, (LocalTime)ResultRow.get(13), "LocTime column mismatch");
+            assertEquals(storedLocDate, (LocalDate)ResultRow.get(14), "LocDate column mismatch");
+            assertEquals(storedLocTs, (LocalDateTime)ResultRow.get(15), "LocTs column mismatch");
+            assertEquals(storedInstant, (Instant)ResultRow.get(16), "Instant column mismatch");
+            assertEquals(0, Interval.COMPARATOR.compare(((Interval)ResultRow.get(17)).normalized(),
+                    storedIntv.normalized()), "Intv column mismatch");
+            assertEquals(storedStr, (String)ResultRow.get(18), "Str column mismatch");
+            assertEquals(storedUuid, (UUID)ResultRow.get(19), "UniqueId column mismatch");
+            assertNull(ResultRow.get(20), "NullValue should be null");
+            assertEquals("default", (String)ResultRow.get(21), "DefaultValue mismatch");
         } catch (DuckDbException e)
         {
             throw new RuntimeException(e);
@@ -195,7 +251,7 @@ public class TestAppender
         }
         catch (DuckDbException e)
         {
-            fail("DuckDbException thrown:" + e.toString());
+            fail("DuckDbException thrown: " + e);
         }
 
         try (Connection con = DbForTestRun.getConnection())
@@ -203,7 +259,7 @@ public class TestAppender
             var Res = con.query("SELECT COUNT(*) FROM AppenderTest WHERE ID = 99;");
 
             assertEquals(1, Res.getRowCount());
-            assertEquals(1L, Res.getRow(0).getFirst());
+            assertEquals(1L, Res.getRow(0).get(0));
 
             var Res2 = con.query("""
                     SELECT ID, Tiny, Small, Medium, Large, Huge, BitBool, TinyDec, SmallDec, MediumDec, BigDec, FloatPt
@@ -211,7 +267,7 @@ public class TestAppender
                         FROM AppenderTest WHERE ID = 99;
                     """);
 
-            List ResultRow = Res2.getRow(0);
+            List<Object> ResultRow = Res2.getRow(0);
 
             assertEquals(99L, (Long)ResultRow.get(0));
             assertEquals((byte)0, (Byte)ResultRow.get(1));

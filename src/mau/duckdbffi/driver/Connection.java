@@ -125,8 +125,26 @@ public class Connection implements AutoCloseable
 
         if (Res.getRowCount() == 1)
         {
-            return createAppender((String)(Res.getRow(0).getFirst()), table);
+            var row = Res.getRow(0);
+            if (row == null || row.isEmpty())
+            {
+                throw new DuckDbException("No default schema found (empty row)!");
+            }
+
+            Object first = row.getFirst();
+            if (first == null)
+            {
+                throw new DuckDbException("No default schema found (null value)!");
+            }
+
+            if (!(first instanceof String))
+            {
+                throw new DuckDbException("Schema value is not a string: " + first.getClass());
+            }
+
+            return createAppender((String) first, table);
         }
+
         throw new DuckDbException("No default schema found!");
     }
 
